@@ -40,6 +40,8 @@ private slots:
 
     void on_actionRGB_to_HSV_triggered();
 
+    void on_after_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

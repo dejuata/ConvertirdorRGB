@@ -4,15 +4,19 @@
 
 using namespace std;
 
+
 QImage image;
-//QImage &rgb = image;
+QImage imageR;
+QImage imageG;
+QImage imageB;
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //this->setWindowState(Qt::WindowMaximized);
+    this->setWindowState(Qt::WindowMaximized);
 
 
 }
@@ -27,6 +31,9 @@ void MainWindow::on_actionOpen_triggered()
    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
 
    image.load(file);
+   imageR.load(file);
+   imageG.load(file);
+   imageB.load(file);
 
    if (!file.isEmpty())
    {
@@ -38,6 +45,7 @@ void MainWindow::on_actionOpen_triggered()
     }
 
     ui->after->setPixmap(QPixmap::fromImage(image));
+    ui->origin->setPixmap(QPixmap::fromImage(image));
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -65,10 +73,11 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
     else
     {
         // Renderizo imagenes en label
-        ui->before->setPixmap(QPixmap::fromImage(convertToRGB(image)));
-        ui->r->setPixmap(QPixmap::fromImage(convertToRGB(image, 'r')));
-        ui->g->setPixmap(QPixmap::fromImage(convertToRGB(image, 'g')));
-        ui->b->setPixmap(QPixmap::fromImage(convertToRGB(image, 'b')));
+        ui->after->setPixmap(QPixmap::fromImage(image));
+        ui->before->setPixmap(QPixmap::fromImage(convertToRGB(image, 'a')));
+        ui->r->setPixmap(QPixmap::fromImage(convertToRGB(imageR, 'r')));
+        ui->g->setPixmap(QPixmap::fromImage(convertToRGB(imageG, 'g')));
+        ui->b->setPixmap(QPixmap::fromImage(convertToRGB(imageB, 'b')));
         // Seteo el valor de los label
         ui->label_before->setText("CHANNEL RGB");
         ui->label_r->setText("CHANNEL R");
@@ -88,10 +97,11 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
     else
     {
         // Renderizo imagenes en label
-        ui->before->setPixmap(QPixmap::fromImage(convertToYUV(image)));
-        ui->r->setPixmap(QPixmap::fromImage(convertToYUV(image, 'y')));
-        ui->g->setPixmap(QPixmap::fromImage(convertToYUV(image, 'u')));
-        ui->b->setPixmap(QPixmap::fromImage(convertToYUV(image, 'v')));
+        ui->after->setPixmap(QPixmap::fromImage(image));
+        ui->before->setPixmap(QPixmap::fromImage(convertToYUV(image, 'a')));
+        ui->r->setPixmap(QPixmap::fromImage(convertToYUV(imageR, 'y')));
+        ui->g->setPixmap(QPixmap::fromImage(convertToYUV(imageG, 'u')));
+        ui->b->setPixmap(QPixmap::fromImage(convertToYUV(imageB, 'v')));
         // Seteo el valor de los label
         ui->label_before->setText("CHANNEL YUV");
         ui->label_r->setText("CHANNEL Y");
@@ -133,7 +143,7 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
     else
     {
         // Renderizo imagenes en label
-        ui->before->setPixmap(QPixmap::fromImage(convertToHSV(image)));
+        ui->before->setPixmap(QPixmap::fromImage(convertToHSV(image, 'a')));
         ui->r->setPixmap(QPixmap::fromImage(convertToHSV(image, 'h')));
         ui->g->setPixmap(QPixmap::fromImage(convertToHSV(image, 's')));
         ui->b->setPixmap(QPixmap::fromImage(convertToHSV(image, 'v')));
@@ -144,4 +154,9 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
         ui->label_b->setText("CHANNEL V");
 
     }
+}
+
+void MainWindow::on_after_triggered()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(convertToHSV(image, 'h')));
 }

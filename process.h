@@ -10,9 +10,10 @@
 
 double r,g,b;
 
-QImage convertToRGB(QImage image, char channel='a')
+QImage convertToRGB(QImage image, char channel)
 {
     QRgb value;
+
 
     for(int i = 0; i < image.width(); i++)
     {
@@ -31,7 +32,7 @@ QImage convertToRGB(QImage image, char channel='a')
             if (channel == 'a')
             {
                 //return image;
-                image.invertPixels(QImage::InvertRgb);
+//                image.invertPixels(QImage::InvertRgb);
             }
             // channel R
             if (channel == 'r')
@@ -57,7 +58,7 @@ QImage convertToRGB(QImage image, char channel='a')
     return image;
 }
 
-QImage convertToYUV(QImage image, char channel='a')
+QImage convertToYUV(QImage image, char channel)
 {
     QRgb value;
     double y,u,v;
@@ -86,19 +87,19 @@ QImage convertToYUV(QImage image, char channel='a')
             // channel Y
             if (channel == 'y')
             {
-                value = qRgb(y,y,y);
+                value = qRgb(0,y,y);
                 image.setPixelColor(i,j,value);
             }
             // channel U
             if (channel == 'u')
             {
-                value = qRgb(u,u,u);
+                value = qRgb(u,0,u);
                 image.setPixelColor(i,j,value);
             }
             // channel V
             if (channel == 'v')
             {
-                value = qRgb(v,v,v);
+                value = qRgb(v,v,0);
                 image.setPixelColor(i,j,value);
             }
         }
@@ -204,19 +205,19 @@ QImage convertToCMY(QImage image, char channel='a')
             // channel Y
             if (channel == 'c')
             {
-                value = qRgb(c,c,c);
+                value = qRgb(0,c,c);
                 image.setPixelColor(i,j,value);
             }
             // channel U
             if (channel == 'm')
             {
-                value = qRgb(m,m,m);
+                value = qRgb(m,0,m);
                 image.setPixelColor(i,j,value);
             }
             // channel V
             if (channel == 'y')
             {
-                value = qRgb(y,y,y);
+                value = qRgb(y,y,0);
                 image.setPixelColor(i,j,value);
             }
         }
@@ -225,18 +226,18 @@ QImage convertToCMY(QImage image, char channel='a')
     return image;
 }
 
-QImage convertToHSV(QImage image, char channel='a')
+QImage convertToHSV(QImage image, char channel)
 {
     QRgb value;
     double h,s,v;
-    QColor hsv;
+//    QColor hsv;
 
     for(int i = 0; i < image.width(); i++)
     {
         for(int j = 0; j < image.height(); j++)
         {
             // convierto a formato HSV usando la funcion de QColor toHsv()
-            hsv = QColor(image.pixel(i,j)).toHsv();
+//            hsv = QColor(image.pixel(i,j)).toHsv();
 
 
             //hsv = QColor(image.pixel(i,j)).convertTo(QColor::Hsv);
@@ -245,13 +246,11 @@ QImage convertToHSV(QImage image, char channel='a')
             r = QColor(image.pixel(i,j)).red();
             g = QColor(image.pixel(i,j)).green();
             b = QColor(image.pixel(i,j)).blue();
-            qDebug()<<r<<" "<<g<<" "<<b;
 
             // Format HSV
-            h = hsv.hue();
-            s = hsv.saturation();
-            v = hsv.value();
-            qDebug()<<h<<" "<<s<<" "<<v;
+            h = QColor(image.pixel(i,j)).hue();
+            s = QColor(image.pixel(i,j)).saturation();
+            v = QColor(image.pixel(i,j)).value();
 
 
             if (channel == 'a')
@@ -262,19 +261,19 @@ QImage convertToHSV(QImage image, char channel='a')
             // channel Y
             if (channel == 'h')
             {
-                value = qRgb(h,h,h);
+                value = qRgb(0,h,h);
                 image.setPixelColor(i,j,value);
             }
             // channel U
             if (channel == 's')
             {
-                value = qRgb(s,s,s);
+                value = qRgb(s,0,s);
                 image.setPixelColor(i,j,value);
             }
             // channel V
             if (channel == 'v')
             {
-                value = qRgb(v,v,v);
+                value = qRgb(v,v,0);
                 image.setPixelColor(i,j,value);
             }
         }
