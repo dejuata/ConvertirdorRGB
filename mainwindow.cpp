@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //this->setWindowState(Qt::WindowMaximized);
 
 
 }
@@ -63,10 +64,16 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
     }
     else
     {
+        // Renderizo imagenes en label
         ui->before->setPixmap(QPixmap::fromImage(convertToRGB(image)));
         ui->r->setPixmap(QPixmap::fromImage(convertToRGB(image, 'r')));
         ui->g->setPixmap(QPixmap::fromImage(convertToRGB(image, 'g')));
         ui->b->setPixmap(QPixmap::fromImage(convertToRGB(image, 'b')));
+        // Seteo el valor de los label
+        ui->label_before->setText("CHANNEL RGB");
+        ui->label_r->setText("CHANNEL R");
+        ui->label_g->setText("CHANNEL G");
+        ui->label_b->setText("CHANNEL B");
     }
 }
 
@@ -80,10 +87,16 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
     }
     else
     {
+        // Renderizo imagenes en label
         ui->before->setPixmap(QPixmap::fromImage(convertToYUV(image)));
         ui->r->setPixmap(QPixmap::fromImage(convertToYUV(image, 'y')));
         ui->g->setPixmap(QPixmap::fromImage(convertToYUV(image, 'u')));
         ui->b->setPixmap(QPixmap::fromImage(convertToYUV(image, 'v')));
+        // Seteo el valor de los label
+        ui->label_before->setText("CHANNEL YUV");
+        ui->label_r->setText("CHANNEL Y");
+        ui->label_g->setText("CHANNEL U");
+        ui->label_b->setText("CHANNEL V");
     }
 }
 
@@ -96,10 +109,39 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
     }
     else
     {
-//        ui->before->setPixmap(QPixmap::fromImage(convertToRGB(image, 2)));
-//        ui->r->setPixmap(QPixmap::fromImage(convertToChannels(image, 2, 'c')));
-//        ui->g->setPixmap(QPixmap::fromImage(convertToChannels(image, 2, 'm')));
-//        ui->b->setPixmap(QPixmap::fromImage(convertToChannels(image, 2, 'y')));
+        // Renderizo imagenes en label
+        ui->before->setPixmap(QPixmap::fromImage(convertToCMY(image)));
+        ui->r->setPixmap(QPixmap::fromImage(convertToCMY(image, 'c')));
+        ui->g->setPixmap(QPixmap::fromImage(convertToCMY(image, 'm')));
+        ui->b->setPixmap(QPixmap::fromImage(convertToCMY(image, 'y')));
+        // Seteo el valor de los label
+        ui->label_before->setText("CHANNEL CMY");
+        ui->label_r->setText("CHANNEL C");
+        ui->label_g->setText("CHANNEL M");
+        ui->label_b->setText("CHANNEL Y");
+
+    }
+}
+
+void MainWindow::on_actionRGB_to_HSV_triggered()
+{
+    if (image.isNull())
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+        return;
+    }
+    else
+    {
+        // Renderizo imagenes en label
+        ui->before->setPixmap(QPixmap::fromImage(convertToHSV(image)));
+        ui->r->setPixmap(QPixmap::fromImage(convertToHSV(image, 'h')));
+        ui->g->setPixmap(QPixmap::fromImage(convertToHSV(image, 's')));
+        ui->b->setPixmap(QPixmap::fromImage(convertToHSV(image, 'v')));
+        // Seteo el valor de los label
+        ui->label_before->setText("CHANNEL HSV");
+        ui->label_r->setText("CHANNEL H");
+        ui->label_g->setText("CHANNEL S");
+        ui->label_b->setText("CHANNEL V");
 
     }
 }

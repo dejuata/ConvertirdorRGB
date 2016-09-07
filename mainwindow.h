@@ -38,6 +38,8 @@ private slots:
 
     void on_actionRGB_to_CMY_triggered();
 
+    void on_actionRGB_to_HSV_triggered();
+
 private:
     Ui::MainWindow *ui;
 };
