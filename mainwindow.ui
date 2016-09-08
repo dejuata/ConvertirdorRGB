@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
+    <width>789</width>
     <height>479</height>
    </rect>
   </property>
@@ -14,9 +14,11 @@
    <string>Convertidor Imagenes</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normalon>C:/Users/USUARIO/Desktop/logo.ico</normalon>
-   </iconset>
+   <iconset resource="resources.qrc">
+    <normaloff>:/img/logo.ico</normaloff>:/img/logo.ico</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #f2f2f2;</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -43,6 +45,9 @@
      <height>0</height>
     </size>
    </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <spacer name="horizontalSpacer_2">
@@ -65,30 +70,12 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLabel" name="label_after">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>15</height>
-           </size>
-          </property>
-          <property name="mouseTracking">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string/>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
-          </property>
+         <widget class="QPushButton" name="btn_origin">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;ORIGIN&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>ORIGIN</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -137,21 +124,12 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QLabel" name="label_before">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>15</height>
-           </size>
-          </property>
+         <widget class="QPushButton" name="btn_transform">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;TRANSFORM&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>TRANSFORM</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -194,21 +172,12 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QLabel" name="label_r">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>15</height>
-           </size>
-          </property>
+         <widget class="QPushButton" name="btn_one">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;CHANNEL ONE&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>CHANNEL ONE</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -251,21 +220,12 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QLabel" name="label_g">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>15</height>
-           </size>
-          </property>
+         <widget class="QPushButton" name="btn_two">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;CHANNEL TWO&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>CHANNEL TWO</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -308,21 +268,12 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QLabel" name="label_b">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>15</height>
-           </size>
-          </property>
+         <widget class="QPushButton" name="btn_three">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;CHANNEL THREE&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>CHANNEL THREE</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -433,7 +384,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>762</width>
+     <width>789</width>
      <height>21</height>
     </rect>
    </property>
@@ -450,8 +401,12 @@
     </property>
     <addaction name="actionRGB_to_RGB"/>
     <addaction name="actionRGB_to_YUV"/>
+    <addaction name="actionRGB_to_YIQ"/>
     <addaction name="actionRGB_to_CMY"/>
     <addaction name="actionRGB_to_HSV"/>
+    <addaction name="actionRGB_to_HSL"/>
+    <addaction name="actionRGB_to_XYZ"/>
+    <addaction name="actionRGB_to_O1O2O3"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
@@ -486,8 +441,30 @@
     <string>RGB to HSV</string>
    </property>
   </action>
+  <action name="actionRGB_to_HSL">
+   <property name="text">
+    <string>RGB to HSL</string>
+   </property>
+  </action>
+  <action name="actionRGB_to_XYZ">
+   <property name="text">
+    <string>RGB to XYZ</string>
+   </property>
+  </action>
+  <action name="actionRGB_to_YIQ">
+   <property name="text">
+    <string>RGB to YIQ</string>
+   </property>
+  </action>
+  <action name="actionRGB_to_O1O2O3">
+   <property name="text">
+    <string>RGB to O1O2O3</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

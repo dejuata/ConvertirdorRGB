@@ -76,8 +76,8 @@ QImage convertToYUV(QImage image, char channel)
 
             // Format YUV
             y = (0.299 * r) + (0.587 * g) + (0.114 * b );
-            u = 0.439 * (b - y);
-            v = 0.877 * (r - y);
+            u = (-0.147 * r) + (-0.289 * g) + (0.436 * b);
+            v = (0.615 * r) + (-0.515 * g) + (-0.100 * b);
 
             if (channel == 'a')
             {
@@ -87,19 +87,69 @@ QImage convertToYUV(QImage image, char channel)
             // channel Y
             if (channel == 'y')
             {
-                value = qRgb(0,y,y);
+                value = qRgb(y,y,y);
                 image.setPixelColor(i,j,value);
             }
             // channel U
             if (channel == 'u')
             {
-                value = qRgb(u,0,u);
+                value = qRgb(u,u,u);
                 image.setPixelColor(i,j,value);
             }
             // channel V
             if (channel == 'v')
             {
-                value = qRgb(v,v,0);
+                value = qRgb(v,v,v);
+                image.setPixelColor(i,j,value);
+            }
+        }
+    }
+
+    return image;
+}
+
+QImage convertToYIQ(QImage image, char channel)
+{
+    QRgb value;
+    double y,ii,q;
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++)
+        {
+            // get pixels
+            r = QColor(image.pixel(i,j)).red();
+            g = QColor(image.pixel(i,j)).green();
+            b = QColor(image.pixel(i,j)).blue();
+
+
+
+            // Format YIQ
+            y = (0.299 * r) + (0.587 * g) + (0.114 * b );
+            ii = (0.596 * r) - (0.274 * g) - (0.322 * b);
+            q = (0.212 * r) - (0.523 * g) + (0.311 * b);
+
+            if (channel == 'a')
+            {
+                value = qRgb(y,ii,q);
+                image.setPixelColor(i,j,value);
+            }
+            // channel Y
+            if (channel == 'y')
+            {
+                value = qRgb(y,y,y);
+                image.setPixelColor(i,j,value);
+            }
+            // channel I
+            if (channel == 'i')
+            {
+                value = qRgb(ii,ii,ii);
+                image.setPixelColor(i,j,value);
+            }
+            // channel Q
+            if (channel == 'q')
+            {
+                value = qRgb(q,q,q);
                 image.setPixelColor(i,j,value);
             }
         }
@@ -110,7 +160,7 @@ QImage convertToYUV(QImage image, char channel)
 // http://www.easyrgb.com/index.php?X=MATH&H=12#text12
 // http://www.rapidtables.com/convert/color/rgb-to-cmyk.htm
 
-QImage convertToCMY(QImage image, char channel='a')
+QImage convertToCMY(QImage image, char channel)
 {
     QRgb value;
     double c,m,y,k,minone,mintwo, min;
@@ -243,9 +293,9 @@ QImage convertToHSV(QImage image, char channel)
             //hsv = QColor(image.pixel(i,j)).convertTo(QColor::Hsv);
 
             // get pixels
-            r = QColor(image.pixel(i,j)).red();
-            g = QColor(image.pixel(i,j)).green();
-            b = QColor(image.pixel(i,j)).blue();
+//            r = QColor(image.pixel(i,j)).red();
+//            g = QColor(image.pixel(i,j)).green();
+//            b = QColor(image.pixel(i,j)).blue();
 
             // Format HSV
             h = QColor(image.pixel(i,j)).hue();
@@ -258,22 +308,22 @@ QImage convertToHSV(QImage image, char channel)
                 value = qRgb(h,s,v);
                 image.setPixelColor(i,j,value);
             }
-            // channel Y
+            // channel H
             if (channel == 'h')
             {
-                value = qRgb(0,h,h);
+                value = qRgb(h,h,h);
                 image.setPixelColor(i,j,value);
             }
-            // channel U
+            // channel S
             if (channel == 's')
             {
-                value = qRgb(s,0,s);
+                value = qRgb(s,s,s);
                 image.setPixelColor(i,j,value);
             }
             // channel V
             if (channel == 'v')
             {
-                value = qRgb(v,v,0);
+                value = qRgb(v,v,v);
                 image.setPixelColor(i,j,value);
             }
         }
@@ -282,6 +332,164 @@ QImage convertToHSV(QImage image, char channel)
     return image;
 }
 
+QImage convertToHSL(QImage image, char channel)
+{
+    QRgb value;
+    double h,s,l;;
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++)
+        {
+
+            // get pixels
+//            r = QColor(image.pixel(i,j)).red();
+//            g = QColor(image.pixel(i,j)).green();
+//            b = QColor(image.pixel(i,j)).blue();
+
+            // Format HSL
+            h = QColor(image.pixel(i,j)).hue();
+            s = QColor(image.pixel(i,j)).saturation();
+            l = QColor(image.pixel(i,j)).lightness();
+
+
+            if (channel == 'a')
+            {
+                value = qRgb(h,s,l);
+                image.setPixelColor(i,j,value);
+            }
+            // channel H
+            if (channel == 'h')
+            {
+                value = qRgb(h,h,h);
+                image.setPixelColor(i,j,value);
+            }
+            // channel S
+            if (channel == 's')
+            {
+                value = qRgb(s,s,s);
+                image.setPixelColor(i,j,value);
+            }
+            // channel L
+            if (channel == 'l')
+            {
+                value = qRgb(l,l,l);
+                image.setPixelColor(i,j,value);
+            }
+        }
+    }
+
+    return image;
+}
+
+QImage convertToXYZ(QImage image, char channel)
+{
+    QRgb value;
+    double x,y,z;
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++)
+        {
+
+            // get pixels
+            r = QColor(image.pixel(i,j)).red();
+            g = QColor(image.pixel(i,j)).green();
+            b = QColor(image.pixel(i,j)).blue();
+
+            // Format XYZ
+            x = (0.431 * r) + (0.342 * g) + (0.178 * b);
+            y = (0.222 * r) + (0.707 * g) + (0.071 * b);
+            z = (0.020 * r) + (0.130 * g) + (0.939 * b);
+
+
+            if (channel == 'a')
+            {
+                value = qRgb(x,y,z);
+                image.setPixelColor(i,j,value);
+            }
+            // channel X
+            if (channel == 'x')
+            {
+                value = qRgb(x,x,x);
+                image.setPixelColor(i,j,value);
+            }
+            // channel Y
+            if (channel == 'y')
+            {
+                value = qRgb(y,y,y);
+                image.setPixelColor(i,j,value);
+            }
+            // channel Z
+            if (channel == 'z')
+            {
+                value = qRgb(z,z,z);
+                image.setPixelColor(i,j,value);
+            }
+        }
+    }
+
+    return image;
+}
+QImage convertToOOO(QImage image, char channel)
+{
+    QRgb value;
+    double x,y,z,l,m,s,a,b,c;
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++)
+        {
+
+            // get pixels
+            r = QColor(image.pixel(i,j)).red();
+            g = QColor(image.pixel(i,j)).green();
+            b = QColor(image.pixel(i,j)).blue();
+
+            // Format RGB to XYZ
+            x = (0.431 * r) + (0.342 * g) + (0.178 * b);
+            y = (0.222 * r) + (0.707 * g) + (0.071 * b);
+            z = (0.020 * r) + (0.130 * g) + (0.939 * b);
+
+            // XYZ to LMS
+            l = (0.2430 * x) + (0.8560 * y) + (-0.0440 * z);
+            m = (-0.3910 * x) + (1.1650 * y) + (0.0870 * z);
+            s = (0.0100 * x) + (-0.0080 * y) + (0.5630 * z);
+
+            // O1 O2 O3
+            a = (1 * l) + (0 * m) + (0 * s) ;
+            b = (-0.59 * l) + (0.80 * m) + (-0.12 * s);
+            c = (-0.34 * l) + (-0.11 * m) + (0.93 * s);
+
+
+            if (channel == 'a')
+            {
+                value = qRgb(a,b,c);
+                image.setPixelColor(i,j,value);
+            }
+            // channel O1
+            if (channel == 'x')
+            {
+                value = qRgb(a,a,a);
+                image.setPixelColor(i,j,value);
+            }
+            // channel O2
+            if (channel == 'y')
+            {
+                value = qRgb(b,b,b);
+                image.setPixelColor(i,j,value);
+            }
+            // channel O3
+            if (channel == 'z')
+            {
+                value = qRgb(c,c,c);
+                image.setPixelColor(i,j,value);
+            }
+        }
+    }
+
+    return image;
+}
 
 
 

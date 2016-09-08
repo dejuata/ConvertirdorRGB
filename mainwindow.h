@@ -35,12 +35,27 @@ private slots:
 
     void on_actionRGB_to_YUV_triggered();
 
-
     void on_actionRGB_to_CMY_triggered();
 
     void on_actionRGB_to_HSV_triggered();
 
-    void on_after_triggered();
+    void on_btn_origin_clicked();
+
+    void on_btn_transform_clicked();
+
+    void on_btn_one_clicked();
+
+    void on_btn_two_clicked();
+
+    void on_btn_three_clicked();
+
+    void on_actionRGB_to_HSL_triggered();
+
+    void on_actionRGB_to_XYZ_triggered();
+
+    void on_actionRGB_to_YIQ_triggered();
+
+    void on_actionRGB_to_O1O2O3_triggered();
 
 private:
     Ui::MainWindow *ui;
