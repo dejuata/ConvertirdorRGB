@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>789</width>
+    <width>797</width>
     <height>479</height>
    </rect>
   </property>
@@ -344,6 +344,12 @@
           <height>0</height>
          </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>1200</width>
+          <height>1000</height>
+         </size>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
@@ -384,7 +390,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>789</width>
+     <width>797</width>
      <height>21</height>
     </rect>
    </property>
@@ -408,8 +414,26 @@
     <addaction name="actionRGB_to_XYZ"/>
     <addaction name="actionRGB_to_O1O2O3"/>
    </widget>
+   <widget class="QMenu" name="menuFilter">
+    <property name="title">
+     <string>Filter</string>
+    </property>
+    <widget class="QMenu" name="menu_Average_filter">
+     <property name="title">
+      <string>
+Average filter</string>
+     </property>
+     <addaction name="actionTransform"/>
+     <addaction name="actionChannel_One"/>
+     <addaction name="actionChannel_Two"/>
+     <addaction name="actionChannel_Three"/>
+     <addaction name="actionSettings"/>
+    </widget>
+    <addaction name="menu_Average_filter"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
+   <addaction name="menuFilter"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -459,6 +483,46 @@
   <action name="actionRGB_to_O1O2O3">
    <property name="text">
     <string>RGB to O1O2O3</string>
+   </property>
+  </action>
+  <action name="actionTransform">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Transform</string>
+   </property>
+  </action>
+  <action name="actionChannel_One">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Channel One</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WidgetShortcut</enum>
+   </property>
+  </action>
+  <action name="actionChannel_Two">
+   <property name="text">
+    <string>Channel Two</string>
+   </property>
+  </action>
+  <action name="actionChannel_Three">
+   <property name="text">
+    <string>Channel Three</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

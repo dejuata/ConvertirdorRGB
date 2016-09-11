@@ -16,7 +16,8 @@ SOURCES += main.cpp\
         mainwindow.cpp
 
 HEADERS  += mainwindow.h \
-    process.h
+    process.h \
+    filter.h
 
 FORMS    += mainwindow.ui
 

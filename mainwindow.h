@@ -14,6 +14,7 @@
 
 
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -55,7 +56,17 @@ private slots:
 
     void on_actionRGB_to_YIQ_triggered();
 
-    void on_actionRGB_to_O1O2O3_triggered();
+    void on_actionRGB_to_O1O2O3_triggered();    
+
+    void on_actionTransform_triggered();
+
+    void on_actionChannel_One_triggered();
+
+    void on_actionChannel_Two_triggered();
+
+    void on_actionChannel_Three_triggered();
+
+    void on_actionSettings_triggered();
 
 private:
     Ui::MainWindow *ui;
