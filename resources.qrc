@@ -2,4 +2,10 @@
     <qresource prefix="/">
         <file>img/logo.ico</file>
     </qresource>
+    <qresource prefix="/filters">
+        <file>Filters/3x3.txt</file>
+        <file>Filters/5x5.txt</file>
+        <file>Filters/7x7.txt</file>
+        <file>Filters/9x9.txt</file>
+    </qresource>
 </RCC>

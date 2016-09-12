@@ -430,6 +430,7 @@ Average filter</string>
      <addaction name="actionSettings"/>
     </widget>
     <addaction name="menu_Average_filter"/>
+    <addaction name="actionLoad_Filter"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
@@ -523,6 +524,11 @@ Average filter</string>
   <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionLoad_Filter">
+   <property name="text">
+    <string>Load Filter</string>
    </property>
   </action>
  </widget>

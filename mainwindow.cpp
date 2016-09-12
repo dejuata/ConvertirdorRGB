@@ -3,9 +3,7 @@
 #include "process.h"
 #include "filter.h"
 
-
 using namespace std;
-
 
 QImage image;
 QImage imageT;
@@ -17,6 +15,8 @@ int kernelThree [3][3];
 int kernelFive  [5][5];
 int kernelSeven [7][7];
 int kernelNine  [9][9];
+// Almaceno el tamano del kernel, si es 0 trabaja con el kernel default de [3][3]
+int sizeList = 0;
 
 
 int kernel[3][3] = {
@@ -24,14 +24,6 @@ int kernel[3][3] = {
                     {1, 1, 1},
                     {1, 1, 1}
                 };
-//int kernel[5][5] = {
-//                    {1, 1, 1, 1, 1},
-//                    {1, 1, 1, 1, 1},
-//                    {1, 1, 1, 1, 1},
-//                    {1, 1, 1, 1, 1},
-//                    {1, 1, 1, 1, 1}
-//                };
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -112,8 +104,6 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
 
 //        if (ui->btn_origin->)
 //        on_btn_origin_clicked(imageR);
-
-
 
     }
 }
@@ -357,38 +347,164 @@ void MainWindow::on_btn_three_clicked()
 
 void MainWindow::on_actionTransform_triggered()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel)));
-
+    if(sizeList == 0)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel)));
+    }
+    if(sizeList == 3)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelThree)));
+    }
+    if(sizeList == 5)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelFive)));
+    }
+    if(sizeList == 7)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelSeven)));
+    }
+    if(sizeList == 9)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelNine)));
+    }
 }
 
 void MainWindow::on_actionChannel_One_triggered()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel)));
+    if(sizeList == 0)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel)));
+    }
+    if(sizeList == 3)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelThree)));
+    }
+    if(sizeList == 5)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelFive)));
+    }
+    if(sizeList == 7)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelSeven)));
+    }
+    if(sizeList == 9)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelNine)));
+    }
 }
 
 void MainWindow::on_actionChannel_Two_triggered()
 {
-   ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel)));
+    if(sizeList == 0)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel)));
+    }
+    if(sizeList == 3)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelThree)));
+    }
+    if(sizeList == 5)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelFive)));
+    }
+    if(sizeList == 7)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelSeven)));
+    }
+    if(sizeList == 9)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelNine)));
+    }
 }
 
 void MainWindow::on_actionChannel_Three_triggered()
 {
-   ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernel)));
+    if(sizeList == 0)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernel)));
+    }
+    if(sizeList == 3)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelThree)));
+    }
+    if(sizeList == 5)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelFive)));
+    }
+    if(sizeList == 7)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelSeven)));
+    }
+    if(sizeList == 9)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelNine)));
+    }
 }
 
 void MainWindow::on_actionSettings_triggered()
 {
-    SettingsFilter *averange = new SettingsFilter(this);
-    averange->setModal(true);
+//    SettingsFilter *averange = new SettingsFilter(this);
+//    averange->setModal(true);
 
-    averange->show();
-
-
-
-
+//    averange->show();
 }
 
-void MainWindow::on_actionLoad_filter_triggered()
-{
 
+
+void MainWindow::on_actionLoad_Filter_triggered()
+{
+    QString text;
+    // cargo el txt con el filtro
+    QFile file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.txt)"));
+    file.open(QIODevice::ReadOnly);
+
+    QTextStream result(&file);
+
+    text = result.readAll();
+
+    // Limpiar el string
+    QRegExp rx("(\\d+)");
+    QString str = text;
+    QStringList lists;
+
+    int pos = 0;
+
+    while ((pos = rx.indexIn(str, pos)) != -1) {
+        lists << rx.cap(1);
+        pos += rx.matchedLength();
+    }
+
+    // Asignar a la matriz los valores del string
+
+    int count = 0;
+    sizeList = sqrt(lists.length());
+
+    for(int i = 0 ; i < sizeList; i++)
+    {
+        for(int j = 0 ; j < sizeList; j++)
+        {
+            if(sizeList == 3)
+            {
+                kernelThree[i][j] = lists[count].toInt();
+            }
+            if(sizeList == 5)
+            {
+                kernelFive[i][j] = lists[count].toInt();
+            }
+            if(sizeList == 7)
+            {
+                kernelSeven[i][j] = lists[count].toInt();
+            }
+            if(sizeList == 9)
+            {
+                kernelNine[i][j] = lists[count].toInt();
+            }
+
+           count++;
+      }
+    }
+
+    qDebug()<<"CARGO FILTRO";
+
+    file.close();
 }

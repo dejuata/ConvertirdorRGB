@@ -10,7 +10,9 @@
 #include <QPixmap>
 #include <QColor>
 #include <QString>
-#include <settingsfilter.h>
+#include <QFile>
+#include <QTextStream>
+#include <QRegExp>
 
 
 
@@ -67,6 +69,10 @@ private slots:
     void on_actionChannel_Three_triggered();
 
     void on_actionSettings_triggered();
+
+
+    
+    void on_actionLoad_Filter_triggered();
 
 private:
     Ui::MainWindow *ui;

@@ -1,29 +1,29 @@
-#ifndef SETTINGSFILTER_H
-#define SETTINGSFILTER_H
+//#ifndef SETTINGSFILTER_H
+//#define SETTINGSFILTER_H
 
-#include <QDialog>
+//#include <QDialog>
 
-namespace Ui {
-class SettingsFilter;
-}
+//namespace Ui {
+//class SettingsFilter;
+//}
 
-class SettingsFilter : public QDialog
-{
-    Q_OBJECT
+//class SettingsFilter : public QDialog
+//{
+//    Q_OBJECT
 
-public:
-    explicit SettingsFilter(QWidget *parent = 0);
-    ~SettingsFilter();
-     Ui::SettingsFilter *ui;
+//public:
+//    explicit SettingsFilter(QWidget *parent = 0);
+//    ~SettingsFilter();
+//     Ui::SettingsFilter *ui;
 
-private slots:
+//private slots:
 
-    void on_selectFilter_currentIndexChanged(int index);
+//    void on_selectFilter_currentIndexChanged(int index);
 
-    void on_pushButton_clicked();
+//    void on_pushButton_clicked();
 
-private:
+//private:
 
-};
+//};
 
-#endif // SETTINGSFILTER_H
+//#endif // SETTINGSFILTER_H
