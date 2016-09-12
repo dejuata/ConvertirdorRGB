@@ -3,6 +3,7 @@
 #include "process.h"
 #include "filter.h"
 
+
 using namespace std;
 
 
@@ -12,16 +13,24 @@ QImage imageR ;
 QImage imageG ;
 QImage imageB ;
 
+int kernelThree [3][3];
+int kernelFive  [5][5];
+int kernelSeven [7][7];
+int kernelNine  [9][9];
 
-int kernel[7][7] = {
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1}
+
+int kernel[3][3] = {
+                    {1, 1, 1},
+                    {1, 1, 1},
+                    {1, 1, 1}
                 };
+//int kernel[5][5] = {
+//                    {1, 1, 1, 1, 1},
+//                    {1, 1, 1, 1, 1},
+//                    {1, 1, 1, 1, 1},
+//                    {1, 1, 1, 1, 1},
+//                    {1, 1, 1, 1, 1}
+//                };
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -43,7 +52,8 @@ void MainWindow::on_actionOpen_triggered()
 {
    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
 
-   image.load(file);   
+   image.load(file);
+
 
    if (!file.isEmpty())
    {
@@ -347,29 +357,38 @@ void MainWindow::on_btn_three_clicked()
 
 void MainWindow::on_actionTransform_triggered()
 {
-    int size = 3;
-    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel, size)));
+    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel)));
+
 }
 
 void MainWindow::on_actionChannel_One_triggered()
 {
-    int size = 3;
-    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel, size)));
+    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel)));
 }
 
 void MainWindow::on_actionChannel_Two_triggered()
 {
-    int size = 3;
-    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel, size)));
+   ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel)));
 }
 
 void MainWindow::on_actionChannel_Three_triggered()
 {
-    int size = 3;
-    ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernel, size)));
+   ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernel)));
 }
 
 void MainWindow::on_actionSettings_triggered()
+{
+    SettingsFilter *averange = new SettingsFilter(this);
+    averange->setModal(true);
+
+    averange->show();
+
+
+
+
+}
+
+void MainWindow::on_actionLoad_filter_triggered()
 {
     
 }

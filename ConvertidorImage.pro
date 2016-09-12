@@ -13,13 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    settingsfilter.cpp
 
 HEADERS  += mainwindow.h \
     process.h \
-    filter.h
+    filter.h \
+    settingsfilter.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    settingsfilter.ui
 
 RESOURCES += \
     resources.qrc
