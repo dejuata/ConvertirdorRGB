@@ -349,7 +349,7 @@ void MainWindow::on_actionTransform_triggered()
 {
     if(sizeList == 0)
     {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel)));
+//        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel)));
     }
     if(sizeList == 3)
     {
@@ -373,7 +373,7 @@ void MainWindow::on_actionChannel_One_triggered()
 {
     if(sizeList == 0)
     {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel)));
+//        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel)));
     }
     if(sizeList == 3)
     {
@@ -397,7 +397,7 @@ void MainWindow::on_actionChannel_Two_triggered()
 {
     if(sizeList == 0)
     {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel)));
+//        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel)));
     }
     if(sizeList == 3)
     {
@@ -460,48 +460,53 @@ void MainWindow::on_actionLoad_Filter_triggered()
 
     QTextStream result(&file);
 
-    text = result.readAll();
+    text = result.readAll();    
 
     // Limpiar el string
-    QRegExp rx("(\\d+)");
-    QString str = text;
-    QStringList lists;
+   // QRegExp rx("(-?\\d+\.*\\d+)");
+    QStringList lists = text.split("\r\n");;
+    QStringList clean;
 
-    int pos = 0;
-
-    while ((pos = rx.indexIn(str, pos)) != -1) {
-        lists << rx.cap(1);
-        pos += rx.matchedLength();
+    for(int i = 0; i < lists.length(); i++)
+    {
+        clean.append(lists[i].split(' '));
     }
+
+    qDebug()<<"lists"<<clean[1].toDouble();
 
     // Asignar a la matriz los valores del string
 
     int count = 0;
-    sizeList = sqrt(lists.length());
+    int number;
+    sizeList = sqrt(clean.length());
 
     for(int i = 0 ; i < sizeList; i++)
     {
         for(int j = 0 ; j < sizeList; j++)
         {
+            number = clean[count].toInt();
+
             if(sizeList == 3)
             {
-                kernelThree[i][j] = lists[count].toInt();
+                kernelThree[i][j] = number;
+                qDebug()<<kernelThree[i][j]<<" ";
             }
             if(sizeList == 5)
             {
-                kernelFive[i][j] = lists[count].toInt();
+                kernelFive[i][j] = number;
             }
             if(sizeList == 7)
             {
-                kernelSeven[i][j] = lists[count].toInt();
+                kernelSeven[i][j] = number;
             }
             if(sizeList == 9)
             {
-                kernelNine[i][j] = lists[count].toInt();
+                kernelNine[i][j] = number;
             }
 
            count++;
       }
+        qDebug()<<endl;
     }
 
     qDebug()<<"CARGO FILTRO";

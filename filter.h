@@ -8,6 +8,7 @@
 #include <vector>
 #include <QImage>
 #include <QColor>
+#include <math.h>
 
 using namespace std;
 
@@ -48,7 +49,7 @@ QImage convolucion (QImage image, int kernel[][3])
                     }
                 }
             }
-            value = qRgb(r/average,g/average,b/average);
+            value = qRgb(r/16,g/16,b/16);
             result.setPixelColor(i,j,value);
         }
     }
