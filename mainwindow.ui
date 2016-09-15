@@ -71,6 +71,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QPushButton" name="btn_origin">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
            <string>ORIGIN</string>
           </property>
@@ -418,19 +421,11 @@
     <property name="title">
      <string>Filter</string>
     </property>
-    <widget class="QMenu" name="menu_Average_filter">
-     <property name="title">
-      <string>
-Average filter</string>
-     </property>
-     <addaction name="actionTransform"/>
-     <addaction name="actionChannel_One"/>
-     <addaction name="actionChannel_Two"/>
-     <addaction name="actionChannel_Three"/>
-     <addaction name="actionSettings"/>
-    </widget>
-    <addaction name="menu_Average_filter"/>
-    <addaction name="actionLoad_Filter"/>
+    <addaction name="actionTransform"/>
+    <addaction name="actionChannel_One"/>
+    <addaction name="actionChannel_Two"/>
+    <addaction name="actionChannel_Three"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
@@ -529,6 +524,11 @@ Average filter</string>
   <action name="actionLoad_Filter">
    <property name="text">
     <string>Load Filter</string>
+   </property>
+  </action>
+  <action name="actionGaussiano_filter">
+   <property name="text">
+    <string>Gaussiano filter</string>
    </property>
   </action>
  </widget>

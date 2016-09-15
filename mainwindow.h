@@ -14,9 +14,12 @@
 #include <QTextStream>
 #include <QRegExp>
 
+
 namespace Ui {
 class MainWindow;
 }
+
+
 
 class MainWindow : public QMainWindow
 {
@@ -25,6 +28,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 
 private slots:
     void on_actionOpen_triggered();
@@ -65,12 +69,12 @@ private slots:
 
     void on_actionChannel_Three_triggered();
 
-    void on_actionSettings_triggered();
-    
-    void on_actionLoad_Filter_triggered();
+    void on_actionSettings_triggered();    
 
-private:
+private:    
     Ui::MainWindow *ui;
+
+
 };
 
 #endif // MAINWINDOW_H

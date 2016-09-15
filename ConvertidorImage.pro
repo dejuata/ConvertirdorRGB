@@ -19,7 +19,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     process.h \
     filter.h \
-    settingsfilter.h
+    settingsfilter.h \
+    resources.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

@@ -1,29 +1,40 @@
-//#ifndef SETTINGSFILTER_H
-//#define SETTINGSFILTER_H
+#ifndef SETTINGSFILTER_H
+#define SETTINGSFILTER_H
 
-//#include <QDialog>
+#include <QDialog>
+#include <QDebug>
+#include <QLineEdit>
+#include <QString>
+#include <QFile>
+#include <QFileDialog>
+#include <QTextStream>
 
-//namespace Ui {
-//class SettingsFilter;
-//}
 
-//class SettingsFilter : public QDialog
-//{
-//    Q_OBJECT
+namespace Ui {
+class SettingsFilter;
+}
 
-//public:
-//    explicit SettingsFilter(QWidget *parent = 0);
-//    ~SettingsFilter();
-//     Ui::SettingsFilter *ui;
+class SettingsFilter : public QDialog
+{
+    Q_OBJECT
 
-//private slots:
+public:
+    explicit SettingsFilter(QWidget *parent = 0);
+    ~SettingsFilter();
+     Ui::SettingsFilter *ui;
 
-//    void on_selectFilter_currentIndexChanged(int index);
+private slots:
 
-//    void on_pushButton_clicked();
+    void on_selectFilter_currentIndexChanged(int index);
 
-//private:
+    void on_comboBox_currentIndexChanged(int index);
 
-//};
+    void on_pushButton_clicked();
 
-//#endif // SETTINGSFILTER_H
+private:
+
+    void show_value_kernel(QStringList lists, int value);
+
+};
+
+#endif // SETTINGSFILTER_H
