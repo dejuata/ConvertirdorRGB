@@ -1,11 +1,14 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-//#define length(x) (sizeof(x)/sizeof(x[0]))
+//#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
 #include <QDebug>
 #include <QColor>
 #include <math.h>
+#include <algorithm>    // std::sort
+#include <vector>       // std::vector
+
 
 /*
  *  Variables para la funcionalidad de filtros
@@ -33,7 +36,7 @@ int kernelGauss[3][3] = {
                 };
 
 // variable que cambia al seleccionar un kernel por default
-int selectKernel = 0;
+int selectFilter = 0;
 
 using namespace std;
 
@@ -78,7 +81,6 @@ void createMatriz(QStringList list)
 /*
  * Funcion de Convolucion
  */
-
 QImage convolucion (QImage image, int kernel[][3])
 {
     int mitad,average,mm,nn,ii,jj,r,g,b;
@@ -136,11 +138,10 @@ QImage convolucion (QImage image, int kernel[][3])
 
 QImage convolucion (QImage image, int kernel[][5])
 {
-    int mitad,average,mm,nn,ii,jj,r,g,b;
+    int mitad,mm,nn,ii,jj,r,g,b,average;
     int size = 5;
     QImage result = image;
-    QRgb value;
-    average = size * size;
+    QRgb value;    
     mitad = size / 2;
 
     for (int i = 0; i < image.width(); ++i) // Filas

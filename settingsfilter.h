@@ -25,11 +25,11 @@ public:
 
 private slots:
 
-    void on_selectFilter_currentIndexChanged(int index);
-
-    void on_comboBox_currentIndexChanged(int index);
+    void on_selectFilter_currentIndexChanged(int index);    
 
     void on_pushButton_clicked();
+
+    void on_filterByDefault_currentIndexChanged(int index);
 
 private:
 

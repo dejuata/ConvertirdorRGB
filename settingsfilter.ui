@@ -2088,7 +2088,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -2108,7 +2108,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="filterByDefault">
         <item>
          <property name="text">
           <string>Select</string>
@@ -2122,6 +2122,21 @@
         <item>
          <property name="text">
           <string>Gaussiano</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Minimum</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Medium</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Maximum</string>
          </property>
         </item>
        </widget>
@@ -2203,10 +2218,6 @@
   <zorder>buttonBox</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>show</zorder>
-  <zorder>pushButton</zorder>
-  <zorder>pushButton</zorder>
-  <zorder>label_2</zorder>
-  <zorder>comboBox</zorder>
  </widget>
  <resources/>
  <connections>

@@ -20,7 +20,8 @@ HEADERS  += mainwindow.h \
     process.h \
     filter.h \
     settingsfilter.h \
-    resources.h
+    resources.h \
+    filterminmedmax.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

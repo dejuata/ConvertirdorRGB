@@ -132,3 +132,5 @@ void SettingsFilter::show_value_kernel(QStringList lists, int value)
 
 
 
+
+

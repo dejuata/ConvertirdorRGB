@@ -531,6 +531,11 @@
     <string>Gaussiano filter</string>
    </property>
   </action>
+  <action name="actionMinimo">
+   <property name="text">
+    <string>Minimo</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
