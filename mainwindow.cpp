@@ -7,14 +7,9 @@
 #include "filter.h"
 #include "filterminmedmax.h"
 #include "resources.h"
+#include "globals.h"
 
 using namespace std;
-
-QImage image;
-QImage imageT;
-QImage imageR ;
-QImage imageG ;
-QImage imageB ;
 
 QStringList lists;
 QString str = "1 1 1 1 1 1 1 1 1";
@@ -36,7 +31,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+// Función para cargar la imagen
 void MainWindow::on_actionOpen_triggered()
 {
    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
@@ -56,7 +51,7 @@ void MainWindow::on_actionOpen_triggered()
     ui->origin->setPixmap(QPixmap::fromImage(image));    
 
 }
-
+// Función para guardar la imagen transformada
 void MainWindow::on_actionSave_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Open File"), "", tr("Images (*.png)"));
@@ -71,10 +66,10 @@ void MainWindow::on_actionSave_triggered()
         imageT.save(fileName);
      }
 }
+
 /*
  * Metodos que llaman a las funciones de convercion de formatos RGB -> RGB, YUV, YIQ, CMY, HSV, HSL, XYZ, O1O2O3
  */
-
 void MainWindow::on_actionRGB_to_RGB_triggered()
 {
     if (image.isNull())
@@ -88,24 +83,14 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
          * para poderlas renderizar en el label origin ademas de que se puedan enviar como parametros
          * a distintas funciones
          */
-        imageT = convertToRGB(image, 'a'), imageR = convertToRGB(image, 'r'), imageG = convertToRGB(image, 'g'), imageB = convertToRGB(image, 'b');
+        imageT = convertToRGB(image, 'a');
+        imageR = convertToRGB(image, 'r');
+        imageG = convertToRGB(image, 'g');
+        imageB = convertToRGB(image, 'b');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL RGB");
-        ui->btn_one->setText("CHANNEL R");
-        ui->btn_two->setText("CHANNEL G");
-        ui->btn_three->setText("CHANNEL B");
-
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to RGB");
-        ui->actionChannel_One->setText("Filter to R");
-        ui->actionChannel_Two->setText("Filter to G");
-        ui->actionChannel_Three->setText("Filter to B");
+        show_Text_UI("R","G","B");
 
     }
 }
@@ -120,24 +105,14 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
     else
     {
         // Renderizo imagenes en label        
-        imageT = convertToYUV(image, 'a'),imageR = convertToYUV(image, 'y'),imageG = convertToYUV(image, 'u'),imageB = convertToYUV(image, 'v');
+        imageT = convertToYUV(image, 'a');
+        imageR = convertToYUV(image, 'y');
+        imageG = convertToYUV(image, 'u');
+        imageB = convertToYUV(image, 'v');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL YUV");
-        ui->btn_one->setText("CHANNEL Y");
-        ui->btn_two->setText("CHANNEL U");
-        ui->btn_three->setText("CHANNEL V");
-
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to YUV");
-        ui->actionChannel_One->setText("Filter to Y");
-        ui->actionChannel_Two->setText("Filter to U");
-        ui->actionChannel_Three->setText("Filter to V");
+        show_Text_UI("Y","U","V");
     }
 }
 
@@ -156,33 +131,15 @@ void MainWindow::on_actionRGB_to_YIQ_triggered()
         imageG = convertToYIQ(image, 'i');
         imageB = convertToYIQ(image, 'q');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL YIQ");
-        ui->btn_one->setText("CHANNEL Y");
-        ui->btn_two->setText("CHANNEL I");
-        ui->btn_three->setText("CHANNEL Q");
+        show_Text_UI("Y","I","Q");
 
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to YIQ");
-        ui->actionChannel_One->setText("Filter to Y");
-        ui->actionChannel_Two->setText("Filter to I");
-        ui->actionChannel_Three->setText("Filter to Q");
     }
 }
 
 void MainWindow::on_actionRGB_to_CMY_triggered()
 {
-    QString cmy,c,m,y;
-    cmy = "CHANNEL CMY";
-    c = "CHANNEL C";
-    m = "CHANNEL M";
-    y = "CHANNEL Y";
-
     if (image.isNull())
     {
         QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
@@ -196,22 +153,9 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
         imageG = convertToCMY(image, 'm');
         imageB = convertToCMY(image, 'y');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText(cmy);
-        ui->btn_one->setText(c);
-        ui->btn_two->setText(m);
-        ui->btn_three->setText(y);
-
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to CMY");
-        ui->actionChannel_One->setText("Filter to C");
-        ui->actionChannel_Two->setText("Filter to M");
-        ui->actionChannel_Three->setText("Filter to Y");
+        show_Text_UI("C","M","Y");
     }
 }
 
@@ -230,22 +174,9 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
         imageG = convertToHSV(image, 's');
         imageB = convertToHSV(image, 'v');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL HSV");
-        ui->btn_one->setText("CHANNEL H");
-        ui->btn_two->setText("CHANNEL S");
-        ui->btn_three->setText("CHANNEL V");
-
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to HSV");
-        ui->actionChannel_One->setText("Filter to H");
-        ui->actionChannel_Two->setText("Filter to S");
-        ui->actionChannel_Three->setText("Filter to V");
+        show_Text_UI("H","S","V");
     }
 }
 
@@ -264,22 +195,9 @@ void MainWindow::on_actionRGB_to_HSL_triggered()
         imageG = convertToHSL(image, 's');
         imageB = convertToHSL(image, 'l');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL HSL");
-        ui->btn_one->setText("CHANNEL H");
-        ui->btn_two->setText("CHANNEL S");
-        ui->btn_three->setText("CHANNEL L");
-
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to HSL");
-        ui->actionChannel_One->setText("Filter to H");
-        ui->actionChannel_Two->setText("Filter to S");
-        ui->actionChannel_Three->setText("Filter to L");
+        show_Text_UI("H","S","L");
     }
 }
 
@@ -298,22 +216,10 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
         imageG = convertToXYZ(image, 'y');
         imageB = convertToXYZ(image, 'z');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));        
-        ui->r->setPixmap(QPixmap::fromImage(imageR));        
-        ui->g->setPixmap(QPixmap::fromImage(imageG));        
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL XYZ");
-        ui->btn_one->setText("CHANNEL X");
-        ui->btn_two->setText("CHANNEL Y");
-        ui->btn_three->setText("CHANNEL Z");
+        show_Text_UI("X","Y","Z");
 
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to XYZ");
-        ui->actionChannel_One->setText("Filter to X");
-        ui->actionChannel_Two->setText("Filter to Y");
-        ui->actionChannel_Three->setText("Filter to Z");
     }
 }
 
@@ -332,22 +238,9 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
         imageG = convertToOOO(image, 'y');
         imageB = convertToOOO(image, 'z');
 
-        ui->before->setPixmap(QPixmap::fromImage(imageT));
-        ui->r->setPixmap(QPixmap::fromImage(imageR));
-        ui->g->setPixmap(QPixmap::fromImage(imageG));
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        render_Miniature_Image();
 
-        // Seteo el valor de los btn
-        ui->btn_transform->setText("CHANNEL O1O2O3");
-        ui->btn_one->setText("CHANNEL O1");
-        ui->btn_two->setText("CHANNEL O2");
-        ui->btn_three->setText("CHANNEL O3");
-
-        // Setear el texto de los filtros
-        ui->actionTransform->setText("Filter to O1O2O3");
-        ui->actionChannel_One->setText("Filter to O1");
-        ui->actionChannel_Two->setText("Filter to O2");
-        ui->actionChannel_Three->setText("Filter to O3");
+        show_Text_UI("O1","O2","O3");
     }
 }
 

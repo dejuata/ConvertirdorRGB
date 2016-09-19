@@ -21,7 +21,8 @@ HEADERS  += mainwindow.h \
     filter.h \
     settingsfilter.h \
     resources.h \
-    filterminmedmax.h
+    filterminmedmax.h \
+    globals.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

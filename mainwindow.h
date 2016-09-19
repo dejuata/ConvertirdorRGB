@@ -19,8 +19,6 @@ namespace Ui {
 class MainWindow;
 }
 
-
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +26,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    QImage image;
+    QImage imageT;
+    QImage imageR;
+    QImage imageG;
+    QImage imageB;
 
 
 private slots:
@@ -71,10 +75,12 @@ private slots:
 
     void on_actionSettings_triggered();
 
-
 private:
     Ui::MainWindow *ui;
 
+    void render_Miniature_Image();
+
+    void show_Text_UI(QString r, QString g, QString b);
 
 };
 
