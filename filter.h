@@ -1,14 +1,12 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-//#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
-
 #include <QDebug>
 #include <QColor>
 #include <math.h>
-#include <algorithm>    // std::sort
-#include <vector>       // std::vector
 
+QString stringAverage = "1 1 1 1 1 1 1 1 1";
+QString stringGaussiano = "1 2 1 2 4 2 1 2 1";
 
 /*
  *  Variables para la funcionalidad de filtros
@@ -35,7 +33,6 @@ int kernelGauss[3][3] = {
                     {1, 2, 1}
                 };
 
-// variable que cambia al seleccionar un kernel por default
 int selectFilter = 0;
 
 using namespace std;

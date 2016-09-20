@@ -9,14 +9,9 @@
 #include "resources.h"
 #include "globals.h"
 
+QString demo = "Hola mama";
+
 using namespace std;
-
-QStringList lists;
-QString str = "1 1 1 1 1 1 1 1 1";
-QString strg = "1 2 1 2 4 2 1 2 1";
-QStringList promedio = str.split(' ');
-QStringList gauss = strg.split(' ');
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -91,10 +86,8 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
         render_Miniature_Image();
 
         show_Text_UI("R","G","B");
-
     }
 }
-
 void MainWindow::on_actionRGB_to_YUV_triggered()
 {
     if (image.isNull())
@@ -104,7 +97,7 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
     }
     else
     {
-        // Renderizo imagenes en label        
+        // Renderizo imagenes en label
         imageT = convertToYUV(image, 'a');
         imageR = convertToYUV(image, 'y');
         imageG = convertToYUV(image, 'u');
@@ -115,7 +108,6 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
         show_Text_UI("Y","U","V");
     }
 }
-
 void MainWindow::on_actionRGB_to_YIQ_triggered()
 {
     if (image.isNull())
@@ -137,7 +129,6 @@ void MainWindow::on_actionRGB_to_YIQ_triggered()
 
     }
 }
-
 void MainWindow::on_actionRGB_to_CMY_triggered()
 {
     if (image.isNull())
@@ -158,7 +149,6 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
         show_Text_UI("C","M","Y");
     }
 }
-
 void MainWindow::on_actionRGB_to_HSV_triggered()
 {
     if (image.isNull())
@@ -179,7 +169,6 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
         show_Text_UI("H","S","V");
     }
 }
-
 void MainWindow::on_actionRGB_to_HSL_triggered()
 {
     if (image.isNull())
@@ -200,7 +189,6 @@ void MainWindow::on_actionRGB_to_HSL_triggered()
         show_Text_UI("H","S","L");
     }
 }
-
 void MainWindow::on_actionRGB_to_XYZ_triggered()
 {
     if (image.isNull())
@@ -222,7 +210,6 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
 
     }
 }
-
 void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 {
     if (image.isNull())
@@ -244,8 +231,6 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
     }
 }
 
-/* ------------------------------------------------------------------------ */
-
 /*
  * Muestro la imagen en el label origin cada vez que se da clic al btn de la miniatura
  */
@@ -253,37 +238,34 @@ void MainWindow::on_btn_origin_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(image));
 }
-
 void MainWindow::on_btn_transform_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageT));
 }
-
 void MainWindow::on_btn_one_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageR));
 }
-
 void MainWindow::on_btn_two_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageG));
 }
-
 void MainWindow::on_btn_three_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageB));
 }
 
-/* ------------------------------------------------------------------------ */
-
-// Crea y muestra la ventana de configuracion de filtros
+/*
+ *  Crea y muestra la ventana de configuracion de filtros
+ */
 void MainWindow::on_actionSettings_triggered()
 {
     SettingsFilter *averange = new SettingsFilter(this);
     averange->setModal(true);
-
     averange->show();
+
 }
+
 
 /*
  * CONFIGURACIÓN DE FILTROS POR DEFAULT -> VENTANA SETTINGSFILTER
@@ -297,6 +279,8 @@ void MainWindow::on_actionSettings_triggered()
  */
 void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
 {
+
+    qDebug()<<demo;
     // Filtro Promedio
     if(index == 1)
     {
@@ -305,7 +289,7 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
         // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
         on_selectFilter_currentIndexChanged(1);
         // Insertar los valores que trae el filtro por defecto
-        show_value_kernel(promedio, 1);
+//        show_value_kernel(listAverage, 1);
     }
     // Filtro Gaussiano
     if(index == 2)
@@ -313,7 +297,7 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
         selectFilter = 1;
         qDebug()<<"Seleccione kernel gaussiano";
         on_selectFilter_currentIndexChanged(1);
-        show_value_kernel(gauss, 1);
+//        show_value_kernel(listgaussiano, 1);
     }
     // Filtro Minimo
     if(index == 3)
@@ -325,13 +309,13 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
     if(index == 4)
     {
         selectFilter = 3;
-        qDebug()<<"Seleccione minimo";
+        qDebug()<<"Seleccione mediano";
     }
     // Filtro Maximo
     if(index == 5)
     {
         selectFilter = 4;
-        qDebug()<<"Seleccione minimo";
+        qDebug()<<"Seleccione maximo";
     }
 }
 
@@ -339,6 +323,7 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
 void SettingsFilter::on_pushButton_clicked()
 {
     QString text;
+    QStringList lists;
 
     // cargo el txt con el filtro
     QFile file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.txt)"));
@@ -371,7 +356,6 @@ void SettingsFilter::on_pushButton_clicked()
         on_selectFilter_currentIndexChanged(3);
         show_value_kernel(lists, 3);
     }
-
 
     qDebug()<<"list: "<<lists;
 

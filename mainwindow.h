@@ -15,6 +15,7 @@
 #include <QRegExp>
 
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -33,6 +34,10 @@ public:
     QImage imageG;
     QImage imageB;
 
+    static int count;
+
+//    static QString stringAverage = "1 1 1 1 1 1 1 1 1";
+//    static QString stringGaussiano = "1 2 1 2 4 2 1 2 1";
 
 private slots:
     void on_actionOpen_triggered();
@@ -81,6 +86,8 @@ private:
     void render_Miniature_Image();
 
     void show_Text_UI(QString r, QString g, QString b);
+
+
 
 };
 

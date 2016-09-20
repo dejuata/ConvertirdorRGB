@@ -1,6 +1,6 @@
 #include "settingsfilter.h"
 #include "ui_settingsfilter.h"
-
+#include "globals.h"
 
 
 SettingsFilter::SettingsFilter(QWidget *parent) :
@@ -10,6 +10,7 @@ SettingsFilter::SettingsFilter(QWidget *parent) :
     ui->setupUi(this);
     ui->show->hide();
     ui->loaded->hide();
+    qDebug()<<demo;
 }
 
 SettingsFilter::~SettingsFilter()
@@ -20,6 +21,9 @@ SettingsFilter::~SettingsFilter()
 void SettingsFilter::on_selectFilter_currentIndexChanged(int index)
 {
     ui->show->show();
+
+
+
 
     if(index == 1)
     {
@@ -88,6 +92,7 @@ void SettingsFilter::show_value_kernel(QStringList lists, int value)
     ui->f_6_0->clear();ui->f_6_1->clear();ui->f_6_2->clear();ui->f_6_3->clear();ui->f_6_4->clear();ui->f_6_5->clear();ui->f_6_6->clear();ui->f_6_7->clear();ui->f_6_8->clear();
     ui->f_7_0->clear();ui->f_7_1->clear();ui->f_7_2->clear();ui->f_7_3->clear();ui->f_7_4->clear();ui->f_7_5->clear();ui->f_7_6->clear();ui->f_7_7->clear();ui->f_7_8->clear();
     ui->f_8_0->clear();ui->f_8_1->clear();ui->f_8_2->clear();ui->f_8_3->clear();ui->f_8_4->clear();ui->f_8_5->clear();ui->f_8_6->clear();ui->f_8_7->clear();ui->f_8_8->clear();
+
 
 
     if(value == 1)

@@ -83,7 +83,7 @@ QImage filterMinMedMax (QImage image, int operation)
             vector<int> myvectorG (arrayG, arrayG+countVectorG);
             vector<int> myvectorB (arrayB, arrayB+countVectorB);
 
-            // Ordeno los vectores de acuerdo al tamaño de numeros validos, es decir descartos 1256
+            // Ordeno los vectores de acuerdo al tamaño de numeros validos, es decir descarto 1256
             sort (myvectorR.begin(), myvectorR.begin()+countVectorR);
             sort (myvectorG.begin(), myvectorG.begin()+countVectorG);
             sort (myvectorB.begin(), myvectorB.begin()+countVectorB);

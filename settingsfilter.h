@@ -9,7 +9,6 @@
 #include <QFileDialog>
 #include <QTextStream>
 
-
 namespace Ui {
 class SettingsFilter;
 }
