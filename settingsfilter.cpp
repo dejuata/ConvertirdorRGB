@@ -10,7 +10,6 @@ SettingsFilter::SettingsFilter(QWidget *parent) :
     ui->setupUi(this);
     ui->show->hide();
     ui->loaded->hide();
-    qDebug()<<demo;
 }
 
 SettingsFilter::~SettingsFilter()

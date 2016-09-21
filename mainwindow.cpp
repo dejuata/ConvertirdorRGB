@@ -7,9 +7,7 @@
 #include "filter.h"
 #include "filterminmedmax.h"
 #include "resources.h"
-#include "globals.h"
 
-QString demo = "Hola mama";
 
 using namespace std;
 
@@ -18,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
 
    // this->setWindowState(Qt::WindowMaximized);
 }
@@ -263,7 +262,6 @@ void MainWindow::on_actionSettings_triggered()
     SettingsFilter *averange = new SettingsFilter(this);
     averange->setModal(true);
     averange->show();
-
 }
 
 
@@ -289,7 +287,7 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
         // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
         on_selectFilter_currentIndexChanged(1);
         // Insertar los valores que trae el filtro por defecto
-//        show_value_kernel(listAverage, 1);
+        show_value_kernel(listAverage, 1);
     }
     // Filtro Gaussiano
     if(index == 2)
@@ -297,7 +295,7 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
         selectFilter = 1;
         qDebug()<<"Seleccione kernel gaussiano";
         on_selectFilter_currentIndexChanged(1);
-//        show_value_kernel(listgaussiano, 1);
+        show_value_kernel(listGaussiano, 1);
     }
     // Filtro Minimo
     if(index == 3)
@@ -331,7 +329,7 @@ void SettingsFilter::on_pushButton_clicked()
 
     QTextStream result(&file);
 
-    text = result.readAll();
+    text = result.readAll();    
 
     // Limpiar el string
     lists = cleanMatriz(text);
@@ -376,180 +374,21 @@ void SettingsFilter::on_pushButton_clicked()
 // Si el usuario selecciona en el menu filter -> channel T
 void MainWindow::on_actionTransform_triggered()
 {
-    // Si selecciona el filtro promedio, llama a la funcion para transformar imageT
-    if(sizeList >= 0 && selectFilter == 0)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernel)));
-    }
-    // Si selecciona el filtro gaussiano, llama a la funcion para transformar imageT
-    if(sizeList >= 0 && selectFilter == 1)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelGauss)));
-    }
-    // Si selecciona el filtro minimo, llama a la función para transformar imageT
-    if(sizeList >= 0 && selectFilter == 2)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(imageT, 0)));
-    }
-    // Si selecciona el filtro mediano, llama a la función para transformar imageT
-    if(sizeList >= 0 && selectFilter == 3)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(imageT, 1)));
-    }
-    // Si selecciona el filtro maximo, llama a la función para transformar imageT
-    if(sizeList >= 0 && selectFilter == 4)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(imageT, 2)));
-    }
-
-    /*
-     * Diferentes opciones de kernel por si el usuario llega a cargar un kernel diferente,
-     * por defecto trabaja con el promedio
-     */
-    if(sizeList == 3 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelThree)));
-    }
-    if(sizeList == 5 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelFive)));
-    }
-    if(sizeList == 7 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelSeven)));
-    }
-    if(sizeList == 9 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelNine)));
-    }
+    action_Filter_Select(imageT);
 }
 
 void MainWindow::on_actionChannel_One_triggered()
 {
-    if(sizeList >= 0 && selectFilter == 0)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernel)));
-    }
-    if(sizeList >= 0 && selectFilter == 1)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelGauss)));
-    }
-    // Si selecciona el filtro minimo, llama a la función para transformar imageR
-    if(sizeList >= 0 && selectFilter == 2)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageR, 0, 'r')));
-    }
-    // Si selecciona el filtro mediano, llama a la función para transformar imageR
-    if(sizeList >= 0 && selectFilter == 3)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageR, 1, 'r')));
-    }
-    // Si selecciona el filtro maximo, llama a la función para transformar imageR
-    if(sizeList >= 0 && selectFilter == 4)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageR, 2, 'r')));
-    }
-    if(sizeList == 3 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelThree)));
-    }
-    if(sizeList == 5 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelFive)));
-    }
-    if(sizeList == 7 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelSeven)));
-    }
-    if(sizeList == 9 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageR, kernelNine)));
-    }
+    action_Filter_Select(imageR);
 }
 
 void MainWindow::on_actionChannel_Two_triggered()
 {
-    if(sizeList >= 0 && selectFilter == 0)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernel)));
-    }
-    if(sizeList >= 0 && selectFilter == 1)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelGauss)));
-    }
-    // Si selecciona el filtro minimo, llama a la función para transformar imageG
-    if(sizeList >= 0 && selectFilter == 2)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageG, 0, 'g')));
-    }
-    // Si selecciona el filtro mediano, llama a la función para transformar imageG
-    if(sizeList >= 0 && selectFilter == 3)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageG, 1, 'g')));
-    }
-    // Si selecciona el filtro maximo, llama a la función para transformar imageG
-    if(sizeList >= 0 && selectFilter == 4)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageG, 2, 'g')));
-    }
-    if(sizeList == 3 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelThree)));
-    }
-    if(sizeList == 5 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelFive)));
-    }
-    if(sizeList == 7&& selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelSeven)));
-    }
-    if(sizeList == 9 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageG, kernelNine)));
-    }
+   action_Filter_Select(imageG);
 }
 
 void MainWindow::on_actionChannel_Three_triggered()
 {
-    if(sizeList >= 0 && selectFilter == 0)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernel)));
-    }
-    if(sizeList >= 0 && selectFilter == 1)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelGauss)));
-    }
-    // Si selecciona el filtro minimo, llama a la función para transformar imageB
-    if(sizeList >= 0 && selectFilter == 2)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageB, 0, 'b')));
-    }
-    // Si selecciona el filtro mediano, llama a la función para transformar imageR
-    if(sizeList >= 0 && selectFilter == 3)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageB, 1, 'b')));
-    }
-    // Si selecciona el filtro maximo, llama a la función para transformar imageR
-    if(sizeList >= 0 && selectFilter == 4)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMaxByChannel(imageB, 2, 'b')));
-    }
-    if(sizeList == 3 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelThree)));
-    }
-    if(sizeList == 5 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelFive)));
-    }
-    if(sizeList == 7 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelSeven)));
-    }
-    if(sizeList == 9 && selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageB, kernelNine)));
-    }
+    action_Filter_Select(imageB);
 }
 

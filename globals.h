@@ -3,26 +3,36 @@
 
 QT_BEGIN_NAMESPACE
 class QString;
-//class QStringList;
+class QStringList;
 QT_END_NAMESPACE
 
-/* QString que contiene por defecto los valores del kernel promedio
- * y el kernel gaussiano, estos son posteriormente convertidos en variables de
- * tipo QStringList para poder imprimir los valores en la cuadricula de la ventana
- * settingfilter.ui, para aplicar cada kernel estos QStringList son convertidos en una matriz
- * de 3x3 por medio de la función createMatriz que se encuentra en el archivo filter.h
+
+/* Variable que almacena la primera linea de un filtro en txt y es la que me define que tipo
+ * de filtro es, es decir, si la primera linea contiene la palabra average, puedo concluir que es
+ * un filtro promedio
  */
+extern QString firstLineFilterTxt;
 
-extern QString demo;
-
-//extern QStringList listAverage;
-//extern QStringList listgaussiano;
-
+/* Variables de tipo QStringList que contiene los valores por defecto
+ * del filtro promedio y el filtro gaussiano
+ */
+extern QStringList listAverage;
+extern QStringList listGaussiano;
+/* Variables de tipo matriz que me van a almacenar los datos que tenga un archivo
+ * txt correspondiente para cada matriz 3x3 5x5 7x7 9x9
+ */
+extern int kernelThree [3][3];
+extern int kernelFive  [5][5];
+extern int kernelSeven [7][7];
+extern int kernelNine  [9][9];
 /* variable que cambia al seleccionar un kernel por default,
  * esta variable controla el estado de la aplicacion respecto al manejo de filtros,
  * ya que por medio de esta, sé que filtro aplico
  */
-//extern int selectFilter = 0;
+extern int selectFilter;
+
+// Almaceno el tamano del kernel, si es 0 trabaja con el kernel default de [3][3]
+extern int sizeList;
 
 
 

@@ -3,7 +3,6 @@
 
 #include <QImage>
 #include <QColor>
-#include <QString>
 #include <math.h>
 
 int channelOne(int r, int g, int b, char channel)
@@ -441,8 +440,5 @@ QImage convertToOOO(QImage image, char channel)
     }
     return image;
 }
-
-
-
 
 #endif // PROCESS_H
