@@ -6,7 +6,6 @@
 #include <math.h>
 #include "globals.h"
 
-QString demo = "Hola mama";
 QString stringAverage = "1 1 1 1 1 1 1 1 1";
 QString stringGaussiano = "1 2 1 2 4 2 1 2 1";
 // por default trabaja con el kernel promedio
@@ -53,18 +52,45 @@ void createMatriz(QStringList list)
         }
     }
 }
+int numberDivisorIfAverageOrGaussiano(int sizeKernel, QString typeFilter)
+{
+    int average = 0;
+
+    if(typeFilter == "average")
+    {
+        average = sizeKernel * sizeKernel;
+    }
+    if(typeFilter == "gaussiano")
+    {
+        for (int i = 0; i < sizeKernel; i++)
+        {
+            for (int j = 0; j < sizeKernel; j++)
+            {
+                if(sizeKernel == 3)average += kernelThree[i][j];
+
+                if(sizeKernel == 5)average += kernelFive[i][j];
+
+                if(sizeKernel == 7)average += kernelSeven[i][j];
+
+                if(sizeKernel == 9)average += kernelNine[i][j];
+            }
+        }
+    }
+    return average;
+}
 /* Funcion para el filtro promedio, recibe como parametro la imagen, y un entero que define
  * con que kernel voy a trabajar, es decir si sizeKernel == 5 entonces el kernel con el
  * que se trabaja es el KernelFive definido anteriormente
  */
-QImage filterAverage (QImage image, int sizeKernel)
+QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilter)
 {
     int mitad,average,mm,nn,ii,jj,r,g,b;
     QImage result = image;
     QRgb value;
-
-    average = sizeKernel * sizeKernel;
     mitad = sizeKernel / 2;
+
+    average = numberDivisorIfAverageOrGaussiano(sizeKernel, typeFilter);
+    qDebug()<<"Average: "<<average;
 
     // Filas
     for (int i = 0; i < image.width(); i++)

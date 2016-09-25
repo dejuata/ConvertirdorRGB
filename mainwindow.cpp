@@ -278,7 +278,6 @@ void MainWindow::on_actionSettings_triggered()
 void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
 {
 
-    qDebug()<<demo;
     // Filtro Promedio
     if(index == 1)
     {

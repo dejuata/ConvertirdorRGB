@@ -58,13 +58,13 @@ void MainWindow::action_Filter_Select(QImage image)
     if(sizeList >= 0 && selectFilter == 0)
     {
         createMatriz(listAverage);
-        ui->origin->setPixmap(QPixmap::fromImage(filterAverage(image, 3)));
+        ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, 3, "average")));
     }
     // Si selecciona el filtro gaussiano, llama a la funcion para transformar imageT
     if(sizeList >= 0 && selectFilter == 1)
     {
         createMatriz(listGaussiano);
-//        ui->origin->setPixmap(QPixmap::fromImage(convolucion(imageT, kernelThree)));
+        ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, 3, "gaussiano")));
     }
     // Si selecciona el filtro minimo, llama a la función para transformar imageT
     if(sizeList >= 0 && selectFilter == 2)
@@ -84,9 +84,9 @@ void MainWindow::action_Filter_Select(QImage image)
     /* Diferentes opciones de kernel por si el usuario llega a cargar un kernel diferente,
      * por defecto trabaja con el promedio
      */
-    if(firstLineFilterTxt == "average" && selectFilter == 9)
+    if(selectFilter == 9)
     {
-        ui->origin->setPixmap(QPixmap::fromImage(filterAverage(image, sizeList)));
+        ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, sizeList, firstLineFilterTxt)));
     }
 }
 
