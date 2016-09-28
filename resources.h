@@ -81,6 +81,14 @@ void MainWindow::action_Filter_Select(QImage image)
     {
         ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(image, 2)));
     }
+    if(sizeList >= 0 && selectFilter == 5)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(filterSigma(image,numberSigma)));
+    }
+    if(sizeList >= 0 && selectFilter == 6)
+    {
+        ui->origin->setPixmap(QPixmap::fromImage(filterNagao(image)));
+    }
     /* Diferentes opciones de kernel por si el usuario llega a cargar un kernel diferente,
      * por defecto trabaja con el promedio
      */

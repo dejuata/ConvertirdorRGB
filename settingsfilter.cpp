@@ -8,6 +8,8 @@ SettingsFilter::SettingsFilter(QWidget *parent) :
     ui(new Ui::SettingsFilter)
 {
     ui->setupUi(this);
+    ui->optionsLabel->hide();
+    ui->optionsNumber->hide();
     ui->show->hide();
     ui->loaded->hide();
 }
@@ -20,9 +22,6 @@ SettingsFilter::~SettingsFilter()
 void SettingsFilter::on_selectFilter_currentIndexChanged(int index)
 {
     ui->show->show();
-
-
-
 
     if(index == 1)
     {
@@ -132,9 +131,13 @@ void SettingsFilter::show_value_kernel(QStringList lists, int value)
     }
 }
 
+void SettingsFilter::clear_options()
+{
+    ui->optionsLabel->hide();
+    ui->optionsNumber->hide();
+}
 
-
-
-
-
-
+void SettingsFilter::on_buttonBox_accepted()
+{
+    numberSigma = ui->optionsNumber->value();
+}

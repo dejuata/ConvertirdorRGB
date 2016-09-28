@@ -31,6 +31,8 @@ void MainWindow::on_actionOpen_triggered()
    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
 
    image.load(file);
+   // convertir la imagen a formato rgb 8 bits;
+   image = image.convertToFormat(QImage::Format_RGB888);
 
    if (!file.isEmpty())
    {
@@ -264,7 +266,6 @@ void MainWindow::on_actionSettings_triggered()
     averange->show();
 }
 
-
 /*
  * CONFIGURACIÓN DE FILTROS POR DEFAULT -> VENTANA SETTINGSFILTER
  *
@@ -277,10 +278,10 @@ void MainWindow::on_actionSettings_triggered()
  */
 void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
 {
-
     // Filtro Promedio
     if(index == 1)
     {
+        clear_options();
         // por default trabaja con el kernel promedio
         selectFilter = 0;
         // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
@@ -291,6 +292,7 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
     // Filtro Gaussiano
     if(index == 2)
     {
+        clear_options();
         selectFilter = 1;
         qDebug()<<"Seleccione kernel gaussiano";
         on_selectFilter_currentIndexChanged(1);
@@ -299,20 +301,37 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
     // Filtro Minimo
     if(index == 3)
     {
+        clear_options();
         selectFilter = 2;
         qDebug()<<"Seleccione minimo";
     }
     // Filtro Mediano
     if(index == 4)
     {
+        clear_options();
         selectFilter = 3;
         qDebug()<<"Seleccione mediano";
     }
     // Filtro Maximo
     if(index == 5)
     {
+        clear_options();
         selectFilter = 4;
         qDebug()<<"Seleccione maximo";
+    }
+    // Filtro Sigma
+    if(index == 6)
+    {
+        selectFilter = 5;
+        qDebug()<<"Seleccione sigma";
+        ui->optionsLabel->show();
+        ui->optionsNumber->show();
+    }
+    // Filtro Nagao
+    if(index == 7)
+    {
+        selectFilter = 6;
+        qDebug()<<"Seleccione nagao";
     }
 }
 
@@ -328,7 +347,7 @@ void SettingsFilter::on_pushButton_clicked()
 
     QTextStream result(&file);
 
-    text = result.readAll();    
+    text = result.readAll();
 
     // Limpiar el string
     lists = cleanMatriz(text);

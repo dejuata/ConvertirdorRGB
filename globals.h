@@ -34,6 +34,8 @@ extern int selectFilter;
 // Almaceno el tamano del kernel, si es 0 trabaja con el kernel default de [3][3]
 extern int sizeList;
 
+// Almaceno el numero sigma que ingresa el usuario
+extern int numberSigma;
 
 
 #endif // GLOBALS_H

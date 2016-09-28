@@ -536,6 +536,11 @@
     <string>Minimo</string>
    </property>
   </action>
+  <action name="actionSigma">
+   <property name="text">
+    <string>sigma</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QColor>
+#include <QRgb>
 #include <math.h>
 #include "globals.h"
 
@@ -25,6 +26,8 @@ int kernelNine  [9][9];
 
 // variable que me controla el estado de la aplicacion de acuerdo al filtro que seleccion en settings
 int selectFilter = 0;
+
+int numberSigma = 5;
 
 /*
  * Funcion para convertir un string a una matriz de 3x3 5x5 7x7 9x9
@@ -84,9 +87,9 @@ int numberDivisorIfAverageOrGaussiano(int sizeKernel, QString typeFilter)
  */
 QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilter)
 {
-    int mitad,average,mm,nn,ii,jj,r,g,b;
+    int mitad,average,mm,nn,ii,jj,r,g,b;    
     QImage result = image;
-    QRgb value;
+    QRgb value;    
     mitad = sizeKernel / 2;
 
     average = numberDivisorIfAverageOrGaussiano(sizeKernel, typeFilter);
@@ -144,6 +147,7 @@ QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilt
                             g += QColor(image.pixel(ii,jj)).green() * kernelNine[mm][nn];
                             b += QColor(image.pixel(ii,jj)).blue() * kernelNine[mm][nn];
                         }
+
                     }
                 }
             }
@@ -153,6 +157,7 @@ QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilt
     }
     return result;
 }
+
 
 
 

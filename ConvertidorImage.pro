@@ -18,11 +18,11 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     process.h \
-    filter.h \
     settingsfilter.h \
     resources.h \
     filterminmedmax.h \
-    globals.h
+    globals.h \
+    filter.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

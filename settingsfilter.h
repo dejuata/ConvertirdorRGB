@@ -30,9 +30,13 @@ private slots:
 
     void on_filterByDefault_currentIndexChanged(int index);
 
+    void on_buttonBox_accepted();
+
 private:
 
     void show_value_kernel(QStringList lists, int value);
+
+    void clear_options();
 
 };
 
