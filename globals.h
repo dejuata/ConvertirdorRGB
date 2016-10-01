@@ -37,5 +37,7 @@ extern int sizeList;
 // Almaceno el numero sigma que ingresa el usuario
 extern int numberSigma;
 
+// Arreglo que contiene los valores del histograma
+extern int histograma[];
 
 #endif // GLOBALS_H

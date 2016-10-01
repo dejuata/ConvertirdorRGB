@@ -15,6 +15,7 @@
 #include <QRegExp>
 
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -73,6 +74,8 @@ private slots:
     void on_actionChannel_Three_triggered();
 
     void on_actionSettings_triggered();    
+
+    void on_actionHistograma_triggered();
 
 private:
     Ui::MainWindow *ui;

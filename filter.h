@@ -1,6 +1,8 @@
 #ifndef FILTER_H
 #define FILTER_H
 
+#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
+
 #include <QDebug>
 #include <QColor>
 #include <QRgb>
@@ -157,6 +159,9 @@ QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilt
     }
     return result;
 }
+
+
+
 
 
 

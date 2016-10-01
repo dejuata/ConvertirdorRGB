@@ -2,11 +2,22 @@
 #include "ui_mainwindow.h"
 #include "settingsfilter.h"
 #include "ui_settingsfilter.h"
+#include "contrast.h"
+#include "ui_contrast.h"
 
 #include "process.h"
 #include "filter.h"
 #include "filterminmedmax.h"
 #include "resources.h"
+
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QAreaSeries>
+
+
+using namespace QtCharts;
 
 
 using namespace std;
@@ -18,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-   // this->setWindowState(Qt::WindowMaximized);
+    this->setWindowState(Qt::WindowMaximized);
 }
 
 MainWindow::~MainWindow()
@@ -410,3 +421,11 @@ void MainWindow::on_actionChannel_Three_triggered()
     action_Filter_Select(imageB);
 }
 
+
+void MainWindow::on_actionHistograma_triggered()
+{
+    Contrast *histograma = new Contrast(this);
+    histograma->createHistograma(imageT);
+    histograma->setModal(true);
+    histograma->show();
+}
