@@ -25,7 +25,8 @@ HEADERS  += mainwindow.h \
     filterminmedmax.h \
     globals.h \
     filter.h \
-    contrast.h
+    contrast.h \
+    histograma.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui \

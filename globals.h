@@ -40,4 +40,7 @@ extern int numberSigma;
 // Arreglo que contiene los valores del histograma
 extern int histograma[];
 
+// variable que me almacena el canal del histrograma que quiero que me muestre
+extern int selectChannelHistograma;
+
 #endif // GLOBALS_H

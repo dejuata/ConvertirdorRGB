@@ -20,10 +20,16 @@ public:
 
     void createHistograma(QImage image);
 
-private:
     QGraphicsScene *scene;
 
-    int histograma[256];
+    int histogramaR[256];
+    int histogramaG[256];
+    int histogramaB[256];
+
+private:
+
+
+
 
 };
 

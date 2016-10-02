@@ -13,8 +13,17 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
+#include <QGraphicsScene>
+#include <QtCharts/QChartView>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QAreaSeries>
+#include <QtCharts/QBarSet>
 
 
+using namespace QtCharts;
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +42,12 @@ public:
     QImage imageR;
     QImage imageG;
     QImage imageB;
+
+    QGraphicsScene *escena;
+
+    void show_histograma();
+
+    Ui::MainWindow *ui;
 
 private slots:
     void on_actionOpen_triggered();
@@ -77,14 +92,25 @@ private slots:
 
     void on_actionHistograma_triggered();
 
+    void on_btn_one_2_clicked();
+
+    void on_btn_histograma_clicked();
+
+    void on_selectChannelHistograma_currentIndexChanged(int index);
+
 private:
-    Ui::MainWindow *ui;
 
     void render_Miniature_Image();
 
     void show_Text_UI(QString r, QString g, QString b);
 
     void action_Filter_Select(QImage image);
+
+    void create_Histograma(QImage image, int channel, bool maximum);
+
+    void show_Label_Image_Hide_Histograma(int index);
+
+
 
 };
 

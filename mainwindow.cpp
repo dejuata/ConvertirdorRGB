@@ -9,16 +9,7 @@
 #include "filter.h"
 #include "filterminmedmax.h"
 #include "resources.h"
-
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-#include <QtCharts/QAreaSeries>
-
-
-using namespace QtCharts;
-
+#include "histograma.h"
 
 using namespace std;
 
@@ -28,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
+    ui->histograma->hide();
+//    ui->histograma->maximumHeight(100);
     this->setWindowState(Qt::WindowMaximized);
 }
 
@@ -36,6 +28,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 // Función para cargar la imagen
 void MainWindow::on_actionOpen_triggered()
 {
@@ -96,8 +89,8 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
         imageB = convertToRGB(image, 'b');
 
         render_Miniature_Image();
-
         show_Text_UI("R","G","B");
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_YUV_triggered()
@@ -116,8 +109,8 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
         imageB = convertToYUV(image, 'v');
 
         render_Miniature_Image();
-
         show_Text_UI("Y","U","V");
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_YIQ_triggered()
@@ -136,9 +129,8 @@ void MainWindow::on_actionRGB_to_YIQ_triggered()
         imageB = convertToYIQ(image, 'q');
 
         render_Miniature_Image();
-
         show_Text_UI("Y","I","Q");
-
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_CMY_triggered()
@@ -157,8 +149,8 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
         imageB = convertToCMY(image, 'y');
 
         render_Miniature_Image();
-
         show_Text_UI("C","M","Y");
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_HSV_triggered()
@@ -177,8 +169,8 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
         imageB = convertToHSV(image, 'v');
 
         render_Miniature_Image();
-
         show_Text_UI("H","S","V");
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_HSL_triggered()
@@ -197,8 +189,8 @@ void MainWindow::on_actionRGB_to_HSL_triggered()
         imageB = convertToHSL(image, 'l');
 
         render_Miniature_Image();
-
         show_Text_UI("H","S","L");
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_XYZ_triggered()
@@ -217,9 +209,8 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
         imageB = convertToXYZ(image, 'z');
 
         render_Miniature_Image();
-
         show_Text_UI("X","Y","Z");
-
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 void MainWindow::on_actionRGB_to_O1O2O3_triggered()
@@ -238,8 +229,8 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
         imageB = convertToOOO(image, 'z');
 
         render_Miniature_Image();
-
         show_Text_UI("O1","O2","O3");
+        show_Label_Image_Hide_Histograma(0);
     }
 }
 
@@ -249,22 +240,27 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 void MainWindow::on_btn_origin_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(image));
+    show_Label_Image_Hide_Histograma(0);
 }
 void MainWindow::on_btn_transform_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageT));
+    show_Label_Image_Hide_Histograma(0);
 }
 void MainWindow::on_btn_one_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageR));
+    show_Label_Image_Hide_Histograma(1);
 }
 void MainWindow::on_btn_two_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageG));
+    show_Label_Image_Hide_Histograma(2);
 }
 void MainWindow::on_btn_three_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageB));
+    show_Label_Image_Hide_Histograma(3);
 }
 
 /*
@@ -428,4 +424,24 @@ void MainWindow::on_actionHistograma_triggered()
     histograma->createHistograma(imageT);
     histograma->setModal(true);
     histograma->show();
+}
+
+void MainWindow::on_btn_one_2_clicked()
+{
+//    QGraphicsScene *scene = new QGraphicsScene(this);
+//    ui->histograma->setScene(scene);
+}
+
+void MainWindow::on_btn_histograma_clicked()
+{
+    ui->origin->hide();
+    ui->histograma->show();
+    create_Histograma(imageT, selectChannelHistograma, true);
+
+}
+
+void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
+{
+    selectChannelHistograma = index;
+    create_Histograma(imageT, selectChannelHistograma, false);
 }

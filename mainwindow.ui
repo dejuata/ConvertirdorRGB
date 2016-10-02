@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
+    <width>856</width>
     <height>479</height>
    </rect>
   </property>
@@ -56,12 +56,12 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>200</width>
+        <width>230</width>
         <height>1000</height>
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="convert">
        <property name="font">
@@ -611,12 +611,12 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
-             <widget class="QPushButton" name="btn_one_2">
+             <widget class="QPushButton" name="btn_histograma">
               <property name="cursor">
                <cursorShape>PointingHandCursor</cursorShape>
               </property>
               <property name="text">
-               <string>CHANNEL ONE</string>
+               <string>Histograma</string>
               </property>
               <property name="flat">
                <bool>true</bool>
@@ -624,70 +624,110 @@
              </widget>
             </item>
             <item>
-             <widget class="QGraphicsView" name="graphicsView">
+             <widget class="QGraphicsView" name="minHistograma">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
-                <height>100</height>
+                <width>16777214</width>
+                <height>200</height>
                </size>
               </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::DefaultContextMenu</enum>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="locale">
+               <locale language="English" country="Kenya"/>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Plain</enum>
+              </property>
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAsNeeded</enum>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QAbstractScrollArea::AdjustToContents</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+              <property name="transformationAnchor">
+               <enum>QGraphicsView::NoAnchor</enum>
+              </property>
+              <property name="resizeAnchor">
+               <enum>QGraphicsView::AnchorUnderMouse</enum>
+              </property>
+              <property name="viewportUpdateMode">
+               <enum>QGraphicsView::FullViewportUpdate</enum>
+              </property>
+              <property name="rubberBandSelectionMode">
+               <enum>Qt::ContainsItemBoundingRect</enum>
+              </property>
+              <property name="optimizationFlags">
+               <set>QGraphicsView::IndirectPainting</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="selectChannelHistograma">
+              <item>
+               <property name="text">
+                <string>Select Channel</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Channel One</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Channel Two</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Channel Three</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_13">
-            <item>
-             <widget class="QPushButton" name="btn_two_2">
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string>CHANNEL TWO</string>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGraphicsView" name="graphicsView_2">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>100</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_14">
-            <item>
-             <widget class="QPushButton" name="btn_three_2">
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string>CHANNEL THREE</string>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGraphicsView" name="graphicsView_3">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>100</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <layout class="QVBoxLayout" name="verticalLayout_13"/>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_14"/>
           </item>
          </layout>
         </item>
@@ -700,6 +740,34 @@
       <property name="sizeConstraint">
        <enum>QLayout::SetFixedSize</enum>
       </property>
+      <item>
+       <widget class="QGraphicsView" name="histograma">
+        <property name="maximumSize">
+         <size>
+          <width>1200</width>
+          <height>1000</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+        <property name="resizeAnchor">
+         <enum>QGraphicsView::AnchorViewCenter</enum>
+        </property>
+        <property name="viewportUpdateMode">
+         <enum>QGraphicsView::FullViewportUpdate</enum>
+        </property>
+        <property name="rubberBandSelectionMode">
+         <enum>Qt::IntersectsItemShape</enum>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="origin">
         <property name="minimumSize">
@@ -754,7 +822,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>797</width>
+     <width>856</width>
      <height>21</height>
     </rect>
    </property>
