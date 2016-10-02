@@ -860,7 +860,6 @@
     <property name="title">
      <string>Contrast</string>
     </property>
-    <addaction name="actionHistograma"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>

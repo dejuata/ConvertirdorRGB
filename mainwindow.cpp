@@ -2,14 +2,12 @@
 #include "ui_mainwindow.h"
 #include "settingsfilter.h"
 #include "ui_settingsfilter.h"
-#include "contrast.h"
-#include "ui_contrast.h"
 
 #include "process.h"
 #include "filter.h"
 #include "filterminmedmax.h"
 #include "resources.h"
-#include "histograma.h"
+
 
 using namespace std;
 
@@ -20,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->histograma->hide();
-//    ui->histograma->maximumHeight(100);
     this->setWindowState(Qt::WindowMaximized);
 }
 
@@ -417,29 +414,14 @@ void MainWindow::on_actionChannel_Three_triggered()
     action_Filter_Select(imageB);
 }
 
-
-void MainWindow::on_actionHistograma_triggered()
-{
-    Contrast *histograma = new Contrast(this);
-    histograma->createHistograma(imageT);
-    histograma->setModal(true);
-    histograma->show();
-}
-
-void MainWindow::on_btn_one_2_clicked()
-{
-//    QGraphicsScene *scene = new QGraphicsScene(this);
-//    ui->histograma->setScene(scene);
-}
-
+// Metodo que renderiza el histograma en su tamaño maximo al ser clickeado el btn
 void MainWindow::on_btn_histograma_clicked()
 {
     ui->origin->hide();
     ui->histograma->show();
     create_Histograma(imageT, selectChannelHistograma, true);
-
 }
-
+// Metodo que me muestra la miniatura del histograma, dependiendo de la opcion del combo box
 void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
 {
     selectChannelHistograma = index;

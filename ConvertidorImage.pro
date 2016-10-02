@@ -15,8 +15,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settingsfilter.cpp \
-    contrast.cpp
+    settingsfilter.cpp
 
 HEADERS  += mainwindow.h \
     process.h \
@@ -24,13 +23,10 @@ HEADERS  += mainwindow.h \
     resources.h \
     filterminmedmax.h \
     globals.h \
-    filter.h \
-    contrast.h \
-    histograma.h
+    filter.h
 
 FORMS    += mainwindow.ui \
-    settingsfilter.ui \
-    contrast.ui
+    settingsfilter.ui
 
 RESOURCES += \
     resources.qrc

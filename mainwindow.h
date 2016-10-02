@@ -15,12 +15,9 @@
 #include <QRegExp>
 #include <QGraphicsScene>
 #include <QtCharts/QChartView>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-#include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QAreaSeries>
-#include <QtCharts/QBarSet>
+
 
 
 using namespace QtCharts;
@@ -88,11 +85,7 @@ private slots:
 
     void on_actionChannel_Three_triggered();
 
-    void on_actionSettings_triggered();    
-
-    void on_actionHistograma_triggered();
-
-    void on_btn_one_2_clicked();
+    void on_actionSettings_triggered();
 
     void on_btn_histograma_clicked();
 
