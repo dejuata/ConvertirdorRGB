@@ -6,14 +6,20 @@
 #include "process.h"
 #include "filter.h"
 #include "filterminmedmax.h"
+#include "histograma.h"
 #include "resources.h"
 
+char nameChannel[4];
 
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_coordX(0),
+    m_coordY(0),
+    chart(0)
+//    m_tooltip(0)
 {
     ui->setupUi(this);
 
@@ -80,6 +86,8 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
          * para poderlas renderizar en el label origin ademas de que se puedan enviar como parametros
          * a distintas funciones
          */
+        channelR = "Red", channelG = "Green", channelB = "Blue";
+
         imageT = convertToRGB(image, 'a');
         imageR = convertToRGB(image, 'r');
         imageG = convertToRGB(image, 'g');
@@ -99,6 +107,8 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
     }
     else
     {
+        channelR = "Y", channelG = "U", channelB = "V";
+
         // Renderizo imagenes en label
         imageT = convertToYUV(image, 'a');
         imageR = convertToYUV(image, 'y');
@@ -119,6 +129,8 @@ void MainWindow::on_actionRGB_to_YIQ_triggered()
     }
     else
     {
+        channelR = "Y", channelG = "I", channelB = "Q";
+
         // Renderizo imagenes en label
         imageT = convertToYIQ(image, 'a');
         imageR = convertToYIQ(image, 'y');
@@ -139,6 +151,8 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
     }
     else
     {
+        channelR = "Cyan", channelG = "Magenta", channelB = "Yellow";
+
         // Renderizo imagenes en label
         imageT = convertToCMY(image, 'a');
         imageR = convertToCMY(image, 'c');
@@ -159,6 +173,8 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
     }
     else
     {
+        channelR = "Hue", channelG = "Saturation", channelB = "Value";
+
         // Renderizo imagenes en label
         imageT = convertToHSV(image, 'a');
         imageR = convertToHSV(image, 'h');
@@ -179,6 +195,8 @@ void MainWindow::on_actionRGB_to_HSL_triggered()
     }
     else
     {
+        channelR = "Hue", channelG = "Saturation", channelB = "Ligntness";
+
         // Renderizo imagenes en label
         imageT = convertToHSL(image, 'a');
         imageR = convertToHSL(image, 'h');
@@ -199,6 +217,8 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
     }
     else
     {
+        channelR = "X", channelG = "Y", channelB = "Z";
+
         // Renderizo imagenes en label
         imageT = convertToXYZ(image, 'a');
         imageR = convertToXYZ(image, 'x');
@@ -219,6 +239,8 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
     }
     else
     {
+        channelR = "O1", channelG = "O2", channelB = "O3";
+
         // Renderizo imagenes en label
         imageT = convertToOOO(image, 'a');
         imageR = convertToOOO(image, 'x');
@@ -426,4 +448,13 @@ void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
 {
     selectChannelHistograma = index;
     create_Histograma(imageT, selectChannelHistograma, false);
+}
+
+void MainWindow::on_equalizarHistograma_clicked()
+{
+    QImage histograma = equalization_Histograma(imageT, selectChannelHistograma);
+
+    ui->origin->setPixmap(QPixmap::fromImage(histograma));
+
+    create_Histograma(histograma,selectChannelHistograma,true);
 }

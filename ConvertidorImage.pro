@@ -23,7 +23,8 @@ HEADERS  += mainwindow.h \
     resources.h \
     filterminmedmax.h \
     globals.h \
-    filter.h
+    filter.h \
+    histograma.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

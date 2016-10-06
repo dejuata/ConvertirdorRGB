@@ -17,7 +17,7 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QAreaSeries>
-
+#include <QGraphicsView>
 
 
 using namespace QtCharts;
@@ -40,13 +40,21 @@ public:
     QImage imageG;
     QImage imageB;
 
-    QGraphicsScene *escena;
+    QString channelR;
+    QString channelG;
+    QString channelB;
+
+    QChart *chart;
+    QGraphicsScene *scene;
+    QGraphicsSimpleTextItem *m_coordX;
+    QGraphicsSimpleTextItem *m_coordY;
 
     void show_histograma();
 
     Ui::MainWindow *ui;
 
 private slots:
+
     void on_actionOpen_triggered();
 
     void on_actionSave_triggered();
@@ -89,7 +97,9 @@ private slots:
 
     void on_btn_histograma_clicked();
 
-    void on_selectChannelHistograma_currentIndexChanged(int index);
+    void on_selectChannelHistograma_currentIndexChanged(int index);    
+
+    void on_equalizarHistograma_clicked();
 
 private:
 
@@ -102,6 +112,16 @@ private:
     void create_Histograma(QImage image, int channel, bool maximum);
 
     void show_Label_Image_Hide_Histograma(int index);
+
+    QImage equalization_Histograma(QImage image, int channel);
+
+    void render_Histograma(bool maximum,  QColor color, QString channel);
+
+//    void resizeEvent(QResizeEvent *event);
+
+//    void mouseMoveEvent(QMouseEvent *event);
+
+
 
 
 

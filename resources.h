@@ -6,13 +6,6 @@
 #include "ui_mainwindow.h"
 #include "globals.h"
 
-#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
-
-using namespace QtCharts;
-
-
-// Por defecto el histograma muestra el channel rojo
-int selectChannelHistograma = 0;
 
 /*
  * Funcion para renderizar las imagenes procesadas en miniatura
@@ -106,113 +99,5 @@ void MainWindow::action_Filter_Select(QImage image)
     }
 }
 
-void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
-{
-    int histograma[256];
-
-    // seteo los valores del arreglo con 0
-    for(int i = 0; i < lengthArray(histograma); i++ )
-    {
-        histograma[i] = 0;
-
-    }
-    // Cuento dependiendo de la posicion del arreglo igual al valor del pixel
-    for (int i = 0; i < image.width(); i++)
-    {
-        // Columnas
-        for (int j = 0; j < image.height(); j++)
-        {
-            if (channel == 1)
-            {
-                histograma[QColor(image.pixel(i,j)).red()] = histograma[QColor(image.pixel(i,j)).red()]++;
-            }
-            if (channel == 2)
-            {
-                histograma[QColor(image.pixel(i,j)).green()] = histograma[QColor(image.pixel(i,j)).green()]++;
-            }
-            if (channel == 3)
-            {
-                histograma[QColor(image.pixel(i,j)).blue()] = histograma[QColor(image.pixel(i,j)).blue()]++;
-            }
-
-        }
-    }
-
-    QGraphicsScene *scene = new QGraphicsScene(this);
-
-    if(maximum)
-    {
-        ui->histograma->setScene(scene);
-    }
-    else{
-        ui->minHistograma->setScene(scene);
-    }
-
-    QLineSeries *series0 = new QLineSeries();
-
-    // recorro el arreglo para enviar los valores a la grafica
-    for(int i = 0; i < lengthArray(histograma); i++ )
-    {
-        *series0 << QPointF(i, histograma[i]);
-    }
-
-    QAreaSeries *series = new QAreaSeries(series0);
-
-
-    if (channel == 1)
-    {
-        series->setName("Red");
-        QPen penR(Qt::red);
-        QBrush BrushR(Qt::red);
-        penR.setWidth(2);
-        series->setPen(penR);
-        series->setBrush(BrushR);
-    }
-    if (channel == 2)
-    {
-        series->setName("Green");
-        QPen penG(Qt::green);
-        QBrush BrushG(Qt::green);
-        penG.setWidth(2);
-        series->setPen(penG);
-        series->setBrush(BrushG);
-    }
-    if (channel == 3)
-    {
-        series->setName("Blue");
-        QPen penB(Qt::blue);
-        QBrush BrushB(Qt::blue);
-        penB.setWidth(2);
-        series->setPen(penB);
-        series->setBrush(BrushB);
-    }
-
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    if(maximum)
-    {
-        chart->createDefaultAxes();
-        chart->axisX()->setRange(0, 255);
-    }
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-
-    if(maximum)
-    {
-        chartView->setFixedSize(1000,600);
-    }
-
-
-    scene->addWidget(chartView);
-
-}
-
-void MainWindow::show_Label_Image_Hide_Histograma(int index)
-{
-    ui->histograma->hide();
-    ui->origin->show();
-    ui->selectChannelHistograma->setCurrentIndex(index);
-}
 
 #endif // RESOURCES_H
