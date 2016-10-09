@@ -13,7 +13,9 @@ using namespace QtCharts;
 // Por defecto el histograma muestra un histograma vacio
 int selectChannelHistograma = 0;
 // Defino el tamaño del histograma
-int histograma[256];
+int histogramaR[256];
+int histogramaG[256];
+int histogramaB[256];
 
 QColor selectColorR(QString channel)
 {
@@ -39,48 +41,26 @@ void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
 {
     QString selectChannel;
     QColor color(0,0,0);
+
     // seteo los valores del arreglo con 0
-    for(int i = 0; i < lengthArray(histograma); i++ )
+    for(int i = 0; i < lengthArray(histogramaR); i++ )
     {
-        histograma[i] = 0;
-
+        histogramaR[i] = 0;
+        histogramaG[i] = 0;
+        histogramaB[i] = 0;
     }
-    // Cuento dependiendo de la posicion del arreglo igual al valor del pixel
 
+    // Cuento dependiendo de la posicion del arreglo igual al valor del pixel
     for (int i = 0; i < image.width(); i++)
-    {
-        // Columnas
+    {        
         for (int j = 0; j < image.height(); j++)
         {
-            if (channel == 0)
-            {
-                histograma[QColor(image.pixel(i,j)).red()] = histograma[QColor(image.pixel(i,j)).red()]++;
-                histograma[QColor(image.pixel(i,j)).green()] = histograma[QColor(image.pixel(i,j)).green()]++;
-                histograma[QColor(image.pixel(i,j)).blue()] = histograma[QColor(image.pixel(i,j)).blue()]++;
-            }
-            if (channel == 1)
-            {
-                histograma[QColor(image.pixel(i,j)).red()] = histograma[QColor(image.pixel(i,j)).red()]++;
-            }
-            if (channel == 2)
-            {
-                histograma[QColor(image.pixel(i,j)).green()] = histograma[QColor(image.pixel(i,j)).green()]++;
-            }
-            if (channel == 3)
-            {
-                histograma[QColor(image.pixel(i,j)).blue()] = histograma[QColor(image.pixel(i,j)).blue()]++;
-            }
-
+                histogramaR[QColor(image.pixel(i,j)).red()] = histogramaR[QColor(image.pixel(i,j)).red()]++;
+                histogramaG[QColor(image.pixel(i,j)).green()] = histogramaG[QColor(image.pixel(i,j)).green()]++;
+                histogramaB[QColor(image.pixel(i,j)).blue()] = histogramaB[QColor(image.pixel(i,j)).blue()]++;
         }
     }
-    // Hallar el histograma promedio
-//    if (channel == 0)
-//    {
-//        for (int i = 0; i < lengthArray(histograma); i++)
-//        {
-//            histograma[i] = round(histograma[i]/3);
-//        }
-//    }
+
     if(channel == 0)
     {
         selectChannel = "Histograma Promedio";
@@ -101,36 +81,70 @@ void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
         color = selectColorB(channelB);
     }
 
-    render_Histograma(maximum,color,selectChannel);
+    render_Histograma(maximum,color,selectChannel,channel);
 }
-QImage MainWindow::equalization_Histograma(QImage image, int channel)
+QImage MainWindow::equalization_Histograma(QImage image)
 {
-    double newPixel = 0;
-    QImage result = image;
+    int newR = 0, newG = 0, newB = 0, r = 0, g = 0, b = 0, sumR = 0, sumG = 0, sumB = 0;
+
     int size = image.width() * image.height();
 
-    for(int x = 0; x < lengthArray(histograma); x++)
-    {
-        newPixel = histograma[x];
-        newPixel = (newPixel/size)*(255*255);
+    int accuHistogramaR[256];
+    int accuHistogramaG[256];
+    int accuHistogramaB[256];
 
-//        qDebug()<<histograma[x]<<size<<newPixel;
+    QImage result = image;
+
+    // Calcular histograma acumulado
+    accuHistogramaR[0] = histogramaR[0];
+    accuHistogramaG[0] = histogramaG[0];
+    accuHistogramaB[0] = histogramaB[0];
+
+    for(int i = 1; i < lengthArray(histogramaR); i++)
+    {
+        accuHistogramaR[i] = histogramaR[i] + accuHistogramaR[i-1];
+        accuHistogramaG[i] = histogramaG[i] + accuHistogramaG[i-1];
+        accuHistogramaB[i] = histogramaB[i] + accuHistogramaB[i-1];
+    }
+
+    for(int x = 0; x < lengthArray(histogramaR); x++)
+    {
+        newR = histogramaR[x];
+        newG = histogramaG[x];
+        newB = histogramaB[x];
+
+        sumR = accuHistogramaR[x];
+        sumG = accuHistogramaG[x];
+        sumB = accuHistogramaB[x];
+
+        newR = (255 * sumR) / size;
+        newG = (255 * sumG) / size;
+        newB = (255 * sumB) / size;
 
         for (int i = 0; i < image.width(); i++)
         {
             for (int j = 0; j < image.height(); j++)
             {
-                if(channel == 1 && QColor(image.pixel(i,j)).red() == x)
+                if(QColor(image.pixel(i,j)).red() == x)
                 {
-                    result.setPixel(i,j,qRgb(newPixel,0,0));
+                    g = QColor(image.pixel(i,j)).green();
+                    b = QColor(image.pixel(i,j)).blue();
+
+                    result.setPixel(i,j,qRgb(newR,g,b));
                 }
-                if(channel == 2 && QColor(image.pixel(i,j)).green() == x)
+                if(QColor(image.pixel(i,j)).green() == x)
                 {
-                    result.setPixel(i,j,qRgb(0,newPixel,0));
+                    r = QColor(result.pixel(i,j)).red();
+                    b = QColor(result.pixel(i,j)).blue();
+
+                    result.setPixel(i,j,qRgb(r,newG,b));
                 }
-                if(channel == 3 && QColor(image.pixel(i,j)).blue() == x)
+                if(QColor(image.pixel(i,j)).blue() == x)
                 {
-                    result.setPixel(i,j,qRgb(0,0,newPixel));
+                    r = QColor(result.pixel(i,j)).red();
+                    g = QColor(result.pixel(i,j)).green();
+
+                    result.setPixel(i,j,qRgb(r,g,newB));
                 }
             }
         }
@@ -139,7 +153,7 @@ QImage MainWindow::equalization_Histograma(QImage image, int channel)
     return result;
 }
 
-void MainWindow::render_Histograma(bool maximum, QColor color, QString channel)
+void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, int spaceColor)
 {
     scene = new QGraphicsScene(this);
 
@@ -154,9 +168,24 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel)
     QLineSeries *series0 = new QLineSeries();
 
     // recorro el arreglo para enviar los valores a la grafica
-    for(int i = 0; i < lengthArray(histograma); i++ )
+    for(int i = 0; i < lengthArray(histogramaR); i++ )
     {
-        *series0 << QPointF(i, histograma[i]);
+        if(spaceColor == 0)
+        {
+            *series0 << QPointF(i, histogramaR[i]) << QPointF(i, histogramaG[i]) << QPointF(i, histogramaB[i]) ;
+        }
+        if(spaceColor == 1)
+        {
+            *series0 << QPointF(i, histogramaR[i]);
+        }
+        if(spaceColor == 2)
+        {
+            *series0 << QPointF(i, histogramaG[i]);
+        }
+        if(spaceColor == 3)
+        {
+            *series0 << QPointF(i, histogramaB[i]);
+        }
     }
 
     QAreaSeries *series = new QAreaSeries(series0);

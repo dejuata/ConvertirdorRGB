@@ -452,7 +452,29 @@ void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
 
 void MainWindow::on_equalizarHistograma_clicked()
 {
-    QImage histograma = equalization_Histograma(imageT, selectChannelHistograma);
+    QImage histograma;
+
+//    if(selectChannelHistograma == 0)
+//    {
+//        imageT = equalization_Histograma(imageT, selectChannelHistograma);
+//    }
+//    if(selectChannelHistograma == 1)
+//    {
+//        imageR = equalization_Histograma(imageT, selectChannelHistograma);
+//    }
+//    if(selectChannelHistograma == 2)
+//    {
+//        imageG = equalization_Histograma(imageT, selectChannelHistograma);
+//    }
+//    if(selectChannelHistograma == 3)
+//    {
+//        imageB = equalization_Histograma(imageT, selectChannelHistograma);
+//    }
+
+//    render_Miniature_Image();
+
+
+    histograma = equalization_Histograma(imageT);
 
     ui->origin->setPixmap(QPixmap::fromImage(histograma));
 

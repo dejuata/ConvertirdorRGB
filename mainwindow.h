@@ -113,9 +113,9 @@ private:
 
     void show_Label_Image_Hide_Histograma(int index);
 
-    QImage equalization_Histograma(QImage image, int channel);
+    QImage equalization_Histograma(QImage image);
 
-    void render_Histograma(bool maximum,  QColor color, QString channel);
+    void render_Histograma(bool maximum,  QColor color, QString channel, int spaceColor);
 
 //    void resizeEvent(QResizeEvent *event);
 

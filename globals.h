@@ -38,7 +38,9 @@ extern int sizeList;
 extern int numberSigma;
 
 // Arreglo que contiene los valores del histograma
-extern int histograma[];
+extern int histogramaR[];
+extern int histogramaG[];
+extern int histogramaB[];
 
 // variable que me almacena el canal del histrograma que quiero que me muestre
 extern int selectChannelHistograma;
