@@ -38,6 +38,7 @@ extern int sizeList;
 extern int numberSigma;
 
 // Arreglo que contiene los valores del histograma
+extern int histogramaT[];
 extern int histogramaR[];
 extern int histogramaG[];
 extern int histogramaB[];

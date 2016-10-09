@@ -21,7 +21,6 @@ HEADERS  += mainwindow.h \
     process.h \
     settingsfilter.h \
     resources.h \
-    filterminmedmax.h \
     globals.h \
     filter.h \
     histograma.h

@@ -5,7 +5,6 @@
 
 #include "process.h"
 #include "filter.h"
-#include "filterminmedmax.h"
 #include "histograma.h"
 #include "resources.h"
 
@@ -441,42 +440,51 @@ void MainWindow::on_btn_histograma_clicked()
 {
     ui->origin->hide();
     ui->histograma->show();
-    create_Histograma(imageT, selectChannelHistograma, true);
+
+    render_Histograma_Min_Or_Max(true);
 }
+
 // Metodo que me muestra la miniatura del histograma, dependiendo de la opcion del combo box
 void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
 {
     selectChannelHistograma = index;
-    create_Histograma(imageT, selectChannelHistograma, false);
+
+    render_Histograma_Min_Or_Max(false);
 }
 
+// evento del btn que llama a la funcion equalizar histograma
 void MainWindow::on_equalizarHistograma_clicked()
 {
-    QImage histograma;
+    // asignar a las imagenes el resultado correspondendiente de equalizar el histograma para cada canal
+    if(selectChannelHistograma == 0)
+    {
+        imageT = equalization_Histograma(imageT,selectChannelHistograma);
+        histograma = &imageT;
+    }
+    if(selectChannelHistograma == 1)
+    {
+        imageR = equalization_Histograma(imageR,selectChannelHistograma);
+        histograma = &imageR;
+    }
+    if(selectChannelHistograma == 2)
+    {
+        imageG = equalization_Histograma(imageG,selectChannelHistograma);
+        histograma = &imageG;
+    }
+    if(selectChannelHistograma == 3)
+    {
+        imageB = equalization_Histograma(imageB,selectChannelHistograma);
+        histograma = &imageB;
+    }
 
-//    if(selectChannelHistograma == 0)
-//    {
-//        imageT = equalization_Histograma(imageT, selectChannelHistograma);
-//    }
-//    if(selectChannelHistograma == 1)
-//    {
-//        imageR = equalization_Histograma(imageT, selectChannelHistograma);
-//    }
-//    if(selectChannelHistograma == 2)
-//    {
-//        imageG = equalization_Histograma(imageT, selectChannelHistograma);
-//    }
-//    if(selectChannelHistograma == 3)
-//    {
-//        imageB = equalization_Histograma(imageT, selectChannelHistograma);
-//    }
+    // renderizar imagenes en miniatura
+    render_Miniature_Image();
 
-//    render_Miniature_Image();
+    // Renderizar la imagen si el histograma cambia, este efecto sucede si el label esta activo -> show()
+    ui->origin->setPixmap(QPixmap::fromImage(*histograma));
 
-
-    histograma = equalization_Histograma(imageT);
-
-    ui->origin->setPixmap(QPixmap::fromImage(histograma));
-
-    create_Histograma(histograma,selectChannelHistograma,true);
+    // Crear y mostrar el histograma en el QGraphicsScene Maximum
+    create_Histograma(*histograma,selectChannelHistograma,true);
+    // Crear y mostrar el histograma en el QGraphicsScene Minimum
+    create_Histograma(*histograma,selectChannelHistograma,false);
 }
