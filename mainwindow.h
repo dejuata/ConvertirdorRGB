@@ -18,13 +18,17 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QAreaSeries>
 #include <QGraphicsView>
-
+#include "convertspacecolor.h"
+#include <QFuture>
+#include <QtConcurrent>
 
 using namespace QtCharts;
 
 namespace Ui {
 class MainWindow;
 }
+
+class ConvertSpaceColor;
 
 class MainWindow : public QMainWindow
 {
@@ -47,12 +51,17 @@ public:
 
     QChart *chart;
     QGraphicsScene *scene;
-    QGraphicsSimpleTextItem *m_coordX;
-    QGraphicsSimpleTextItem *m_coordY;
+
+    QFuture<QImage> futureT;
+    QFuture<QImage> futureR;
+    QFuture<QImage> futureG;
+    QFuture<QImage> futureB;
 
     void show_histograma();
 
     Ui::MainWindow *ui;
+    ConvertSpaceColor *convertImage;
+
 
 private slots:
 
@@ -102,6 +111,8 @@ private slots:
 
     void on_equalizarHistograma_clicked();
 
+    void on_btnAverage_clicked();
+
 private:
 
     void render_Miniature_Image();
@@ -119,6 +130,8 @@ private:
     void render_Histograma(bool maximum,  QColor color, QString channel, int spaceColor);
 
     void render_Histograma_Min_Or_Max(bool maximum);
+
+    void futureOOO();
 
 //    void resizeEvent(QResizeEvent *event);
 

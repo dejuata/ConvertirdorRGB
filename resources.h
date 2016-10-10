@@ -2,6 +2,8 @@
 #define RESOURCES_H
 
 #include <QString>
+#include <QFuture>
+#include <QtConcurrent>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "globals.h"
@@ -98,6 +100,20 @@ void MainWindow::action_Filter_Select(QImage image)
         ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, sizeList, firstLineFilterTxt)));
     }
 }
+
+void MainWindow::futureOOO()
+{
+    futureT = QtConcurrent::run(convertToOOO1,image,'a');
+    futureR = QtConcurrent::run(convertToOOO1,image,'x');
+    futureG = QtConcurrent::run(convertToOOO1,image,'y');
+    futureB = QtConcurrent::run(convertToOOO1,image,'z');
+
+    imageT = t.result();
+    imageR = r.result();
+    imageG = g.result();
+    imageB = b.result();
+}
+
 
 
 #endif // RESOURCES_H

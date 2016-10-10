@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
+    <width>863</width>
     <height>479</height>
    </rect>
   </property>
@@ -61,7 +61,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="convert">
        <property name="font">
@@ -368,7 +368,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_8">
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="btnAverage">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -405,7 +405,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="btnGaussiano">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -434,7 +434,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="btnMinimum">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -463,7 +463,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_5">
+         <widget class="QPushButton" name="btnMedium">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -492,7 +492,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_6">
+         <widget class="QPushButton" name="btnMaximum">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -521,7 +521,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_7">
+         <widget class="QPushButton" name="btnSigma">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -550,7 +550,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="btnNagao">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -838,7 +838,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>856</width>
+     <width>863</width>
      <height>21</height>
     </rect>
    </property>

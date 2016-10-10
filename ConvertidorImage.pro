@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets concurrent
 QT       += charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -15,7 +15,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settingsfilter.cpp
+    settingsfilter.cpp \
+    convertspacecolor.cpp
 
 HEADERS  += mainwindow.h \
     process.h \
@@ -23,7 +24,8 @@ HEADERS  += mainwindow.h \
     resources.h \
     globals.h \
     filter.h \
-    histograma.h
+    histograma.h \
+    convertspacecolor.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

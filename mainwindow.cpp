@@ -8,17 +8,15 @@
 #include "histograma.h"
 #include "resources.h"
 
+
+
 char nameChannel[4];
 
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    m_coordX(0),
-    m_coordY(0),
-    chart(0)
-//    m_tooltip(0)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -48,6 +46,9 @@ void MainWindow::on_actionOpen_triggered()
            return;
        }
     }
+
+    // Clase que contiene los metodos para transformar a distintos espacios de color
+    convertImage = new ConvertSpaceColor(image);
 
     ui->after->setPixmap(QPixmap::fromImage(image));
     ui->origin->setPixmap(QPixmap::fromImage(image));    
@@ -87,10 +88,10 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
          */
         channelR = "Red", channelG = "Green", channelB = "Blue";
 
-        imageT = convertToRGB(image, 'a');
-        imageR = convertToRGB(image, 'r');
-        imageG = convertToRGB(image, 'g');
-        imageB = convertToRGB(image, 'b');
+        imageT = convertImage->imageToRGB().result();
+        imageR = convertImage->imageToR().result();
+        imageG = convertImage->imageToG().result();
+        imageB = convertImage->imageToB().result();
 
         render_Miniature_Image();
         show_Text_UI("R","G","B");
@@ -109,10 +110,10 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
         channelR = "Y", channelG = "U", channelB = "V";
 
         // Renderizo imagenes en label
-        imageT = convertToYUV(image, 'a');
-        imageR = convertToYUV(image, 'y');
-        imageG = convertToYUV(image, 'u');
-        imageB = convertToYUV(image, 'v');
+        imageT = convertImage->imageToYUV().result();
+        imageR = convertImage->imageToY().result();
+        imageG = convertImage->imageToU().result();
+        imageB = convertImage->imageToV().result();
 
         render_Miniature_Image();
         show_Text_UI("Y","U","V");
@@ -131,10 +132,10 @@ void MainWindow::on_actionRGB_to_YIQ_triggered()
         channelR = "Y", channelG = "I", channelB = "Q";
 
         // Renderizo imagenes en label
-        imageT = convertToYIQ(image, 'a');
-        imageR = convertToYIQ(image, 'y');
-        imageG = convertToYIQ(image, 'i');
-        imageB = convertToYIQ(image, 'q');
+        imageT = convertImage->imageToYIQ().result();
+        imageR = convertImage->imageToY().result();
+        imageG = convertImage->imageToI().result();
+        imageB = convertImage->imageToQ().result();
 
         render_Miniature_Image();
         show_Text_UI("Y","I","Q");
@@ -153,10 +154,10 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
         channelR = "Cyan", channelG = "Magenta", channelB = "Yellow";
 
         // Renderizo imagenes en label
-        imageT = convertToCMY(image, 'a');
-        imageR = convertToCMY(image, 'c');
-        imageG = convertToCMY(image, 'm');
-        imageB = convertToCMY(image, 'y');
+        imageT = convertImage->imageToCMY().result();
+        imageR = convertImage->imageToC().result();
+        imageG = convertImage->imageToM().result();
+        imageB = convertImage->imageTocmY().result();
 
         render_Miniature_Image();
         show_Text_UI("C","M","Y");
@@ -175,10 +176,10 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
         channelR = "Hue", channelG = "Saturation", channelB = "Value";
 
         // Renderizo imagenes en label
-        imageT = convertToHSV(image, 'a');
-        imageR = convertToHSV(image, 'h');
-        imageG = convertToHSV(image, 's');
-        imageB = convertToHSV(image, 'v');
+        imageT = convertImage->imageToHSV().result();
+        imageR = convertImage->imageToH().result();
+        imageG = convertImage->imageToS().result();
+        imageB = convertImage->imageTohsV().result();
 
         render_Miniature_Image();
         show_Text_UI("H","S","V");
@@ -197,10 +198,10 @@ void MainWindow::on_actionRGB_to_HSL_triggered()
         channelR = "Hue", channelG = "Saturation", channelB = "Ligntness";
 
         // Renderizo imagenes en label
-        imageT = convertToHSL(image, 'a');
-        imageR = convertToHSL(image, 'h');
-        imageG = convertToHSL(image, 's');
-        imageB = convertToHSL(image, 'l');
+        imageT = convertImage->imageToHSL().result();
+        imageR = convertImage->imageToH().result();
+        imageG = convertImage->imageToS().result();
+        imageB = convertImage->imageToL().result();
 
         render_Miniature_Image();
         show_Text_UI("H","S","L");
@@ -219,10 +220,10 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
         channelR = "X", channelG = "Y", channelB = "Z";
 
         // Renderizo imagenes en label
-        imageT = convertToXYZ(image, 'a');
-        imageR = convertToXYZ(image, 'x');
-        imageG = convertToXYZ(image, 'y');
-        imageB = convertToXYZ(image, 'z');
+        imageT = convertImage->imageToXYZ().result();
+        imageR = convertImage->imageToX().result();
+        imageG = convertImage->imageToxYz().result();
+        imageB = convertImage->imageToZ().result();
 
         render_Miniature_Image();
         show_Text_UI("X","Y","Z");
@@ -240,11 +241,20 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
     {
         channelR = "O1", channelG = "O2", channelB = "O3";
 
+//        QFuture<QImage> t = QtConcurrent::run(convertToOOO1,image,'a');
+//        QFuture<QImage> r = QtConcurrent::run(convertToOOO1,image,'x');
+//        QFuture<QImage> g = QtConcurrent::run(convertToOOO1,image,'y');
+//        QFuture<QImage> b = QtConcurrent::run(convertToOOO1,image,'z');
+
+//        imageT = t.result();
+//        imageR = r.result();
+//        imageG = g.result();
+//        imageB = b.result();
         // Renderizo imagenes en label
-        imageT = convertToOOO(image, 'a');
-        imageR = convertToOOO(image, 'x');
-        imageG = convertToOOO(image, 'y');
-        imageB = convertToOOO(image, 'z');
+        imageT = convertImage->imageToOOO().result();
+        imageR = convertImage->imageToO1().result();
+        imageG = convertImage->imageToO2().result();
+        imageB = convertImage->imageToO3().result();
 
         render_Miniature_Image();
         show_Text_UI("O1","O2","O3");
@@ -419,17 +429,14 @@ void MainWindow::on_actionTransform_triggered()
 {
     action_Filter_Select(imageT);
 }
-
 void MainWindow::on_actionChannel_One_triggered()
 {
     action_Filter_Select(imageR);
 }
-
 void MainWindow::on_actionChannel_Two_triggered()
 {
    action_Filter_Select(imageG);
 }
-
 void MainWindow::on_actionChannel_Three_triggered()
 {
     action_Filter_Select(imageB);
@@ -487,4 +494,9 @@ void MainWindow::on_equalizarHistograma_clicked()
     create_Histograma(*histograma,selectChannelHistograma,true);
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
     create_Histograma(*histograma,selectChannelHistograma,false);
+}
+
+void MainWindow::on_btnAverage_clicked()
+{
+//    progressBar();
 }
