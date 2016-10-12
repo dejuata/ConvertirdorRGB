@@ -1,9 +1,12 @@
-#include "convertspacecolor.h"
+#ifndef PROCESS_H
+#define PROCESS_H
 
-ConvertSpaceColor::ConvertSpaceColor(QImage image)
-{
-    this->img = image;
-}
+#include <QImage>
+#include <QColor>
+#include <math.h>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+
 
 int channelOne(int r, int g, int b, char channel)
 {
@@ -26,6 +29,7 @@ int channelOne(int r, int g, int b, char channel)
     }
     return channelOne;
 }
+
 int channelTwo(int r, int g, int b, char channel)
 {
     int channelTwo;
@@ -52,6 +56,7 @@ int channelTwo(int r, int g, int b, char channel)
     }
     return channelTwo;
 }
+
 int channelThree(int r, int g, int b, char channel)
 {
     int channelThree;
@@ -79,13 +84,12 @@ int channelThree(int r, int g, int b, char channel)
     return channelThree;
 }
 
-// Funciones de conversion a diferentes espacios de color
 QImage convertToRGB(QImage image, char channel)
 {
     int r,g,b;
 
     for(int i = 0; i < image.width(); i++)
-    {
+    {       
         for(int j = 0; j < image.height(); j++)
         {
             //.pixel es un metodo ineficaz cuando hay mucho pixeles en la imagen, solucionar esto
@@ -118,6 +122,28 @@ QImage convertToRGB(QImage image, char channel)
     }
     return image;
 }
+QImage convertToYYY(QImage image)
+{
+    int r,g,b,y;
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++)
+        {
+            // get pixels
+            r = QColor(image.pixel(i,j)).red();
+            g = QColor(image.pixel(i,j)).green();
+            b = QColor(image.pixel(i,j)).blue();
+
+            // Format YUV
+            y = channelOne(r,g,b,'y');
+
+            image.setPixelColor(i,j,qRgb(y,y,y));
+        }
+    }
+    return image;
+}
+
 QImage convertToYUV(QImage image, char channel)
 {
     int r,g,b,y,u,v;
@@ -163,6 +189,7 @@ QImage convertToYUV(QImage image, char channel)
 
     return image;
 }
+
 QImage convertToYIQ(QImage image, char channel)
 {
     int r,g,b,y,ii,q;
@@ -207,6 +234,7 @@ QImage convertToYIQ(QImage image, char channel)
     }
     return image;
 }
+
 QImage convertToCMY(QImage image, char channel)
 {
     int r,g,b,c,m,y;
@@ -255,6 +283,7 @@ QImage convertToCMY(QImage image, char channel)
     }
     return image;
 }
+
 QImage convertToHSV(QImage image, char channel)
 {
     int h,s,v;
@@ -294,6 +323,7 @@ QImage convertToHSV(QImage image, char channel)
     }
     return image;
 }
+
 QImage convertToHSL(QImage image, char channel)
 {
     int h,s,l;
@@ -333,6 +363,7 @@ QImage convertToHSL(QImage image, char channel)
     }
     return image;
 }
+
 QImage convertToXYZ(QImage image, char channel)
 {
     int r,g,b,x,y,z;
@@ -377,6 +408,7 @@ QImage convertToXYZ(QImage image, char channel)
     }
     return image;
 }
+
 QImage convertToOOO(QImage image, char channel)
 {
     int r,g,b,x,y,z;
@@ -400,7 +432,7 @@ QImage convertToOOO(QImage image, char channel)
             // XYZ to LMS
             l = (0.2430 * x) + (0.8560 * y) + (-0.0440 * z);
             m = (-0.3910 * x) + (1.1650 * y) + (0.0870 * z);
-            s = (0.0100 * x) + (-0.0080 * y) + (0.5630 * z);
+            s = (0.0100 * x) + (-0.0080 * y) + (0.5630 * z);            
 
             if (channel == 'a')
             {
@@ -434,185 +466,5 @@ QImage convertToOOO(QImage image, char channel)
     return image;
 }
 
-// Funciones ejecutadas en hilos
-QFuture<QImage> ConvertSpaceColor::imageToRGB()
-{
-    ThreadOne = QtConcurrent::run(convertToRGB,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToR()
-{
-    ThreadTwo = QtConcurrent::run(convertToRGB,img,'r');
-    ThreadTwo.waitForFinished();
-    return ThreadTwo;
-}
-QFuture<QImage> ConvertSpaceColor::imageToG()
-{
-    ThreadThree = QtConcurrent::run(convertToRGB,img,'g');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageToB()
-{
-    ThreadFor = QtConcurrent::run(convertToRGB,img,'b');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
 
-QFuture<QImage> ConvertSpaceColor::imageToYUV()
-{
-    ThreadOne = QtConcurrent::run(convertToYUV,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToY()
-{
-    ThreadTwo = QtConcurrent::run(convertToYUV,img,'y');
-    ThreadTwo.waitForFinished();
-    return ThreadTwo;
-}
-QFuture<QImage> ConvertSpaceColor::imageToU()
-{
-    ThreadThree = QtConcurrent::run(convertToYUV,img,'u');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageToV()
-{
-    ThreadFor = QtConcurrent::run(convertToYUV,img,'v');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
-
-QFuture<QImage> ConvertSpaceColor::imageToYIQ()
-{
-    ThreadOne = QtConcurrent::run(convertToYIQ,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToI()
-{
-    ThreadThree = QtConcurrent::run(convertToYIQ,img,'i');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageToQ()
-{
-    ThreadFor = QtConcurrent::run(convertToYIQ,img,'q');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
-
-QFuture<QImage> ConvertSpaceColor::imageToCMY()
-{
-    ThreadOne = QtConcurrent::run(convertToCMY,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToC()
-{
-    ThreadTwo = QtConcurrent::run(convertToCMY,img,'c');
-    ThreadTwo.waitForFinished();
-    return ThreadTwo;
-}
-QFuture<QImage> ConvertSpaceColor::imageToM()
-{
-    ThreadThree = QtConcurrent::run(convertToCMY,img,'m');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageTocmY()
-{
-    ThreadFor = QtConcurrent::run(convertToCMY,img,'y');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
-
-QFuture<QImage> ConvertSpaceColor::imageToHSV()
-{
-    ThreadOne = QtConcurrent::run(convertToHSV,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToH()
-{
-    ThreadTwo = QtConcurrent::run(convertToHSV,img,'h');
-    ThreadTwo.waitForFinished();
-    return ThreadTwo;
-}
-QFuture<QImage> ConvertSpaceColor::imageToS()
-{
-    ThreadThree = QtConcurrent::run(convertToHSV,img,'s');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageTohsV()
-{
-    ThreadFor = QtConcurrent::run(convertToHSV,img,'v');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
-
-QFuture<QImage> ConvertSpaceColor::imageToHSL()
-{
-    ThreadOne = QtConcurrent::run(convertToHSL,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToL()
-{
-    ThreadFor = QtConcurrent::run(convertToHSL,img,'l');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
-
-QFuture<QImage> ConvertSpaceColor::imageToXYZ()
-{
-    ThreadOne = QtConcurrent::run(convertToXYZ,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToX()
-{
-    ThreadTwo = QtConcurrent::run(convertToXYZ,img,'x');
-    ThreadTwo.waitForFinished();
-    return ThreadTwo;
-}
-QFuture<QImage> ConvertSpaceColor::imageToxYz()
-{
-    ThreadThree = QtConcurrent::run(convertToXYZ,img,'y');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageToZ()
-{
-    ThreadFor = QtConcurrent::run(convertToXYZ,img,'z');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
-
-QFuture<QImage> ConvertSpaceColor::imageToOOO()
-{
-    ThreadOne = QtConcurrent::run(convertToOOO,img,'a');
-    ThreadOne.waitForFinished();
-    return ThreadOne;
-}
-QFuture<QImage> ConvertSpaceColor::imageToO1()
-{
-    ThreadTwo = QtConcurrent::run(convertToOOO,img,'x');
-    ThreadTwo.waitForFinished();
-    return ThreadTwo;
-}
-QFuture<QImage> ConvertSpaceColor::imageToO2()
-{
-    ThreadThree = QtConcurrent::run(convertToOOO,img,'y');
-    ThreadThree.waitForFinished();
-    return ThreadThree;
-}
-QFuture<QImage> ConvertSpaceColor::imageToO3()
-{
-    ThreadFor = QtConcurrent::run(convertToOOO,img,'z');
-    ThreadFor.waitForFinished();
-    return ThreadFor;
-}
+#endif // PROCESS_H

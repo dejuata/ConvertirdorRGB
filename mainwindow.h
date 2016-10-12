@@ -18,17 +18,15 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QAreaSeries>
 #include <QGraphicsView>
-#include "convertspacecolor.h"
 #include <QFuture>
 #include <QtConcurrent>
+#include <QtWidgets>
 
 using namespace QtCharts;
 
 namespace Ui {
 class MainWindow;
 }
-
-class ConvertSpaceColor;
 
 class MainWindow : public QMainWindow
 {
@@ -42,8 +40,8 @@ public:
     QImage imageT;
     QImage imageR;
     QImage imageG;
-    QImage imageB;
-    QImage *histograma;
+    QImage imageB;    
+    QImage *imageLabel;
 
     QString channelR;
     QString channelG;
@@ -57,11 +55,11 @@ public:
     QFuture<QImage> futureG;
     QFuture<QImage> futureB;
 
+
     void show_histograma();
 
-    Ui::MainWindow *ui;
-    ConvertSpaceColor *convertImage;
 
+    Ui::MainWindow *ui;
 
 private slots:
 
@@ -111,7 +109,22 @@ private slots:
 
     void on_equalizarHistograma_clicked();
 
+
+    void on_actionRGB_to_YYY_triggered();
+
     void on_btnAverage_clicked();
+
+    void on_btnGaussiano_clicked();
+
+    void on_btnMinimum_clicked();
+
+    void on_btnMedium_clicked();
+
+    void on_btnMaximum_clicked();
+
+    void on_btnSigma_clicked();
+
+    void on_btnNagao_clicked();
 
 private:
 
@@ -131,15 +144,23 @@ private:
 
     void render_Histograma_Min_Or_Max(bool maximum);
 
+    void futureRGB();
+
+    void futureYYY();
+
+    void futureYUV();
+
+    void futureYIQ();
+
+    void futureCMY();
+
+    void futureHSV();
+
+    void futureHSL();
+
+    void futureXYZ();
+
     void futureOOO();
-
-//    void resizeEvent(QResizeEvent *event);
-
-//    void mouseMoveEvent(QMouseEvent *event);
-
-
-
-
 
 };
 

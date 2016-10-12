@@ -2,15 +2,10 @@
 #include "ui_mainwindow.h"
 #include "settingsfilter.h"
 #include "ui_settingsfilter.h"
-
-#include "process.h"
+#include "convertImage.h"
 #include "filter.h"
 #include "histograma.h"
 #include "resources.h"
-
-
-
-char nameChannel[4];
 
 using namespace std;
 
@@ -46,9 +41,6 @@ void MainWindow::on_actionOpen_triggered()
            return;
        }
     }
-
-    // Clase que contiene los metodos para transformar a distintos espacios de color
-    convertImage = new ConvertSpaceColor(image);
 
     ui->after->setPixmap(QPixmap::fromImage(image));
     ui->origin->setPixmap(QPixmap::fromImage(image));    
@@ -88,13 +80,28 @@ void MainWindow::on_actionRGB_to_RGB_triggered()
          */
         channelR = "Red", channelG = "Green", channelB = "Blue";
 
-        imageT = convertImage->imageToRGB().result();
-        imageR = convertImage->imageToR().result();
-        imageG = convertImage->imageToG().result();
-        imageB = convertImage->imageToB().result();
+        futureRGB();
 
         render_Miniature_Image();
         show_Text_UI("R","G","B");
+        show_Label_Image_Hide_Histograma(0);
+    }
+}
+void MainWindow::on_actionRGB_to_YYY_triggered()
+{
+    if (image.isNull())
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+        return;
+    }
+    else
+    {
+        channelR = "Red", channelG = "Green", channelB = "Blue";
+
+        futureYYY();
+
+        render_Miniature_Image();
+        show_Text_UI("Y","Y","Y");
         show_Label_Image_Hide_Histograma(0);
     }
 }
@@ -110,10 +117,7 @@ void MainWindow::on_actionRGB_to_YUV_triggered()
         channelR = "Y", channelG = "U", channelB = "V";
 
         // Renderizo imagenes en label
-        imageT = convertImage->imageToYUV().result();
-        imageR = convertImage->imageToY().result();
-        imageG = convertImage->imageToU().result();
-        imageB = convertImage->imageToV().result();
+        futureYUV();
 
         render_Miniature_Image();
         show_Text_UI("Y","U","V");
@@ -132,10 +136,7 @@ void MainWindow::on_actionRGB_to_YIQ_triggered()
         channelR = "Y", channelG = "I", channelB = "Q";
 
         // Renderizo imagenes en label
-        imageT = convertImage->imageToYIQ().result();
-        imageR = convertImage->imageToY().result();
-        imageG = convertImage->imageToI().result();
-        imageB = convertImage->imageToQ().result();
+        futureYIQ();
 
         render_Miniature_Image();
         show_Text_UI("Y","I","Q");
@@ -154,10 +155,7 @@ void MainWindow::on_actionRGB_to_CMY_triggered()
         channelR = "Cyan", channelG = "Magenta", channelB = "Yellow";
 
         // Renderizo imagenes en label
-        imageT = convertImage->imageToCMY().result();
-        imageR = convertImage->imageToC().result();
-        imageG = convertImage->imageToM().result();
-        imageB = convertImage->imageTocmY().result();
+        futureCMY();
 
         render_Miniature_Image();
         show_Text_UI("C","M","Y");
@@ -176,10 +174,7 @@ void MainWindow::on_actionRGB_to_HSV_triggered()
         channelR = "Hue", channelG = "Saturation", channelB = "Value";
 
         // Renderizo imagenes en label
-        imageT = convertImage->imageToHSV().result();
-        imageR = convertImage->imageToH().result();
-        imageG = convertImage->imageToS().result();
-        imageB = convertImage->imageTohsV().result();
+        futureHSV();
 
         render_Miniature_Image();
         show_Text_UI("H","S","V");
@@ -198,10 +193,7 @@ void MainWindow::on_actionRGB_to_HSL_triggered()
         channelR = "Hue", channelG = "Saturation", channelB = "Ligntness";
 
         // Renderizo imagenes en label
-        imageT = convertImage->imageToHSL().result();
-        imageR = convertImage->imageToH().result();
-        imageG = convertImage->imageToS().result();
-        imageB = convertImage->imageToL().result();
+        futureHSL();
 
         render_Miniature_Image();
         show_Text_UI("H","S","L");
@@ -220,10 +212,7 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
         channelR = "X", channelG = "Y", channelB = "Z";
 
         // Renderizo imagenes en label
-        imageT = convertImage->imageToXYZ().result();
-        imageR = convertImage->imageToX().result();
-        imageG = convertImage->imageToxYz().result();
-        imageB = convertImage->imageToZ().result();
+        futureXYZ();
 
         render_Miniature_Image();
         show_Text_UI("X","Y","Z");
@@ -241,20 +230,8 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
     {
         channelR = "O1", channelG = "O2", channelB = "O3";
 
-//        QFuture<QImage> t = QtConcurrent::run(convertToOOO1,image,'a');
-//        QFuture<QImage> r = QtConcurrent::run(convertToOOO1,image,'x');
-//        QFuture<QImage> g = QtConcurrent::run(convertToOOO1,image,'y');
-//        QFuture<QImage> b = QtConcurrent::run(convertToOOO1,image,'z');
-
-//        imageT = t.result();
-//        imageR = r.result();
-//        imageG = g.result();
-//        imageB = b.result();
-        // Renderizo imagenes en label
-        imageT = convertImage->imageToOOO().result();
-        imageR = convertImage->imageToO1().result();
-        imageG = convertImage->imageToO2().result();
-        imageB = convertImage->imageToO3().result();
+        // Ejecuto las funciones de procesamiento para cada canal en un hilo respectivo
+        futureOOO();
 
         render_Miniature_Image();
         show_Text_UI("O1","O2","O3");
@@ -268,26 +245,31 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 void MainWindow::on_btn_origin_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(image));
+    imageLabel = &image;
     show_Label_Image_Hide_Histograma(0);
 }
 void MainWindow::on_btn_transform_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageT));
+    imageLabel = &imageT;
     show_Label_Image_Hide_Histograma(0);
 }
 void MainWindow::on_btn_one_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageR));
+    imageLabel = &imageR;
     show_Label_Image_Hide_Histograma(1);
 }
 void MainWindow::on_btn_two_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageG));
+    imageLabel = &imageG;
     show_Label_Image_Hide_Histograma(2);
 }
 void MainWindow::on_btn_three_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageB));
+    imageLabel = &imageB;
     show_Label_Image_Hide_Histograma(3);
 }
 
@@ -466,37 +448,68 @@ void MainWindow::on_equalizarHistograma_clicked()
     if(selectChannelHistograma == 0)
     {
         imageT = equalization_Histograma(imageT,selectChannelHistograma);
-        histograma = &imageT;
+        imageLabel = &imageT;
     }
     if(selectChannelHistograma == 1)
     {
         imageR = equalization_Histograma(imageR,selectChannelHistograma);
-        histograma = &imageR;
+        imageLabel = &imageR;
     }
     if(selectChannelHistograma == 2)
     {
         imageG = equalization_Histograma(imageG,selectChannelHistograma);
-        histograma = &imageG;
+        imageLabel = &imageG;
     }
     if(selectChannelHistograma == 3)
     {
         imageB = equalization_Histograma(imageB,selectChannelHistograma);
-        histograma = &imageB;
+        imageLabel = &imageB;
     }
 
     // renderizar imagenes en miniatura
     render_Miniature_Image();
 
     // Renderizar la imagen si el histograma cambia, este efecto sucede si el label esta activo -> show()
-    ui->origin->setPixmap(QPixmap::fromImage(*histograma));
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
 
     // Crear y mostrar el histograma en el QGraphicsScene Maximum
-    create_Histograma(*histograma,selectChannelHistograma,true);
+    create_Histograma(*imageLabel,selectChannelHistograma,true);
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
-    create_Histograma(*histograma,selectChannelHistograma,false);
+    create_Histograma(*imageLabel,selectChannelHistograma,false);
 }
 
+
+
+
+
+// Filtros configurados como botones
 void MainWindow::on_btnAverage_clicked()
 {
-//    progressBar();
+    createMatriz(listAverage);
+    ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(*imageLabel, 3, "average")));
+}
+void MainWindow::on_btnGaussiano_clicked()
+{
+    createMatriz(listGaussiano);
+    ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(*imageLabel, 3, "gaussiano")));
+}
+void MainWindow::on_btnMinimum_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(*imageLabel, 0)));
+}
+void MainWindow::on_btnMedium_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(*imageLabel, 1)));
+}
+void MainWindow::on_btnMaximum_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(*imageLabel, 2)));
+}
+void MainWindow::on_btnSigma_clicked()
+{
+     ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
+}
+void MainWindow::on_btnNagao_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterNagao(*imageLabel)));
 }

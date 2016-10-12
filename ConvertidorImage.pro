@@ -15,17 +15,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settingsfilter.cpp \
-    convertspacecolor.cpp
+    settingsfilter.cpp
 
 HEADERS  += mainwindow.h \
-    process.h \
     settingsfilter.h \
     resources.h \
     globals.h \
     filter.h \
     histograma.h \
-    convertspacecolor.h
+    convertImage \
+    convertImage.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>863</width>
+    <width>977</width>
     <height>479</height>
    </rect>
   </property>
@@ -61,7 +61,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="convert">
        <property name="font">
@@ -838,7 +838,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>863</width>
+     <width>977</width>
      <height>21</height>
     </rect>
    </property>
@@ -854,6 +854,7 @@
      <string>Convert</string>
     </property>
     <addaction name="actionRGB_to_RGB"/>
+    <addaction name="actionRGB_to_YYY"/>
     <addaction name="actionRGB_to_YUV"/>
     <addaction name="actionRGB_to_YIQ"/>
     <addaction name="actionRGB_to_CMY"/>
@@ -995,6 +996,11 @@
   <action name="actionHistograma">
    <property name="text">
     <string>Histograma</string>
+   </property>
+  </action>
+  <action name="actionRGB_to_YYY">
+   <property name="text">
+    <string>RGB to YYY</string>
    </property>
   </action>
  </widget>

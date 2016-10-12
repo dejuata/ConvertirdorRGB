@@ -1,20 +1,18 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <QString>
-#include <QFuture>
-#include <QtConcurrent>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "globals.h"
 
+using namespace QtConcurrent;
 
 /*
  * Funcion para renderizar las imagenes procesadas en miniatura
  */
 void MainWindow::render_Miniature_Image()
 {
-    ui->before->setPixmap(QPixmap::fromImage(imageT));
+    ui->before->setPixmap(QPixmap::fromImage(futureT));
     ui->r->setPixmap(QPixmap::fromImage(imageR));
     ui->g->setPixmap(QPixmap::fromImage(imageG));
     ui->b->setPixmap(QPixmap::fromImage(imageB));
@@ -100,19 +98,113 @@ void MainWindow::action_Filter_Select(QImage image)
         ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, sizeList, firstLineFilterTxt)));
     }
 }
+// Funciones para procesar las conversiones en diferentes hilos
+void MainWindow::futureRGB()
+{
+    futureT = run(convertToRGB,image,'a');
+    futureR = run(convertToRGB,image,'r');
+    futureG = run(convertToRGB,image,'g');
+    futureB = run(convertToRGB,image,'b');
 
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
+void MainWindow::futureYYY()
+{
+    futureT = run(convertToYYY,image);
+
+    imageT = futureT.result();
+    imageR = futureT.result();
+    imageG = futureT.result();
+    imageB = futureT.result();
+}
+void MainWindow::futureYUV()
+{
+    futureT = run(convertToYUV,image,'a');
+    futureR = run(convertToYUV,image,'y');
+    futureG = run(convertToYUV,image,'u');
+    futureB = run(convertToYUV,image,'v');
+
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
+void MainWindow::futureYIQ()
+{
+    futureT = run(convertToYIQ,image,'a');
+    futureR = run(convertToYIQ,image,'y');
+    futureG = run(convertToYIQ,image,'i');
+    futureB = run(convertToYIQ,image,'q');
+
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
+void MainWindow::futureCMY()
+{
+    futureT = run(convertToCMY,image,'a');
+    futureR = run(convertToCMY,image,'c');
+    futureG = run(convertToCMY,image,'m');
+    futureB = run(convertToCMY,image,'y');
+
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
+void MainWindow::futureHSV()
+{
+    futureT = run(convertToHSV,image,'a');
+    futureR = run(convertToHSV,image,'h');
+    futureG = run(convertToHSV,image,'s');
+    futureB = run(convertToHSV,image,'v');
+
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
+void MainWindow::futureHSL()
+{
+    futureT = run(convertToHSL,image,'a');
+    futureR = run(convertToHSL,image,'h');
+    futureG = run(convertToHSL,image,'s');
+    futureB = run(convertToHSL,image,'l');
+
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
+void MainWindow::futureXYZ()
+{
+    futureT = run(convertToXYZ,image,'a');
+    futureR = run(convertToXYZ,image,'x');
+    futureG = run(convertToXYZ,image,'y');
+    futureB = run(convertToXYZ,image,'z');
+
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
+}
 void MainWindow::futureOOO()
 {
-    futureT = QtConcurrent::run(convertToOOO1,image,'a');
-    futureR = QtConcurrent::run(convertToOOO1,image,'x');
-    futureG = QtConcurrent::run(convertToOOO1,image,'y');
-    futureB = QtConcurrent::run(convertToOOO1,image,'z');
+    futureT = run(convertToOOO,image,'a');
+    futureR = run(convertToOOO,image,'x');
+    futureG = run(convertToOOO,image,'y');
+    futureB = run(convertToOOO,image,'z');
 
-    imageT = t.result();
-    imageR = r.result();
-    imageG = g.result();
-    imageB = b.result();
+    imageT = futureT.result();
+    imageR = futureR.result();
+    imageG = futureG.result();
+    imageB = futureB.result();
 }
+
 
 
 
