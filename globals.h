@@ -46,4 +46,7 @@ extern int histogramaB[];
 // variable que me almacena el canal del histrograma que quiero que me muestre
 extern int selectChannelHistograma;
 
+// variable que me almacena la constante para poder aplicar las operaciones elementales del histograma
+extern double numberOperationsHistograma;
+
 #endif // GLOBALS_H

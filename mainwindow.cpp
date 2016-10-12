@@ -478,10 +478,6 @@ void MainWindow::on_equalizarHistograma_clicked()
     create_Histograma(*imageLabel,selectChannelHistograma,false);
 }
 
-
-
-
-
 // Filtros configurados como botones
 void MainWindow::on_btnAverage_clicked()
 {
@@ -513,3 +509,116 @@ void MainWindow::on_btnNagao_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(filterNagao(*imageLabel)));
 }
+
+
+// Operaciones con histogramas
+
+// Funcion que captura el valor del spin box cuando cambia
+void MainWindow::on_const_2_valueChanged(double arg1)
+{
+    numberOperationsHistograma = arg1;
+}
+void MainWindow::on_btnPlus_clicked()
+{
+    if(selectChannelHistograma == 0)
+    {
+        imageT = sumConstImage(imageT,numberOperationsHistograma,0);
+        imageLabel = &imageT;
+    }
+    if(selectChannelHistograma == 1)
+    {
+        imageR = sumConstImage(imageR,numberOperationsHistograma,1);
+        imageLabel = &imageR;
+    }
+    if(selectChannelHistograma == 2)
+    {
+        imageG = sumConstImage(imageG,numberOperationsHistograma,2);
+        imageLabel = &imageG;
+    }
+    if(selectChannelHistograma == 3)
+    {
+        imageB = sumConstImage(imageB,numberOperationsHistograma,3);
+        imageLabel = &imageB;
+    }
+
+
+    render_Miniature_Image();
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    // Crear y mostrar el histograma en el QGraphicsScene Maximum
+    create_Histograma(*imageLabel,selectChannelHistograma,true);
+    // Crear y mostrar el histograma en el QGraphicsScene Minimum
+    create_Histograma(*imageLabel,selectChannelHistograma,false);
+}
+void MainWindow::on_btnSubstract_clicked()
+{
+    if(selectChannelHistograma == 0)
+    {
+        imageT = susbtractConstImage(imageT,numberOperationsHistograma,0);
+        imageLabel = &imageT;
+    }
+    if(selectChannelHistograma == 1)
+    {
+        imageR = susbtractConstImage(imageR,numberOperationsHistograma,1);
+        imageLabel = &imageR;
+    }
+    if(selectChannelHistograma == 2)
+    {
+        imageG = susbtractConstImage(imageG,numberOperationsHistograma,2);
+        imageLabel = &imageG;
+    }
+    if(selectChannelHistograma == 3)
+    {
+        imageB = susbtractConstImage(imageB,numberOperationsHistograma,3);
+        imageLabel = &imageB;
+    }
+
+
+    render_Miniature_Image();
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    // Crear y mostrar el histograma en el QGraphicsScene Maximum
+    create_Histograma(*imageLabel,selectChannelHistograma,true);
+    // Crear y mostrar el histograma en el QGraphicsScene Minimum
+    create_Histograma(*imageLabel,selectChannelHistograma,false);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    if(ui->const_2->value() > 3 || ui->const_2->value() == 0)
+    {
+        QMessageBox::critical(this, tr("Alert"), tr("El numero gamma debe estar en el rango de 0 a 3"));
+        return;
+    }
+    else
+    {
+        if(selectChannelHistograma == 0)
+        {
+            imageT = gammaConstImage(imageT,numberOperationsHistograma,0);
+            imageLabel = &imageT;
+        }
+        if(selectChannelHistograma == 1)
+        {
+            imageR = gammaConstImage(imageR,numberOperationsHistograma,1);
+            imageLabel = &imageR;
+        }
+        if(selectChannelHistograma == 2)
+        {
+            imageG = gammaConstImage(imageG,numberOperationsHistograma,2);
+            imageLabel = &imageG;
+        }
+        if(selectChannelHistograma == 3)
+        {
+            imageB = gammaConstImage(imageB,numberOperationsHistograma,3);
+            imageLabel = &imageB;
+        }
+
+
+        render_Miniature_Image();
+        ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+        // Crear y mostrar el histograma en el QGraphicsScene Maximum
+        create_Histograma(*imageLabel,selectChannelHistograma,true);
+        // Crear y mostrar el histograma en el QGraphicsScene Minimum
+        create_Histograma(*imageLabel,selectChannelHistograma,false);
+    }
+}
+
+

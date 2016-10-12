@@ -12,6 +12,8 @@ using namespace QtCharts;
 
 // Por defecto el histograma muestra un histograma vacio
 int selectChannelHistograma = 0;
+// Inicializo la variable de la constante para las operaciones del histograma en cero
+double numberOperationsHistograma = 0;
 
 // Defino el tamaño del histograma
 int histogramaT[256];
@@ -260,6 +262,134 @@ void MainWindow::render_Histograma_Min_Or_Max(bool maximum)
     }
 }
 
+// Sumar una constante al histograma
+QImage sumConstImage(QImage image, double number, int channel)
+{
+    int r,g,b;
 
+    for (int i = 0; i < image.width(); i++)
+    {
+        for (int j = 0; j < image.height(); j++)
+        {
+            if(channel == 0)
+            {
+                r = QColor(image.pixel(i,j)).red();
+                g = QColor(image.pixel(i,j)).green();
+                b = QColor(image.pixel(i,j)).blue();
+
+                r = round(r + number) >= 255 ? 255 : round(r + number);
+                g = round(g + number) >= 255 ? 255 : round(g + number);
+                b = round(b + number) >= 255 ? 255 : round(b + number);
+
+                image.setPixel(i,j,qRgb(r,g,b));
+            }
+            if(channel == 1)
+            {
+                r = QColor(image.pixel(i,j)).red();
+                r = round(r + number) >= 255 ? 255 : round(r + number);
+                image.setPixel(i,j,qRgb(r,0,0));
+            }
+            if(channel == 2)
+            {
+                g = QColor(image.pixel(i,j)).green();
+                g = round(g + number) >= 255 ? 255 : round(g + number);
+                image.setPixel(i,j,qRgb(0,g,0));
+            }
+            if(channel == 3)
+            {
+                b = QColor(image.pixel(i,j)).blue();
+                b = round(b + number) >= 255 ? 255 : round(b + number);
+                image.setPixel(i,j,qRgb(0,0,b));
+            }
+        }
+    }
+    return image;
+}
+
+QImage susbtractConstImage(QImage image, double number, int channel)
+{
+    int r,g,b;
+
+    for (int i = 0; i < image.width(); i++)
+    {
+        for (int j = 0; j < image.height(); j++)
+        {
+            if(channel == 0)
+            {
+                r = QColor(image.pixel(i,j)).red();
+                g = QColor(image.pixel(i,j)).green();
+                b = QColor(image.pixel(i,j)).blue();
+
+                r = round(r - number) <= 0 ? 0 : round(r - number);
+                g = round(g - number) <= 0 ? 0 : round(g - number);
+                b = round(b - number) <= 0 ? 0 : round(b - number);
+
+                image.setPixel(i,j,qRgb(r,g,b));
+            }
+            if(channel == 1)
+            {
+                r = QColor(image.pixel(i,j)).red();
+                r = round(r - number) <= 0 ? 0 : round(r - number);
+                image.setPixel(i,j,qRgb(r,0,0));
+            }
+            if(channel == 2)
+            {
+                g = QColor(image.pixel(i,j)).green();
+                g = round(g - number) <= 0 ? 0 : round(g - number);
+                image.setPixel(i,j,qRgb(0,g,0));
+            }
+            if(channel == 3)
+            {
+                b = QColor(image.pixel(i,j)).blue();
+                b = round(b - number) <= 0 ? 0 : round(b - number);
+                image.setPixel(i,j,qRgb(0,0,b));
+            }
+        }
+    }
+    return image;
+}
+
+QImage gammaConstImage(QImage image, double number, int channel)
+{
+    int r,g,b;
+
+    for (int i = 0; i < image.width(); i++)
+    {
+        for (int j = 0; j < image.height(); j++)
+        {
+            if(channel == 0)
+            {
+                r = QColor(image.pixel(i,j)).red();
+                g = QColor(image.pixel(i,j)).green();
+                b = QColor(image.pixel(i,j)).blue();
+
+                r = round(pow(r,1/number)) >= 255 ? 255 : round(pow(r,1/number));
+                g = round(pow(g,1/number)) >= 255 ? 255 : round(pow(g,1/number));
+                b = round(pow(b,1/number)) >= 255 ? 255 : round(pow(b,1/number));
+
+                image.setPixel(i,j,qRgb(r,g,b));
+            }
+            if(channel == 1)
+            {
+                r = QColor(image.pixel(i,j)).red();
+                r = round(pow(r,1/number)) >= 255 ? 255 : round(pow(r,1/number));
+                image.setPixel(i,j,qRgb(r,0,0));
+            }
+            if(channel == 2)
+            {
+                g = QColor(image.pixel(i,j)).green();
+                g = round(pow(g,1/number)) >= 255 ? 255 : round(pow(g,1/number));
+                image.setPixel(i,j,qRgb(0,g,0));
+            }
+            if(channel == 3)
+            {
+                b = QColor(image.pixel(i,j)).blue();
+                b = round(pow(b,1/number)) >= 255 ? 255 : round(pow(b,1/number));
+                image.setPixel(i,j,qRgb(0,0,b));
+            }
+        }
+    }
+    return image;
+}
 
 #endif // HISTOGRAMA_H

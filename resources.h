@@ -12,7 +12,7 @@ using namespace QtConcurrent;
  */
 void MainWindow::render_Miniature_Image()
 {
-    ui->before->setPixmap(QPixmap::fromImage(futureT));
+    ui->before->setPixmap(QPixmap::fromImage(imageT));
     ui->r->setPixmap(QPixmap::fromImage(imageR));
     ui->g->setPixmap(QPixmap::fromImage(imageG));
     ui->b->setPixmap(QPixmap::fromImage(imageB));

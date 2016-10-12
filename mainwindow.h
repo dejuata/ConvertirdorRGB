@@ -126,6 +126,14 @@ private slots:
 
     void on_btnNagao_clicked();
 
+    void on_btnPlus_clicked();
+
+    void on_btnSubstract_clicked();
+
+    void on_pushButton_clicked();
+
+    void on_const_2_valueChanged(double arg1);
+
 private:
 
     void render_Miniature_Image();
