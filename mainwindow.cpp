@@ -13,8 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-
+    ui->setupUi(this);    
     ui->histograma->hide();
 
 
@@ -508,6 +507,12 @@ void MainWindow::on_btnSigma_clicked()
 {
      ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
 }
+void MainWindow::on_sliderSigma_sliderReleased()
+{
+    numberSigma = sigma();
+    qDebug()<<numberSigma;
+    ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
+}
 void MainWindow::on_btnNagao_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(filterNagao(*imageLabel)));
@@ -515,7 +520,8 @@ void MainWindow::on_btnNagao_clicked()
 
 void MainWindow::on_btnSobel_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterSobel(*imageLabel)));
+    int number = threshold();
+    ui->origin->setPixmap(QPixmap::fromImage(filterSobel(*imageLabel, number)));
 }
 void MainWindow::on_btnRobert_clicked()
 {
@@ -601,6 +607,11 @@ int MainWindow::threshold()
 {
     return ui->threshold->value();
 }
+
+int MainWindow::sigma()
+{
+    return ui->numberSigma->value();
+}
 // setea en el spinbox el valor del slider que corresponde al numero gamma
 void MainWindow::on_gamma_sliderMoved(int position)
 {
@@ -639,3 +650,14 @@ void MainWindow::on_gamma_sliderReleased()
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
     create_Histograma(*imageLabel,selectChannelHistograma,false);
 }
+
+void MainWindow::on_horizontalSlider_sliderReleased()
+{
+    on_btnSobel_clicked();
+}
+
+
+
+
+
+

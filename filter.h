@@ -722,10 +722,10 @@ QImage filterSobelOrRobert(QImage image, int firstFlag, int secondFlang, int thr
     return image;
 
 }
-QImage filterSobel(QImage image)
+QImage filterSobel(QImage image, int threshold)
 {
     int mitad,mm,nn,ii,jj,sizeKernel = 3;
-    int x1,x2,x3,y1,y2,y3;
+    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;
     QImage result = image;
     QRgb value;
     mitad = sizeKernel / 2;
@@ -774,10 +774,14 @@ QImage filterSobel(QImage image)
                         y1 += QColor(image.pixel(ii,jj)).red() * arrayY[mm][nn];
                         y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
                         y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
+
+                        xy1 = (x1 + y1) > threshold ? 0 : x1+y1;
+                        xy2 = (x2 + y2) > threshold ? 0 : x2+y2;
+                        xy3 = (x3 + y3) > threshold ? 0 : x3+y3;
                     }
                 }
             }
-            value = qRgb(fabs(x1) + fabs(y1),fabs(x2) + fabs(y2),fabs(x3) + fabs(y3));
+            value = qRgb(fabs(xy1),fabs(xy2),fabs(xy3));
             result.setPixelColor(i,j,value);
         }
     }

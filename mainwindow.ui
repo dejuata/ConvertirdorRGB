@@ -66,7 +66,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="convert">
          <property name="font">
@@ -544,35 +544,6 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="btnSigma">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">border: 1px solid #F05542;</string>
-                </property>
-                <property name="text">
-                 <string>Sigma</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="resources.qrc">
-                  <normaloff>:/img/sigma.ico</normaloff>:/img/sigma.ico</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>35</width>
-                  <height>35</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QPushButton" name="btnNagao">
                 <property name="minimumSize">
                  <size>
@@ -607,6 +578,97 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_3">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">border: 1px solid #F05542;margin-top:3px</string>
+                </property>
+                <property name="title">
+                 <string>Sigma</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_16">
+                 <item>
+                  <widget class="QSpinBox" name="numberSigma">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
+                   <property name="maximum">
+                    <number>255</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <widget class="QLabel" name="label_4">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16</width>
+                       <height>16</height>
+                      </size>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">border:none;</string>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="textFormat">
+                      <enum>Qt::PlainText</enum>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap resource="resources.qrc">:/img/sigma.ico</pixmap>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSlider" name="sliderSigma">
+                     <property name="styleSheet">
+                      <string notr="true">border:none;</string>
+                     </property>
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
              </layout>
             </widget>
             <widget class="QWidget" name="page_2">
@@ -623,9 +685,81 @@
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
+               <widget class="QPushButton" name="btnRobert">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">border: 1px solid #F05542;</string>
+                </property>
+                <property name="text">
+                 <string>Roberts</string>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/img/roberts.ico</normalon>
+                 </iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>35</width>
+                  <height>35</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnPrewitt">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">border: 1px solid #F05542;</string>
+                </property>
+                <property name="text">
+                 <string>Prewitt</string>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/img/prewitt.ico</normalon>
+                 </iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>35</width>
+                  <height>35</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QGroupBox" name="groupBox">
+                <property name="styleSheet">
+                 <string notr="true">border: 1px solid #F05542;margin-top:5px</string>
+                </property>
                 <property name="title">
-                 <string/>
+                 <string>Sobel</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignHCenter|Qt::AlignTop</set>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_13">
                  <property name="spacing">
@@ -642,77 +776,46 @@
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
                    <property name="maximum">
                     <number>255</number>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSlider" name="horizontalSlider">
-                   <property name="maximum">
-                    <number>255</number>
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <property name="sizeConstraint">
+                    <enum>QLayout::SetDefaultConstraint</enum>
                    </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                   <property name="topMargin">
+                    <number>0</number>
                    </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="btnSobel">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">border: 1px solid #F05542;</string>
-                   </property>
-                   <property name="text">
-                    <string>Sobel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="btnRobert">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">border: 1px solid #F05542;</string>
-                   </property>
-                   <property name="text">
-                    <string>Roberts</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="btnPrewitt">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">border: 1px solid #F05542;</string>
-                   </property>
-                   <property name="text">
-                    <string>Prewitt</string>
-                   </property>
-                  </widget>
+                   <item>
+                    <widget class="QLabel" name="label_3">
+                     <property name="styleSheet">
+                      <string notr="true">border:none;</string>
+                     </property>
+                     <property name="text">
+                      <string>Threshold</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSlider" name="horizontalSlider">
+                     <property name="styleSheet">
+                      <string notr="true">border:none;</string>
+                     </property>
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
@@ -1327,12 +1430,28 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>163</y>
+     <x>160</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
      <x>103</x>
-     <y>149</y>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderSigma</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>numberSigma</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>138</x>
+     <y>528</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>133</x>
+     <y>505</y>
     </hint>
    </hints>
   </connection>

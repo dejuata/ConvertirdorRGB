@@ -141,6 +141,11 @@ private slots:
 
     void on_gamma_sliderReleased();
 
+    void on_horizontalSlider_sliderReleased();
+
+
+    void on_sliderSigma_sliderReleased();
+
 private:
 
     void render_Miniature_Image();
@@ -179,6 +184,8 @@ private:
 
     // metodo que me retorna el valor del threshold
     int threshold();
+    // obtener el numero sigma
+    int sigma();
 
 
 };
