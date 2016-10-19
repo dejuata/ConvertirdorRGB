@@ -8,6 +8,9 @@
         <file>img/minimum.ico</file>
         <file>img/sigma.ico</file>
         <file>img/nagao.ico</file>
+        <file>img/equalizer.ico</file>
+        <file>img/plus.ico</file>
+        <file>img/substract.ico</file>
     </qresource>
     <qresource prefix="/filters">
         <file>Filters/3x3.txt</file>

@@ -109,7 +109,6 @@ private slots:
 
     void on_equalizarHistograma_clicked();
 
-
     void on_actionRGB_to_YYY_triggered();
 
     void on_btnAverage_clicked();
@@ -128,11 +127,19 @@ private slots:
 
     void on_btnPlus_clicked();
 
-    void on_btnSubstract_clicked();
-
-    void on_pushButton_clicked();
+    void on_btnSubstract_clicked();    
 
     void on_const_2_valueChanged(double arg1);
+
+    void on_btnSobel_clicked();
+
+    void on_btnRobert_clicked();
+
+    void on_btnPrewitt_clicked();
+
+    void on_gamma_sliderMoved(int position);
+
+    void on_gamma_sliderReleased();
 
 private:
 
@@ -170,6 +177,12 @@ private:
 
     void futureOOO();
 
+    // metodo que me retorna el valor del threshold
+    int threshold();
+
+
 };
+
+
 
 #endif // MAINWINDOW_H

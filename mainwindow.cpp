@@ -16,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->histograma->hide();
+
+
     this->setWindowState(Qt::WindowMaximized);
 }
 
@@ -32,6 +34,7 @@ void MainWindow::on_actionOpen_triggered()
    image.load(file);
    // convertir la imagen a formato rgb 8 bits;
    image = image.convertToFormat(QImage::Format_RGB888);
+   imageLabel = &image;
 
    if (!file.isEmpty())
    {
@@ -510,6 +513,18 @@ void MainWindow::on_btnNagao_clicked()
     ui->origin->setPixmap(QPixmap::fromImage(filterNagao(*imageLabel)));
 }
 
+void MainWindow::on_btnSobel_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterSobel(*imageLabel)));
+}
+void MainWindow::on_btnRobert_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterRobert(*imageLabel)));
+}
+void MainWindow::on_btnPrewitt_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(filterPrewitt(*imageLabel)));
+}
 
 // Operaciones con histogramas
 
@@ -581,44 +596,46 @@ void MainWindow::on_btnSubstract_clicked()
     create_Histograma(*imageLabel,selectChannelHistograma,false);
 }
 
-void MainWindow::on_pushButton_clicked()
+// metodo que me retorna el valor del threshold
+int MainWindow::threshold()
 {
-    if(ui->const_2->value() > 3 || ui->const_2->value() == 0)
-    {
-        QMessageBox::critical(this, tr("Alert"), tr("El numero gamma debe estar en el rango de 0 a 3"));
-        return;
-    }
-    else
-    {
-        if(selectChannelHistograma == 0)
-        {
-            imageT = gammaConstImage(imageT,numberOperationsHistograma,0);
-            imageLabel = &imageT;
-        }
-        if(selectChannelHistograma == 1)
-        {
-            imageR = gammaConstImage(imageR,numberOperationsHistograma,1);
-            imageLabel = &imageR;
-        }
-        if(selectChannelHistograma == 2)
-        {
-            imageG = gammaConstImage(imageG,numberOperationsHistograma,2);
-            imageLabel = &imageG;
-        }
-        if(selectChannelHistograma == 3)
-        {
-            imageB = gammaConstImage(imageB,numberOperationsHistograma,3);
-            imageLabel = &imageB;
-        }
-
-
-        render_Miniature_Image();
-        ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
-        // Crear y mostrar el histograma en el QGraphicsScene Maximum
-        create_Histograma(*imageLabel,selectChannelHistograma,true);
-        // Crear y mostrar el histograma en el QGraphicsScene Minimum
-        create_Histograma(*imageLabel,selectChannelHistograma,false);
-    }
+    return ui->threshold->value();
+}
+// setea en el spinbox el valor del slider que corresponde al numero gamma
+void MainWindow::on_gamma_sliderMoved(int position)
+{
+    ui->const_2->setValue(position*0.001);
 }
 
+void MainWindow::on_gamma_sliderReleased()
+{
+    QImage gamma;
+    if(selectChannelHistograma == 0)
+    {
+        gamma = gammaConstImage(imageT,numberOperationsHistograma,0);
+        imageLabel = &gamma;
+    }
+    if(selectChannelHistograma == 1)
+    {
+        gamma = gammaConstImage(imageR,numberOperationsHistograma,1);
+        imageLabel = &gamma;
+    }
+    if(selectChannelHistograma == 2)
+    {
+        gamma = gammaConstImage(imageG,numberOperationsHistograma,2);
+        imageLabel = &gamma;
+    }
+    if(selectChannelHistograma == 3)
+    {
+        gamma = gammaConstImage(imageB,numberOperationsHistograma,3);
+        imageLabel = &gamma;
+    }
 
+
+    render_Miniature_Image();
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    // Crear y mostrar el histograma en el QGraphicsScene Maximum
+    create_Histograma(*imageLabel,selectChannelHistograma,true);
+    // Crear y mostrar el histograma en el QGraphicsScene Minimum
+    create_Histograma(*imageLabel,selectChannelHistograma,false);
+}
