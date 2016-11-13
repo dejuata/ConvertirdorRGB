@@ -146,9 +146,13 @@ private slots:
 
     void on_sliderSigma_sliderReleased();
 
+    void on_btnThreshold_clicked();
+
 private:
 
-    void render_Miniature_Image();
+    void clear_Label_Miniature_Image();
+
+    void render_Miniature_Image(bool NoGrayscale = true);
 
     void show_Text_UI(QString r, QString g, QString b);
 
@@ -186,6 +190,8 @@ private:
     int threshold();
     // obtener el numero sigma
     int sigma();
+    // devuelve true o false si el fondo es blanco o negro
+    bool background();
 
 
 };

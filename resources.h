@@ -7,15 +7,34 @@
 
 using namespace QtConcurrent;
 
+// Funcion para limpiar labels cuando se desea cambiar la imagen a procesar
+void MainWindow::clear_Label_Miniature_Image()
+{
+    ui->before->clear();
+    ui->r->clear();
+    ui->g->clear();
+    ui->b->clear();
+}
+
 /*
  * Funcion para renderizar las imagenes procesadas en miniatura
  */
-void MainWindow::render_Miniature_Image()
+void MainWindow::render_Miniature_Image(bool NoGrayscale)
 {
     ui->before->setPixmap(QPixmap::fromImage(imageT));
-    ui->r->setPixmap(QPixmap::fromImage(imageR));
-    ui->g->setPixmap(QPixmap::fromImage(imageG));
-    ui->b->setPixmap(QPixmap::fromImage(imageB));
+    if(NoGrayscale)
+    {
+        ui->r->setPixmap(QPixmap::fromImage(imageR));
+        ui->g->setPixmap(QPixmap::fromImage(imageG));
+        ui->b->setPixmap(QPixmap::fromImage(imageB));
+    }
+    else
+    {
+        ui->r->clear();
+        ui->g->clear();
+        ui->b->clear();
+    }
+
 }
 /*
  * Funcion para mostrar los textos de la interfaz en zonas como convert y filter, dependiendo

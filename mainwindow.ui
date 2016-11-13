@@ -66,7 +66,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="convert">
          <property name="font">
@@ -375,15 +375,15 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="page">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>176</width>
-               <height>477</height>
+               <width>108</width>
+               <height>391</height>
               </rect>
              </property>
              <attribute name="label">
@@ -685,72 +685,12 @@
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
-               <widget class="QPushButton" name="btnRobert">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">border: 1px solid #F05542;</string>
-                </property>
-                <property name="text">
-                 <string>Roberts</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normalon>:/img/roberts.ico</normalon>
-                 </iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>35</width>
-                  <height>35</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnPrewitt">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">border: 1px solid #F05542;</string>
-                </property>
-                <property name="text">
-                 <string>Prewitt</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normalon>:/img/prewitt.ico</normalon>
-                 </iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>35</width>
-                  <height>35</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QGroupBox" name="groupBox">
                 <property name="styleSheet">
                  <string notr="true">border: 1px solid #F05542;margin-top:5px</string>
                 </property>
                 <property name="title">
-                 <string>Sobel</string>
+                 <string>Edge Detection</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -785,6 +725,19 @@
                   </widget>
                  </item>
                  <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Threshold Manual</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_5">
                    <property name="sizeConstraint">
                     <enum>QLayout::SetDefaultConstraint</enum>
@@ -792,16 +745,6 @@
                    <property name="topMargin">
                     <number>0</number>
                    </property>
-                   <item>
-                    <widget class="QLabel" name="label_3">
-                     <property name="styleSheet">
-                      <string notr="true">border:none;</string>
-                     </property>
-                     <property name="text">
-                      <string>Threshold</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item>
                     <widget class="QSlider" name="horizontalSlider">
                      <property name="styleSheet">
@@ -816,6 +759,217 @@
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Threshold Auto</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBox_5">
+                   <property name="styleSheet">
+                    <string notr="true">border:none</string>
+                   </property>
+                   <property name="title">
+                    <string/>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_7">
+                    <item>
+                     <widget class="QRadioButton" name="radioBtnOtsu">
+                      <property name="styleSheet">
+                       <string notr="true">border:none;</string>
+                      </property>
+                      <property name="text">
+                       <string>Otsu</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioBtnIsodata">
+                      <property name="styleSheet">
+                       <string notr="true">border:none;</string>
+                      </property>
+                      <property name="text">
+                       <string>Isodata</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnThreshold">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="text">
+                    <string>Calculate</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="lineWidth">
+                    <number>1</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBox_4">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:none</string>
+                   </property>
+                   <property name="title">
+                    <string/>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <property name="spacing">
+                     <number>6</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>9</number>
+                    </property>
+                    <item>
+                     <widget class="QRadioButton" name="white">
+                      <property name="styleSheet">
+                       <string notr="true">border:none;</string>
+                      </property>
+                      <property name="text">
+                       <string>White</string>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="black">
+                      <property name="styleSheet">
+                       <string notr="true">border:none;</string>
+                      </property>
+                      <property name="text">
+                       <string>Black</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnRobert">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">border: 1px solid #F05542;</string>
+                   </property>
+                   <property name="text">
+                    <string>Roberts</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>:/img/roberts.ico</normalon>
+                    </iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>35</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnPrewitt">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">border: 1px solid #F05542;</string>
+                   </property>
+                   <property name="text">
+                    <string>Prewitt</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>:/img/prewitt.ico</normalon>
+                    </iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>35</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnSobel">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="text">
+                    <string>Sobel</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>:/img/sobel.ico</normalon>
+                    </iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>35</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -901,6 +1055,9 @@
                 </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="locale">
                  <locale language="English" country="Kenya"/>
@@ -1007,6 +1164,9 @@
             </item>
             <item>
              <widget class="QGroupBox" name="groupBox_2">
+              <property name="styleSheet">
+               <string notr="true">border: 1px solid #F05542;</string>
+              </property>
               <property name="title">
                <string>Elementary operations</string>
               </property>
@@ -1024,6 +1184,9 @@
                  </property>
                  <item>
                   <widget class="QLabel" name="label">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
                    <property name="text">
                     <string>Gamma</string>
                    </property>
@@ -1031,6 +1194,9 @@
                  </item>
                  <item>
                   <widget class="QSlider" name="gamma">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
                    <property name="maximum">
                     <number>3000</number>
                    </property>
@@ -1057,6 +1223,9 @@
                  </property>
                  <item>
                   <widget class="QLabel" name="label_2">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;</string>
+                   </property>
                    <property name="text">
                     <string>Input const</string>
                    </property>
@@ -1064,6 +1233,9 @@
                  </item>
                  <item>
                   <widget class="QDoubleSpinBox" name="const_2">
+                   <property name="styleSheet">
+                    <string notr="true">border:1px solid #F05542;</string>
+                   </property>
                    <property name="decimals">
                     <number>3</number>
                    </property>
@@ -1148,11 +1320,7 @@
                </item>
               </layout>
               <zorder>btnPlus</zorder>
-              <zorder>btnPlus</zorder>
-              <zorder>btnPlus</zorder>
               <zorder>btnSubstract</zorder>
-              <zorder>horizontalLayoutWidget_2</zorder>
-              <zorder>horizontalLayoutWidget</zorder>
              </widget>
             </item>
            </layout>
@@ -1168,6 +1336,9 @@
           <width>1200</width>
           <height>1000</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -1430,12 +1601,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>284</y>
+     <x>183</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
-     <x>103</x>
-     <y>266</y>
+     <x>125</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -1450,8 +1621,8 @@
      <y>528</y>
     </hint>
     <hint type="destinationlabel">
-     <x>133</x>
-     <y>505</y>
+     <x>155</x>
+     <y>500</y>
     </hint>
    </hints>
   </connection>

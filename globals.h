@@ -38,7 +38,7 @@ extern int sizeList;
 extern int numberSigma;
 
 // Arreglo que contiene los valores del histograma
-extern int histogramaT[];
+extern double histogramaT[];
 extern int histogramaR[];
 extern int histogramaG[];
 extern int histogramaB[];
@@ -48,5 +48,8 @@ extern int selectChannelHistograma;
 
 // variable que me almacena la constante para poder aplicar las operaciones elementales del histograma
 extern double numberOperationsHistograma;
+
+// variable que almacena el tamaño de la imagen
+extern int sizeImage;
 
 #endif // GLOBALS_H

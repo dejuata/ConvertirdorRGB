@@ -16,7 +16,7 @@ int selectChannelHistograma = 0;
 double numberOperationsHistograma = 0;
 
 // Defino el tamaño del histograma
-int histogramaT[256];
+double histogramaT[256];
 int histogramaR[256];
 int histogramaG[256];
 int histogramaB[256];
@@ -184,7 +184,7 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, 
     {
         if(spaceColor == 0)
         {
-            histogramaT[i] = histogramaR[i] + histogramaG[i] + histogramaB[i];
+            histogramaT[i] = histogramaR[i];
             *series0 << QPointF(i, histogramaT[i]);
         }
         if(spaceColor == 1)
@@ -240,7 +240,9 @@ void MainWindow::show_Label_Image_Hide_Histograma(int index)
     ui->histograma->hide();
     ui->origin->show();
     ui->selectChannelHistograma->setCurrentIndex(index);
+    render_Histograma_Min_Or_Max(false);
 }
+
 
 void MainWindow::render_Histograma_Min_Or_Max(bool maximum)
 {

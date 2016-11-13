@@ -15,6 +15,7 @@
 using namespace QtConcurrent;
 using namespace std;
 
+// Kernel por default
 QString stringAverage = "1 1 1 1 1 1 1 1 1";
 QString stringGaussiano = "1 2 1 2 4 2 1 2 1";
 QString stringSobelOnX = "-1 -2 -1 0 0 0 1 2 1";
@@ -23,7 +24,6 @@ QString stringRobertOnX = "0 1 -1 0";
 QString stringRobertOnY = "-1 0 0 1";
 QString stringPrewittOnX = "1 1 1 0 0 0 -1 -1 -1";
 QString stringPrewittOnY = "1 0 -1 1 0 -1 1 0 -1";
-
 
 QStringList listAverage = stringAverage.split(' ');
 QStringList listGaussiano = stringGaussiano.split(' ');
@@ -105,6 +105,7 @@ int numberDivisorIfAverageOrGaussiano(int sizeKernel, QString typeFilter)
     }
     return average;
 }
+
 /* Funcion para el filtro promedio, recibe como parametro la imagen, y un entero que define
  * con que kernel voy a trabajar, es decir si sizeKernel == 5 entonces el kernel con el
  * que se trabaja es el KernelFive definido anteriormente
@@ -698,48 +699,42 @@ QImage highPass(QImage image, int flagSobel)
     }
     return result;
 }
-QImage filterSobelOrRobert(QImage image, int firstFlag, int secondFlang, int threshold = 0)
-{    
-    int r,g,b;
-    QRgb value;
-    //QRgb thres = qRgb(threshold,threshold,threshold);
-    QImage imageX = run(highPass, image, firstFlag).result();
-    QImage imageY = run(highPass, image, secondFlang).result();
 
-    for (int i = 0; i < image.width(); i++)
-    {
-        for (int j = 0; j < image.height(); j++)
-        {
+//QImage filterSobelOrRobert(QImage image, int firstFlag, int secondFlang, int threshold = 0)
+//{
+//    // int r,g,b;
+//    QRgb value;
+//    //QRgb thres = qRgb(threshold,threshold,threshold);
+//    QImage imageX = run(highPass, image, firstFlag).result();
+//    QImage imageY = run(highPass, image, secondFlang).result();
+
+//    for (int i = 0; i < image.width(); i++)
+//    {
+//        for (int j = 0; j < image.height(); j++)
+//        {
 //            value = imageX.pixel(i,j) + imageY.pixel(i,j);
-//            value = value < thres ? value : qRgb(255,255,255);
-            r = QColor(imageX.pixel(i,j)).red() + QColor(imageY.pixel(i,j)).red();
-            g = QColor(imageX.pixel(i,j)).green() + QColor(imageY.pixel(i,j)).green();
-            b = QColor(imageX.pixel(i,j)).blue() + QColor(imageY.pixel(i,j)).blue();
-            value = qRgb(r,g,b);
-            image.setPixelColor(i,j,value);
-        }
-    }
-    return image;
+////            value = value < thres ? value : qRgb(255,255,255);
+////            r = QColor(imageX.pixel(i,j)).red() + QColor(imageY.pixel(i,j)).red();
+////            g = QColor(imageX.pixel(i,j)).green() + QColor(imageY.pixel(i,j)).green();
+////            b = QColor(imageX.pixel(i,j)).blue() + QColor(imageY.pixel(i,j)).blue();
+////            value = qRgb(r,g,b);
+//            image.setPixelColor(i,j,value);
+//        }
+//    }
+//    return image;
 
-}
-QImage filterSobel(QImage image, int threshold)
+//}
+
+QImage filterSobel(QImage image, int threshold, bool background = true)
 {
     int mitad,mm,nn,ii,jj,sizeKernel = 3;
-    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;
+    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;       
     QImage result = image;
     QRgb value;
     mitad = sizeKernel / 2;
 
-    int arrayX[3][3] = {
-                        {1,2,1},
-                        {0,0,0},
-                        {-1,-2,-1}
-                       };
-    int arrayY[3][3] = {
-                        {1,0,-1},
-                        {2,0,-2},
-                        {1,0,-1}
-                       };
+    int arrayX[3][3] = {{1,2,1},{0,0,0},{-1,-2,-1}};
+    int arrayY[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
 
     // Filas
     for (int i = 0; i < image.width(); i++)
@@ -775,34 +770,37 @@ QImage filterSobel(QImage image, int threshold)
                         y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
                         y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
 
-                        xy1 = (x1 + y1) > threshold ? 0 : x1+y1;
-                        xy2 = (x2 + y2) > threshold ? 0 : x2+y2;
-                        xy3 = (x3 + y3) > threshold ? 0 : x3+y3;
+                        if(background)
+                        {
+                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 0 : 255;
+                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 0 : 255;
+                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 0 : 255;
+                        }
+                        else
+                        {
+                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 255 : 0;
+                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 255 : 0;
+                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 255 : 0;
+                        }
                     }
                 }
             }
-            value = qRgb(fabs(xy1),fabs(xy2),fabs(xy3));
+            value = qRgb(xy1,xy2,xy3);
             result.setPixelColor(i,j,value);
         }
     }
     return result;
 }
-QImage filterRobert(QImage image)
+QImage filterRobert(QImage image, int threshold , bool background = true)
 {
     int mitad,mm,nn,ii,jj,sizeKernel = 2;
-    int x1,x2,x3,y1,y2,y3;
+    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;
     QImage result = image;
     QRgb value;
     mitad = sizeKernel / 2;
 
-    int arrayX[2][2] = {
-                        {0,1},
-                        {-1,0}
-                       };
-    int arrayY[2][2] = {
-                        {-1,0},
-                        {0,1}
-                       };
+    int arrayX[2][2] = {{0,1},{-1,0}};
+    int arrayY[2][2] = {{-1,0},{0,1}};
 
     // Filas
     for (int i = 0; i < image.width(); i++)
@@ -837,33 +835,38 @@ QImage filterRobert(QImage image)
                         y1 += QColor(image.pixel(ii,jj)).red() * arrayY[mm][nn];
                         y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
                         y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
+
+                        if(background)
+                        {
+                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 0 : 255;
+                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 0 : 255;
+                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 0 : 255;
+                        }
+                        else
+                        {
+                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 255 : 0;
+                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 255 : 0;
+                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 255 : 0;
+                        }
                     }
                 }
             }
-            value = qRgb(fabs(x1) + fabs(y1),fabs(x2) + fabs(y2),fabs(x3) + fabs(y3));
+            value = qRgb(xy1,xy2,xy3);
             result.setPixelColor(i,j,value);
         }
     }
     return result;
 }
-QImage filterPrewitt(QImage image)
+QImage filterPrewitt(QImage image, int threshold , bool background = true)
 {
     int mitad,mm,nn,ii,jj,sizeKernel = 3;
-    int x1,x2,x3,y1,y2,y3;
+    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;
     QImage result = image;
     QRgb value;
     mitad = sizeKernel / 2;
 
-    int arrayX[3][3] = {
-                        {1,1,1},
-                        {0,0,0},
-                        {-1,-1,-1}
-                       };
-    int arrayY[3][3] = {
-                        {1,0,-1},
-                        {1,0,-1},
-                        {1,0,-1}
-                       };
+    int arrayX[3][3] = {{1,1,1},{0,0,0},{-1,-1,-1}};
+    int arrayY[3][3] = {{1,0,-1},{1,0,-1},{1,0,-1}};
 
     // Filas
     for (int i = 0; i < image.width(); i++)
@@ -898,10 +901,23 @@ QImage filterPrewitt(QImage image)
                         y1 += QColor(image.pixel(ii,jj)).red() * arrayY[mm][nn];
                         y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
                         y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
+
+                        if(background)
+                        {
+                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 0 : 255;
+                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 0 : 255;
+                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 0 : 255;
+                        }
+                        else
+                        {
+                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 255 : 0;
+                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 255 : 0;
+                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 255 : 0;
+                        }
                     }
                 }
             }
-            value = qRgb(fabs(x1) + fabs(y1),fabs(x2) + fabs(y2),fabs(x3) + fabs(y3));
+            value = qRgb(xy1,xy2,xy3);
             result.setPixelColor(i,j,value);
         }
     }
