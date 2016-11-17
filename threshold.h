@@ -8,7 +8,7 @@
 #include <QDebug>
 #include "globals.h"
 
-#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
+//#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
 using namespace QtConcurrent;
 
@@ -143,6 +143,16 @@ int thresholdOtsu()
     }
 
     return threshold;
+}
+void thresholdIsodata()
+{
+    calculateWeight();
+
+    for(int i = 0; i < lengthArray(histogramaT); i++ )
+    {
+//        qDebug()<<"W1:"<<weightBack[i]<<"W2: "<<weightFore[i]<<"WF: "<<(weightBack[i] + weightFore[i])/2;
+    }
+
 }
 
 #endif // THRESHOLD_H

@@ -22,19 +22,27 @@ void MainWindow::clear_Label_Miniature_Image()
 void MainWindow::render_Miniature_Image(bool NoGrayscale)
 {
     ui->before->setPixmap(QPixmap::fromImage(imageT));
+
     if(NoGrayscale)
     {
         ui->r->setPixmap(QPixmap::fromImage(imageR));
         ui->g->setPixmap(QPixmap::fromImage(imageG));
         ui->b->setPixmap(QPixmap::fromImage(imageB));
+
+        ui->btn_one->setEnabled(NoGrayscale);
+        ui->btn_two->setEnabled(NoGrayscale);
+        ui->btn_three->setEnabled(NoGrayscale);
     }
     else
     {
         ui->r->clear();
         ui->g->clear();
         ui->b->clear();
-    }
 
+        ui->btn_one->setEnabled(NoGrayscale);
+        ui->btn_two->setEnabled(NoGrayscale);
+        ui->btn_three->setEnabled(NoGrayscale);
+    }
 }
 /*
  * Funcion para mostrar los textos de la interfaz en zonas como convert y filter, dependiendo
@@ -138,6 +146,7 @@ void MainWindow::futureYYY()
     imageR = futureT.result();
     imageG = futureT.result();
     imageB = futureT.result();
+
 }
 void MainWindow::futureYUV()
 {
@@ -224,7 +233,59 @@ void MainWindow::futureOOO()
     imageB = futureB.result();
 }
 
+void MainWindow::show_hide_Input_Morphologic(int index)
+{
+    ui->structure->show();
 
+
+    if(index == 0)
+    {
+         ui->structure->hide();
+         clean_Input();
+    }
+    if(index == 1)
+    {
+        clean_Input();
+        ui->e_0_0->hide();ui->e_0_1->hide();ui->e_0_2->hide();ui->e_0_3->hide();ui->e_0_4->hide();
+        ui->e_1_0->hide();ui->e_1_4->hide();
+        ui->e_2_0->hide();ui->e_2_4->hide();
+        ui->e_3_0->hide();ui->e_3_4->hide();
+        ui->e_4_0->hide();ui->e_4_1->hide();ui->e_4_2->hide();ui->e_4_3->hide();ui->e_4_4->hide();
+    }
+    if(index == 2)
+    {
+        clean_Input();
+        ui->e_0_0->show();ui->e_0_1->show();ui->e_0_2->show();ui->e_0_3->show();ui->e_0_4->show();
+        ui->e_1_0->show();ui->e_1_4->show();
+        ui->e_2_0->show();ui->e_2_4->show();
+        ui->e_3_0->show();ui->e_3_4->show();
+        ui->e_4_0->show();ui->e_4_1->show();ui->e_4_2->show();ui->e_4_3->show();ui->e_4_4->show();
+    }
+}
+void MainWindow::clean_Input()
+{
+    ui->e_0_0->clear();ui->e_0_1->clear();ui->e_0_2->clear();ui->e_0_3->clear();ui->e_0_4->clear();
+    ui->e_1_0->clear();ui->e_1_1->clear();ui->e_1_2->clear();ui->e_1_3->clear();ui->e_1_4->clear();
+    ui->e_2_0->clear();ui->e_2_1->clear();ui->e_2_2->clear();ui->e_2_3->clear();ui->e_2_4->clear();
+    ui->e_3_0->clear();ui->e_3_1->clear();ui->e_3_2->clear();ui->e_3_3->clear();ui->e_3_4->clear();
+    ui->e_4_0->clear();ui->e_4_1->clear();ui->e_4_2->clear();ui->e_4_3->clear();ui->e_4_4->clear();
+}
+
+void MainWindow::show_Structure(QStringList lists)
+{
+    clean_Input();
+
+    /*if(ui->sizeEstruc->currentIndex() == 0)
+    {
+        clean_Input();
+    }*/
+    if(ui->sizeEstruc->currentIndex() == 1)
+    {
+        ui->e_1_1->insert(lists[0]);ui->e_1_2->insert(lists[1]);ui->e_1_3->insert(lists[2]);
+        ui->e_2_1->insert(lists[3]);ui->e_2_2->insert(lists[4]);ui->e_2_3->insert(lists[5]);
+        ui->e_3_1->insert(lists[6]);ui->e_3_2->insert(lists[7]);ui->e_3_3->insert(lists[8]);
+    }
+}
 
 
 #endif // RESOURCES_H

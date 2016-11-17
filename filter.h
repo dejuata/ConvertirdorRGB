@@ -1,7 +1,7 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
+
 
 #include <QDebug>
 #include <QColor>

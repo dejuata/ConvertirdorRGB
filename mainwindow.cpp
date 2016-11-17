@@ -7,6 +7,7 @@
 #include "histograma.h"
 #include "resources.h"
 #include "threshold.h"
+#include "morphological.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);    
     ui->histograma->hide();
+    ui->structure->hide();
 
 
     this->setWindowState(Qt::WindowMaximized);
@@ -462,16 +464,19 @@ void MainWindow::on_actionChannel_Three_triggered()
 void MainWindow::on_btnAverage_clicked()
 {
     createMatriz(listAverage);
-    ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(*imageLabel, 3, "average")));
+    imageT = filterAverageAndGaussiano(*imageLabel, 3, "average");
+    ui->origin->setPixmap(QPixmap::fromImage(imageT));
 }
 void MainWindow::on_btnGaussiano_clicked()
 {
     createMatriz(listGaussiano);
-    ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(*imageLabel, 3, "gaussiano")));
+    imageT = filterAverageAndGaussiano(*imageLabel, 3, "gaussiano");
+    ui->origin->setPixmap(QPixmap::fromImage(imageT));
 }
 void MainWindow::on_btnMinimum_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(*imageLabel, 0)));
+    imageT = filterMinMedMax(*imageLabel, 0);
+    ui->origin->setPixmap(QPixmap::fromImage(imageT));
 }
 void MainWindow::on_btnMedium_clicked()
 {
@@ -485,6 +490,11 @@ void MainWindow::on_btnSigma_clicked()
 {
      ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
 }
+// retorna el numero sigma que ingresa el usuario
+int MainWindow::sigma()
+{
+    return ui->numberSigma->value();
+}
 void MainWindow::on_sliderSigma_sliderReleased()
 {
     numberSigma = sigma();
@@ -495,12 +505,22 @@ void MainWindow::on_btnNagao_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(filterNagao(*imageLabel)));
 }
-/* Paso alto */
 
+/* Paso alto */
 // Metodo que retorna el valor del threshold del spin box seleccionado por el usuario
 int MainWindow::threshold()
 {
     return ui->threshold->value();
+}
+
+// calcula el threshold con el algoritmo de otsu o isodata
+// dependienda de la opcion del radio button que halla escogido el usuario
+void MainWindow::on_btnThreshold_clicked()
+{
+    int threshold = thresholdOtsu();
+    ui->threshold->setValue(threshold);
+    ui->horizontalSlider->setValue(threshold);
+    thresholdIsodata();
 }
 
 // Metodo que retorna true o false si el fondo es blanco o negro
@@ -508,10 +528,10 @@ bool MainWindow::background()
 {
     return ui->white->isChecked() ? true : false;
 }
-
 void MainWindow::on_btnSobel_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterSobel(*imageLabel, threshold(), background())));
+    imageT = filterSobel(*imageLabel, threshold(), background());
+    ui->origin->setPixmap(QPixmap::fromImage(imageT));
 }
 void MainWindow::on_btnRobert_clicked()
 {
@@ -701,15 +721,52 @@ void MainWindow::on_btnSubstract_clicked()
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
 
-
-
-int MainWindow::sigma()
+/*-----------------------------------------------------------------------------------------------------------/*
+ * Operaciones morfologicas
+ *-----------------------------------------------------------------------------------------------------------*/
+void MainWindow::on_sizeEstruc_currentIndexChanged(int index)
 {
-    return ui->numberSigma->value();
+    //Ocultar las celdas dependiendo del tamaño de kernel que escoja 3x3 5x5
+    show_hide_Input_Morphologic(index);
 }
-
-
-
+void MainWindow::on_optionsEstruc_currentIndexChanged(int index)
+{
+    if(ui->sizeEstruc->currentIndex() == 1 && index > 0)
+    {
+       // selecciono la estructura de un array y la convierto a una lista
+       QStringList listStructure = arrayStructure[index-1].split(' ');
+       // Funcion que muestra en pantalla los datos de la estructura
+       show_Structure(listStructure);
+       // Funcion que rellena una matriz con los valores de la estructura
+       createMatrizStructure(listStructure);
+       // Activo el btnDilation
+       ui->btnDilation->setEnabled(true);
+       ui->btnErosion->setEnabled(true);
+       ui->btnOpening->setEnabled(true);
+       ui->btnClosing->setEnabled(true);
+    }
+}
+void MainWindow::on_btnDilation_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(imageT,true)));
+}
+void MainWindow::on_btnErosion_clicked()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(imageT,false)));
+}
+void MainWindow::on_btnOpening_clicked()
+{
+    QImage opening = dilationOrErosion(imageT,false);
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(opening,true)));
+}
+void MainWindow::on_btnClosing_clicked()
+{
+    QImage closing = dilationOrErosion(imageT,true);
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(closing,false)));
+}
+/*-----------------------------------------------------------------------------------------------------------/*
+ * Fin
+ *-----------------------------------------------------------------------------------------------------------*/
 
 void MainWindow::on_horizontalSlider_sliderReleased()
 {
@@ -721,11 +778,9 @@ void MainWindow::on_horizontalSlider_sliderReleased()
 
 
 
-// calcula el threshold con el algoritmo de otsu o isodata
-// dependienda de la opcion del radio button que halla escogido el usuario
-void MainWindow::on_btnThreshold_clicked()
-{
-    int threshold = thresholdOtsu();
-    ui->threshold->setValue(threshold);
-    ui->horizontalSlider->setValue(threshold);
-}
+
+
+
+
+
+

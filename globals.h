@@ -1,6 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
+
 QT_BEGIN_NAMESPACE
 class QString;
 class QStringList;

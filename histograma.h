@@ -6,7 +6,7 @@
 #include "globals.h"
 #include "math.h"
 
-#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
+//#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
 using namespace QtCharts;
 
@@ -85,7 +85,6 @@ void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
 
     render_Histograma(maximum,color,selectChannel,channel);
 }
-
 
 QImage MainWindow::equalization_Histograma(QImage image, int channel)
 {
@@ -184,7 +183,7 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, 
     {
         if(spaceColor == 0)
         {
-            histogramaT[i] = histogramaR[i];
+            histogramaT[i] = (histogramaR[i] + histogramaG[i] + histogramaB[i])/3;
             *series0 << QPointF(i, histogramaT[i]);
         }
         if(spaceColor == 1)
@@ -233,8 +232,6 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, 
     scene->addItem(chart);
 }
 
-
-
 void MainWindow::show_Label_Image_Hide_Histograma(int index)
 {
     ui->histograma->hide();
@@ -242,7 +239,6 @@ void MainWindow::show_Label_Image_Hide_Histograma(int index)
     ui->selectChannelHistograma->setCurrentIndex(index);
     render_Histograma_Min_Or_Max(false);
 }
-
 
 void MainWindow::render_Histograma_Min_Or_Max(bool maximum)
 {
@@ -263,6 +259,7 @@ void MainWindow::render_Histograma_Min_Or_Max(bool maximum)
         create_Histograma(imageB, selectChannelHistograma, maximum);
     }
 }
+
 
 // Sumar una constante al histograma
 QImage sumConstImage(QImage image, double number, int channel)

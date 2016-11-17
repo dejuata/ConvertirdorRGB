@@ -25,7 +25,8 @@ HEADERS  += mainwindow.h \
     histograma.h \
     convertImage \
     convertImage.h \
-    threshold.h
+    threshold.h \
+    morphological.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

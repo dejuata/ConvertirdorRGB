@@ -143,10 +143,23 @@ private slots:
 
     void on_horizontalSlider_sliderReleased();
 
-
     void on_sliderSigma_sliderReleased();
 
     void on_btnThreshold_clicked();
+
+    void on_btnDilation_clicked();
+
+    void on_sizeEstruc_currentIndexChanged(int index);
+
+    void on_optionsEstruc_currentIndexChanged(int index);
+
+    void on_btnErosion_clicked();
+
+
+
+    void on_btnOpening_clicked();
+
+    void on_btnClosing_clicked();
 
 private:
 
@@ -193,8 +206,18 @@ private:
     // devuelve true o false si el fondo es blanco o negro
     bool background();
 
+    //Funcion para mostrar los QInput de las operaciones morfologicas
+    // dependiendo del tamaño que seleccione el usuario 3x3 5x5
+    void show_hide_Input_Morphologic(int index);
+
+    //Muestra las diferentes estructuras en los inputs
+    void show_Structure(QStringList lists);
+
+    void clean_Input();
 
 };
+
+
 
 
 
