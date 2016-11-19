@@ -5,10 +5,14 @@
 #include "ui_mainwindow.h"
 #include "globals.h"
 #include "math.h"
+#include <algorithm>    // sort
+#include <vector>       // vector
+#include <QtConcurrent>
 
 //#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
 using namespace QtCharts;
+using namespace QtConcurrent;
 
 // Por defecto el histograma muestra un histograma vacio
 int selectChannelHistograma = 0;
@@ -17,9 +21,9 @@ double numberOperationsHistograma = 0;
 
 // Defino el tamaño del histograma
 double histogramaT[256];
-int histogramaR[256];
-int histogramaG[256];
-int histogramaB[256];
+double histogramaR[256];
+double histogramaG[256];
+double histogramaB[256];
 
 QColor selectColorR(QString channel)
 {
@@ -40,12 +44,9 @@ QColor selectColorB(QString channel)
     return color;
 }
 
-
-void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
+// Funcion que creo el histograma para los cuatros canales
+int createHistograma(QImage image)
 {
-    QString selectChannel;
-    QColor color(0,0,0);
-
     // seteo los valores del arreglo con 0
     for(int i = 0; i < lengthArray(histogramaT); i++ )
     {
@@ -54,7 +55,7 @@ void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
 
     // Cuento dependiendo de la posicion del arreglo igual al valor del pixel
     for (int i = 0; i < image.width(); i++)
-    {        
+    {
         for (int j = 0; j < image.height(); j++)
         {
             histogramaR[QColor(image.pixel(i,j)).red()] = histogramaR[QColor(image.pixel(i,j)).red()]++;
@@ -63,29 +64,101 @@ void MainWindow::create_Histograma(QImage image, int channel, bool maximum)
         }
     }
 
-    if(channel == 0)
+    // Creo el histogramaT sumando y diviendo por 3
+    for (int i = 0; i < lengthArray(histogramaT); i++)
     {
-        selectChannel = "Histograma Promedio";
-    }
-    if(channel == 1)
-    {
-        selectChannel = channelR;
-        color = selectColorR(channelR);
-    }
-    if(channel == 2)
-    {
-        selectChannel = channelG;
-        color = selectColorG(channelG);
-    }
-    if(channel == 3)
-    {
-        selectChannel = channelB;
-        color = selectColorB(channelB);
+        histogramaT[i] = (histogramaR[i] + histogramaG[i] + histogramaB[i])/3;
     }
 
-    render_Histograma(maximum,color,selectChannel,channel);
+    return 0;
 }
 
+// Funcion que renderiza el histograma dependiendo del canal
+void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, int spaceColor)
+{
+    scene = new QGraphicsScene(this);
+
+    if(maximum)
+    {
+        ui->histograma->setScene(scene);
+    }
+    else{
+        ui->minHistograma->setScene(scene);
+    }
+
+    QLineSeries *series0 = new QLineSeries();
+
+    // recorro el arreglo para enviar los valores a la grafica
+    for(int i = 0; i < lengthArray(histogramaT); i++ )
+    {
+        if(spaceColor == 0)*series0 << QPointF(i, histogramaT[i]);
+
+        if(spaceColor == 1)*series0 << QPointF(i, histogramaR[i]);
+
+        if(spaceColor == 2)*series0 << QPointF(i, histogramaG[i]);
+
+        if(spaceColor == 3)*series0 << QPointF(i, histogramaB[i]);
+    }
+
+    QAreaSeries *series = new QAreaSeries(series0);
+
+    if (channel == "Histograma Promedio")
+    {
+        series->setName(channel);
+    }
+    else
+    {
+        series->setName(channel);
+    }
+
+    QPen penR(color);
+    QBrush BrushR(color);
+    penR.setWidth(2);
+    series->setPen(penR);
+    series->setBrush(BrushR);
+
+
+    chart = new QChart();
+    chart->addSeries(series);
+    chart->legend()->hide();
+
+    if(maximum)
+    {
+        chart->createDefaultAxes();
+        chart->legend()->show();
+        chart->setAcceptHoverEvents(true);
+        chart->resize(1000,600);        
+    }
+
+    scene->addItem(chart);
+}
+
+void normalizeHistograma()
+{
+    double maxR, maxG, maxB;
+
+    // transformo el array a vector
+    vector<double> vectorR (histogramaR, histogramaR+256);
+    vector<double> vectorG (histogramaG, histogramaG+256);
+    vector<double> vectorB (histogramaB, histogramaB+256);
+
+    // Ordeno los vectores para sacar el numero maximo
+    sort (vectorR.begin(), vectorR.begin()+256);
+    sort (vectorG.begin(), vectorG.begin()+256);
+    sort (vectorB.begin(), vectorB.begin()+256);
+
+    // Almaceno los valores maximos para cada canal
+    maxR = vectorR[255], maxG = vectorG[255], maxB = vectorB[255];
+
+    for (int i = 0; i < lengthArray(histogramaT); i++)
+    {
+        histogramaR[i] = histogramaR[i] / maxR;
+        histogramaG[i] = histogramaG[i] / maxG;
+        histogramaB[i] = histogramaB[i] / maxB;
+    }
+}
+
+// Funcion que retorna una imagen equalizada dependiendo del canal
 QImage MainWindow::equalization_Histograma(QImage image, int channel)
 {
     int newR = 0, newG = 0, newB = 0, r = 0, g = 0, b = 0, sumR = 0, sumG = 0, sumB = 0;
@@ -164,104 +237,39 @@ QImage MainWindow::equalization_Histograma(QImage image, int channel)
     return result;
 }
 
-void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, int spaceColor)
+// Funcion que actua como tercero para renderizar el canal y controla algunos
+// datos como el tamaño, el nombre y el color con el cual quiero que se pinte el histograma
+void MainWindow::render_Histograma_Min_Or_Max(bool maximum, int spaceColor)
 {
-    scene = new QGraphicsScene(this);
+    QString channel;
+    QColor color(0,0,0);
 
-    if(maximum)
-    {
-        ui->histograma->setScene(scene);
-    }
-    else{
-        ui->minHistograma->setScene(scene);
-    }
+    if(channel == 0)channel = "Histograma Promedio";
 
-    QLineSeries *series0 = new QLineSeries();
+    if(spaceColor == 1){channel = channelR;color = selectColorR(channelR);}
 
-    // recorro el arreglo para enviar los valores a la grafica
-    for(int i = 0; i < lengthArray(histogramaT); i++ )
-    {
-        if(spaceColor == 0)
-        {
-            histogramaT[i] = (histogramaR[i] + histogramaG[i] + histogramaB[i])/3;
-            *series0 << QPointF(i, histogramaT[i]);
-        }
-        if(spaceColor == 1)
-        {
-            *series0 << QPointF(i, histogramaR[i]);
-        }
-        if(spaceColor == 2)
-        {
-            *series0 << QPointF(i, histogramaG[i]);
-        }
-        if(spaceColor == 3)
-        {
-            *series0 << QPointF(i, histogramaB[i]);
-        }
-    }
+    if(spaceColor == 2){channel = channelG;color = selectColorG(channelG);}
 
-    QAreaSeries *series = new QAreaSeries(series0);
+    if(spaceColor == 3){channel = channelB;color = selectColorB(channelB);}
 
-    if (channel == "Histograma Promedio")
-    {
-        series->setName(channel);
-    }
-    else
-    {
-        series->setName(channel);
-    }
-
-    QPen penR(color);
-    QBrush BrushR(color);
-    penR.setWidth(2);
-    series->setPen(penR);
-    series->setBrush(BrushR);
-
-    chart = new QChart();
-    chart->addSeries(series);
-    chart->legend()->hide();
-
-    if(maximum)
-    {
-        chart->createDefaultAxes();
-        chart->legend()->show();
-        chart->setAcceptHoverEvents(true);
-        chart->resize(1000,600);
-    }
-
-    scene->addItem(chart);
+    render_Histograma(maximum, color, channel, spaceColor);
 }
 
+// Funcion que se llama cuando se da clic al boton de una image y lo que hace es que oculta
+// el QGraphisScene del histograma, muestra el label de la imagen, actualiza el combox de seleccion
+// del histograma de la pestaña histograma y pinta un histograma por defecto
 void MainWindow::show_Label_Image_Hide_Histograma(int index)
 {
     ui->histograma->hide();
     ui->origin->show();
     ui->selectChannelHistograma->setCurrentIndex(index);
-    render_Histograma_Min_Or_Max(false);
-}
-
-void MainWindow::render_Histograma_Min_Or_Max(bool maximum)
-{
-    if(selectChannelHistograma == 0)
-    {
-        create_Histograma(imageT, selectChannelHistograma, maximum);
-    }
-    if(selectChannelHistograma == 1)
-    {
-        create_Histograma(imageR, selectChannelHistograma, maximum);
-    }
-    if(selectChannelHistograma == 2)
-    {
-        create_Histograma(imageG, selectChannelHistograma, maximum);
-    }
-    if(selectChannelHistograma == 3)
-    {
-        create_Histograma(imageB, selectChannelHistograma, maximum);
-    }
+    // Llamo este metodo para cuando se haga una transformacion de color
+    // por defecto se muestre algo en el histograma miniatura
+    render_Histograma_Min_Or_Max(false,index);
 }
 
 
-// Sumar una constante al histograma
+/************************ Operaciones con histograma *************************/
 QImage sumConstImage(QImage image, double number, int channel)
 {
     int r,g,b;
@@ -304,7 +312,6 @@ QImage sumConstImage(QImage image, double number, int channel)
     }
     return image;
 }
-
 QImage susbtractConstImage(QImage image, double number, int channel)
 {
     int r,g,b;
@@ -347,7 +354,6 @@ QImage susbtractConstImage(QImage image, double number, int channel)
     }
     return image;
 }
-
 QImage gammaConstImage(QImage image, double number, int channel)
 {
     int r,g,b;

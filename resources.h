@@ -6,7 +6,49 @@
 #include "globals.h"
 
 using namespace QtConcurrent;
+//Resize a la imagen original
+QSize resizeImage(int width, int height)
+{
+    width = width/2;
+    height = height/2;
 
+    return QSize(width,height);
+}
+
+// Funcion que valida que la imagen cargada no sea nula y si es falso ejecuta una serie de funciones
+void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, int spaceColor)
+{
+    if (image.isNull())
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+        return;
+    }
+    else
+    {
+        // Variable que almacena el nombre de los canales para poder mostrarlos en el histograma
+        channelR = r, channelG = g, channelB = b;
+
+        // Funcion que selecciona que transformacion de color voy a realizar
+        select_Space_Colors_Convert(spaceColor);//converitr imagenes
+
+        //Funcion que crea el histograma para los cuatro canales
+        run(createHistograma,imageT).result();
+
+        // Funcion que muestra las imagenes convertidas en miniatura
+        if(spaceColor == 1){render_Miniature_Image(false);}
+        else{render_Miniature_Image(true);}
+
+        // Muestra en el label principal la imagen original por defecto
+        ui->origin->setPixmap(QPixmap::fromImage(image));
+
+        // Muestra en los botones de las imagenes miniaturas, las iniciales de los espacio de color
+        if(spaceColor == 8){show_Text_UI(r.mid(0,2),g.mid(0,2),b.mid(0,2));}
+        else{show_Text_UI(r.mid(0,1),g.mid(0,1),b.mid(0,1));}
+
+        // Muestra el histograma promedio por defecto
+        show_Label_Image_Hide_Histograma(0);
+    }
+}
 // Funcion para limpiar labels cuando se desea cambiar la imagen a procesar
 void MainWindow::clear_Label_Miniature_Image()
 {
@@ -16,12 +58,24 @@ void MainWindow::clear_Label_Miniature_Image()
     ui->b->clear();
 }
 
+// funcion para mostra la imagen en el label origin al igual que almacenar las imagenes en el puntero
+// para trabajar con ellas
+void MainWindow::show_Image_In_Label(QImage &image, int channel)
+{
+    // Almaceno en un puntero la imagen que selecciona el usuario para poder aplicar las diferentes operaciones
+    imageLabel = &image;
+    // Muestra la imagen en el Label
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    // Crea y muestra el histograma dependiendo del canal seleccionado
+    // 0 -> T / 1 -> R / 2 -> G / 3 -> B
+    show_Label_Image_Hide_Histograma(channel);
+}
 /*
  * Funcion para renderizar las imagenes procesadas en miniatura
  */
 void MainWindow::render_Miniature_Image(bool NoGrayscale)
 {
-    ui->before->setPixmap(QPixmap::fromImage(imageT));
+    ui->before->setPixmap(QPixmap::fromImage(imageT));    
 
     if(NoGrayscale)
     {
@@ -126,112 +180,72 @@ void MainWindow::action_Filter_Select(QImage image)
     }
 }
 // Funciones para procesar las conversiones en diferentes hilos
-void MainWindow::futureRGB()
+void MainWindow::select_Space_Colors_Convert(int index)
 {
-    futureT = run(convertToRGB,image,'a');
-    futureR = run(convertToRGB,image,'r');
-    futureG = run(convertToRGB,image,'g');
-    futureB = run(convertToRGB,image,'b');
+    switch(index)
+    {
+        case 0:
+        {
+            futureT = run(convertToRGB,image,'a');futureR = run(convertToRGB,image,'r');
+            futureG = run(convertToRGB,image,'g');futureB = run(convertToRGB,image,'b');
+        }
+        break;
+        case 1:
+        {
+            futureT = run(convertToYYY,image);futureR = futureT;futureG = futureT;futureB = futureT;
+        }
+        break;
+        case 2:
+        {
+            futureT = run(convertToYUV,image,'a');futureR = run(convertToYUV,image,'y');
+            futureG = run(convertToYUV,image,'u');futureB = run(convertToYUV,image,'v');
+        }
+        break;
+        case 3:
+        {
+            futureT = run(convertToYIQ,image,'a');futureR = run(convertToYIQ,image,'y');
+            futureG = run(convertToYIQ,image,'i');futureB = run(convertToYIQ,image,'q');
+        }
+        break;
+        case 4:
+        {
+            futureT = run(convertToCMY,image,'a');futureR = run(convertToCMY,image,'c');
+            futureG = run(convertToCMY,image,'m');futureB = run(convertToCMY,image,'y');
+        }
+        break;
+        case 5:
+        {
+            futureT = run(convertToHSV,image,'a');futureR = run(convertToHSV,image,'h');
+            futureG = run(convertToHSV,image,'s');futureB = run(convertToHSV,image,'v');
+        }
+        break;
+        case 6:
+        {
+            futureT = run(convertToHSL,image,'a');futureR = run(convertToHSL,image,'h');
+            futureG = run(convertToHSL,image,'s');futureB = run(convertToHSL,image,'l');
+        }
+        break;
+        case 7:
+        {
+            futureT = run(convertToXYZ,image,'a');futureR = run(convertToXYZ,image,'x');
+            futureG = run(convertToXYZ,image,'y');futureB = run(convertToXYZ,image,'z');
+        }
+        break;
+        case 8:
+        {
+            futureT = run(convertToOOO,image,'a');futureR = run(convertToOOO,image,'x');
+            futureG = run(convertToOOO,image,'y');futureB = run(convertToOOO,image,'z');
+        }
+        break;
 
+        default: qDebug()<< "Usted ha ingresado una opción incorrecta";
+    }
     imageT = futureT.result();
     imageR = futureR.result();
     imageG = futureG.result();
     imageB = futureB.result();
 }
-void MainWindow::futureYYY()
-{
-    futureT = run(convertToYYY,image);
 
-    imageT = futureT.result();
-    imageR = futureT.result();
-    imageG = futureT.result();
-    imageB = futureT.result();
-
-}
-void MainWindow::futureYUV()
-{
-    futureT = run(convertToYUV,image,'a');
-    futureR = run(convertToYUV,image,'y');
-    futureG = run(convertToYUV,image,'u');
-    futureB = run(convertToYUV,image,'v');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
-void MainWindow::futureYIQ()
-{
-    futureT = run(convertToYIQ,image,'a');
-    futureR = run(convertToYIQ,image,'y');
-    futureG = run(convertToYIQ,image,'i');
-    futureB = run(convertToYIQ,image,'q');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
-void MainWindow::futureCMY()
-{
-    futureT = run(convertToCMY,image,'a');
-    futureR = run(convertToCMY,image,'c');
-    futureG = run(convertToCMY,image,'m');
-    futureB = run(convertToCMY,image,'y');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
-void MainWindow::futureHSV()
-{
-    futureT = run(convertToHSV,image,'a');
-    futureR = run(convertToHSV,image,'h');
-    futureG = run(convertToHSV,image,'s');
-    futureB = run(convertToHSV,image,'v');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
-void MainWindow::futureHSL()
-{
-    futureT = run(convertToHSL,image,'a');
-    futureR = run(convertToHSL,image,'h');
-    futureG = run(convertToHSL,image,'s');
-    futureB = run(convertToHSL,image,'l');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
-void MainWindow::futureXYZ()
-{
-    futureT = run(convertToXYZ,image,'a');
-    futureR = run(convertToXYZ,image,'x');
-    futureG = run(convertToXYZ,image,'y');
-    futureB = run(convertToXYZ,image,'z');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
-void MainWindow::futureOOO()
-{
-    futureT = run(convertToOOO,image,'a');
-    futureR = run(convertToOOO,image,'x');
-    futureG = run(convertToOOO,image,'y');
-    futureB = run(convertToOOO,image,'z');
-
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
-}
 
 void MainWindow::show_hide_Input_Morphologic(int index)
 {

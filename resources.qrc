@@ -14,6 +14,10 @@
         <file>img/prewitt.ico</file>
         <file>img/roberts.ico</file>
         <file>img/sobel.ico</file>
+        <file>img/closing.ico</file>
+        <file>img/opening.ico</file>
+        <file>img/dilation.ico</file>
+        <file>img/erosion.ico</file>
     </qresource>
     <qresource prefix="/filters">
         <file>Filters/3x3.txt</file>

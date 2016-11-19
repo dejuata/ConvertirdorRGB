@@ -11,6 +11,7 @@
 
 using namespace std;
 
+
 // variable para almacenar el tamaño de la imagen, este valor cambia cuando cargo la imagen
 int sizeImage = 0;
 
@@ -36,14 +37,25 @@ void MainWindow::on_actionOpen_triggered()
 {
    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
 
-   image.load(file);
-   // convertir la imagen a formato rgb 8 bits;
-   image = image.convertToFormat(QImage::Format_RGB888);
-   imageLabel = &image;
+   origin.load(file);
 
+   if(origin.width() >= 3000)
+   {
+       image = origin.scaled(resizeImage(origin.width(),origin.height()),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+   }
+   else
+   {
+       image = origin;
+   }
+
+   // convertir la imagen a formato rgb 8 bits;
+   //image = image.convertToFormat(QImage::Format_RGB888);
+   /************************************/
+   //imageLabel = image;
+   /************************************/
    if (!file.isEmpty())
    {
-       if (!image.load(file))
+       if (!origin.load(file))
        {
            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
            return;
@@ -56,7 +68,7 @@ void MainWindow::on_actionOpen_triggered()
     // Funcion que limpia los label cada vez que se abre una nueva imagen
     clear_Label_Miniature_Image();
 
-    qDebug()<<image.isGrayscale();
+    //qDebug()<<image.isGrayscale();
 
     // almaceno el tamaño de la imagen en una variable global para poder usarla en el algoritmo de otsu
     sizeImage = image.width() * image.height();
@@ -74,7 +86,7 @@ void MainWindow::on_actionSave_triggered()
             return;
         }
         imageT.save(fileName);
-     }
+    }
 }
 
 /*-----------------------------------------------------------------------------------------------------------/*
@@ -82,176 +94,39 @@ void MainWindow::on_actionSave_triggered()
  *-----------------------------------------------------------------------------------------------------------*/
 void MainWindow::on_actionRGB_to_RGB_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        /* Renderizo imagenes en label miniatura, ademas las almaceno en variables globales
-         * para poderlas renderizar en el label origin ademas de que se puedan enviar como parametros
-         * a distintas funciones
-         */
-        channelR = "Red", channelG = "Green", channelB = "Blue";
-
-        futureRGB();
-
-        render_Miniature_Image();
-        show_Text_UI("R","G","B");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("Red","Green","Blue",0);
 }
 void MainWindow::on_actionRGB_to_YYY_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "Red", channelG = "Green", channelB = "Blue";
-
-        futureYYY();
-
-        render_Miniature_Image(false);
-        show_Text_UI("Y","Y","Y");
-        show_Label_Image_Hide_Histograma(0);
-    }
+   convert_Image_To_Space_Color("Y","Y","Y",1);
 }
 void MainWindow::on_actionRGB_to_YUV_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "Y", channelG = "U", channelB = "V";
-
-        // Renderizo imagenes en label
-        futureYUV();
-
-        render_Miniature_Image();
-        show_Text_UI("Y","U","V");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("Y","U","V",2);
 }
 void MainWindow::on_actionRGB_to_YIQ_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "Y", channelG = "I", channelB = "Q";
-
-        // Renderizo imagenes en label
-        futureYIQ();
-
-        render_Miniature_Image();
-        show_Text_UI("Y","I","Q");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("Y","I","Q",3);
 }
 void MainWindow::on_actionRGB_to_CMY_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "Cyan", channelG = "Magenta", channelB = "Yellow";
-
-        // Renderizo imagenes en label
-        futureCMY();
-
-        render_Miniature_Image();
-        show_Text_UI("C","M","Y");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("Cyan","Magenta","Yellow",4);
 }
 void MainWindow::on_actionRGB_to_HSV_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "Hue", channelG = "Saturation", channelB = "Value";
-
-        // Renderizo imagenes en label
-        futureHSV();
-
-        render_Miniature_Image();
-        show_Text_UI("H","S","V");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("Hue","Saturation","Value",5);
 }
 void MainWindow::on_actionRGB_to_HSL_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "Hue", channelG = "Saturation", channelB = "Ligntness";
-
-        // Renderizo imagenes en label
-        futureHSL();
-
-        render_Miniature_Image();
-        show_Text_UI("H","S","L");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("Hue","Saturation","Ligntness",6);
 }
 void MainWindow::on_actionRGB_to_XYZ_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "X", channelG = "Y", channelB = "Z";
-
-        // Renderizo imagenes en label
-        futureXYZ();
-
-        render_Miniature_Image();
-        show_Text_UI("X","Y","Z");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("X","Y","Z",7);
 }
 void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 {
-    if (image.isNull())
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-        return;
-    }
-    else
-    {
-        channelR = "O1", channelG = "O2", channelB = "O3";
-
-        // Ejecuto las funciones de procesamiento para cada canal en un hilo respectivo
-        futureOOO();
-
-        render_Miniature_Image();
-        show_Text_UI("O1","O2","O3");
-        show_Label_Image_Hide_Histograma(0);
-    }
+    convert_Image_To_Space_Color("O1","O2","O3",8);
 }
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
@@ -261,35 +136,30 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
  * Muestro la imagen en el label origin (label principal) cada vez que se da clic al btn de la miniatura
  *-----------------------------------------------------------------------------------------------------------*/
 void MainWindow::on_btn_origin_clicked()
-{
+{    
     ui->origin->setPixmap(QPixmap::fromImage(image));
-    // Almaceno en un puntero la imagen que selecciona el usuario para poder aplicar las diferentes operaciones
-    imageLabel = &image;
     show_Label_Image_Hide_Histograma(0);
+    channel = "origin";
 }
 void MainWindow::on_btn_transform_clicked()
-{
-    ui->origin->setPixmap(QPixmap::fromImage(imageT));
-    imageLabel = &imageT;
-    show_Label_Image_Hide_Histograma(0);
+{    
+    show_Image_In_Label(imageT, 0);
+    channel = "t";
 }
 void MainWindow::on_btn_one_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(imageR));
-    imageLabel = &imageR;
-    show_Label_Image_Hide_Histograma(1);
+    show_Image_In_Label(imageR, 1);
+    channel = "r";
 }
 void MainWindow::on_btn_two_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(imageG));
-    imageLabel = &imageG;
-    show_Label_Image_Hide_Histograma(2);
+    show_Image_In_Label(imageG, 2);
+    channel = "g";
 }
 void MainWindow::on_btn_three_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(imageB));
-    imageLabel = &imageB;
-    show_Label_Image_Hide_Histograma(3);
+    show_Image_In_Label(imageB, 3);
+    channel = "b";
 }
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
@@ -460,35 +330,38 @@ void MainWindow::on_actionChannel_Three_triggered()
 /*-----------------------------------------------------------------------------------------------------------/*
  * Filtros configurados como botones
  *-----------------------------------------------------------------------------------------------------------*/
-/* Paso bajo */
+/******************** Paso bajo ********************/
 void MainWindow::on_btnAverage_clicked()
-{
+{    
     createMatriz(listAverage);
-    imageT = filterAverageAndGaussiano(*imageLabel, 3, "average");
-    ui->origin->setPixmap(QPixmap::fromImage(imageT));
+    *imageLabel = filterAverageAndGaussiano(*imageLabel, 3, "average");
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));    
+    render_Miniature_Image();
 }
 void MainWindow::on_btnGaussiano_clicked()
 {
     createMatriz(listGaussiano);
-    imageT = filterAverageAndGaussiano(*imageLabel, 3, "gaussiano");
-    ui->origin->setPixmap(QPixmap::fromImage(imageT));
+    *imageLabel = filterAverageAndGaussiano(*imageLabel, 3, "gaussiano");
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    render_Miniature_Image();
 }
 void MainWindow::on_btnMinimum_clicked()
 {
-    imageT = filterMinMedMax(*imageLabel, 0);
-    ui->origin->setPixmap(QPixmap::fromImage(imageT));
+    *imageLabel = filterMinMedMax(*imageLabel, 0);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    render_Miniature_Image();
 }
 void MainWindow::on_btnMedium_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(*imageLabel, 1)));
+    *imageLabel = filterMinMedMax(*imageLabel, 1);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    render_Miniature_Image();
 }
 void MainWindow::on_btnMaximum_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(*imageLabel, 2)));
-}
-void MainWindow::on_btnSigma_clicked()
-{
-     ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
+    *imageLabel = filterMinMedMax(*imageLabel, 2);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    render_Miniature_Image();
 }
 // retorna el numero sigma que ingresa el usuario
 int MainWindow::sigma()
@@ -497,16 +370,27 @@ int MainWindow::sigma()
 }
 void MainWindow::on_sliderSigma_sliderReleased()
 {
-    numberSigma = sigma();
-    qDebug()<<numberSigma;
+    numberSigma = sigma();    
     ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
+}
+// guardar los cambios de la imagen cuando se escoja un sigma satisfactorio, es decir
+// no se sobreescribe los cambios cada vez que se cambia el sigma, sino que estos se
+// aplican a la imagen original
+void MainWindow::on_btnSigma_clicked()
+{
+    numberSigma = sigma();
+    *imageLabel = filterSigma(*imageLabel,numberSigma);
+    render_Miniature_Image();
 }
 void MainWindow::on_btnNagao_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterNagao(*imageLabel)));
+    *imageLabel = filterNagao(*imageLabel);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    render_Miniature_Image();
 }
+/*********************** Fin ***********************/
 
-/* Paso alto */
+/******************** Paso alto ********************/
 // Metodo que retorna el valor del threshold del spin box seleccionado por el usuario
 int MainWindow::threshold()
 {
@@ -530,17 +414,41 @@ bool MainWindow::background()
 }
 void MainWindow::on_btnSobel_clicked()
 {
-    imageT = filterSobel(*imageLabel, threshold(), background());
-    ui->origin->setPixmap(QPixmap::fromImage(imageT));
+    ui->origin->setPixmap(QPixmap::fromImage(filterSobel(*imageLabel, threshold(), background())));
+    edgeDetection = "Sobel";
 }
 void MainWindow::on_btnRobert_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(filterRobert(*imageLabel, threshold(), background())));
+    edgeDetection = "Robert";
 }
 void MainWindow::on_btnPrewitt_clicked()
 {
     ui->origin->setPixmap(QPixmap::fromImage(filterPrewitt(*imageLabel, threshold(), background())));
+    edgeDetection = "Prewitt";
 }
+// Guardo los cambios de la imagen al aplicar Sobel, Robert o Prewitt
+void MainWindow::on_btnEdgeDetection_clicked()
+{
+    bool grayscale = imageT.isGrayscale();
+
+    if(edgeDetection == "Sobel")
+    {
+        *imageLabel = filterSobel(*imageLabel, threshold(), background());
+        render_Miniature_Image(!grayscale);
+    }
+    if(edgeDetection == "Robert")
+    {
+        *imageLabel = filterRobert(*imageLabel, threshold(), background());
+        render_Miniature_Image(!grayscale);
+    }
+    if(edgeDetection == "Prewitt")
+    {
+        *imageLabel = filterPrewitt(*imageLabel, threshold(), background());
+        render_Miniature_Image(!grayscale);
+    }
+}
+/*********************** Fin ***********************/
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
@@ -553,7 +461,8 @@ void MainWindow::on_btnPrewitt_clicked()
 void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
 {
     selectChannelHistograma = index;
-    render_Histograma_Min_Or_Max(false);
+    // cuando cambia el indice se renderiza el histograma que corresponde a su canal
+    render_Histograma_Min_Or_Max(false,index);
 }
 
 // Metodo que renderiza el histograma en su tamaño maximo al ser clickeado el btn
@@ -561,8 +470,13 @@ void MainWindow::on_btn_histograma_clicked()
 {
     ui->origin->hide();
     ui->histograma->show();
-
-    render_Histograma_Min_Or_Max(true);
+    render_Histograma_Min_Or_Max(true,selectChannelHistograma);
+}
+// Metodo que normaliza el histograma en valores de 0 a 1
+void MainWindow::on_actionNormalizeHistograma_triggered()
+{
+    normalizeHistograma();
+    render_Histograma_Min_Or_Max(true,selectChannelHistograma);
 }
 
 // Metodo que ecualiza el histograma de la imagen dependiendo del valor almacenado
@@ -573,35 +487,35 @@ void MainWindow::on_equalizarHistograma_clicked()
     if(selectChannelHistograma == 0)
     {
         imageT = equalization_Histograma(imageT,selectChannelHistograma);
-        imageLabel = &imageT;
+//        imageLabel = imageT;
     }
     if(selectChannelHistograma == 1)
     {
         imageR = equalization_Histograma(imageR,selectChannelHistograma);
-        imageLabel = &imageR;
+//        imageLabel = imageR;
     }
     if(selectChannelHistograma == 2)
     {
         imageG = equalization_Histograma(imageG,selectChannelHistograma);
-        imageLabel = &imageG;
+//        imageLabel = imageG;
     }
     if(selectChannelHistograma == 3)
     {
         imageB = equalization_Histograma(imageB,selectChannelHistograma);
-        imageLabel = &imageB;
+//        imageLabel = imageB;
     }
 
     // renderizar imagenes en miniatura
     render_Miniature_Image();
 
     // Renderizar la imagen si el histograma cambia, este efecto sucede si el label esta activo -> show()
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
 
     // Crear y mostrar el histograma en el QGraphicsScene Maximum
-    create_Histograma(*imageLabel,selectChannelHistograma,true);
+//    create_Histograma(imageLabel,selectChannelHistograma,true);
 
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
-    create_Histograma(*imageLabel,selectChannelHistograma,false);
+//    create_Histograma(imageLabel,selectChannelHistograma,false);
 }
 
 /* Operaciones con histogramas */
@@ -619,31 +533,31 @@ void MainWindow::on_gamma_sliderReleased()
     if(selectChannelHistograma == 0)
     {
         gamma = gammaConstImage(imageT,numberOperationsHistograma,0);
-        imageLabel = &gamma;
+//        imageLabel = gamma;
     }
     if(selectChannelHistograma == 1)
     {
         gamma = gammaConstImage(imageR,numberOperationsHistograma,1);
-        imageLabel = &gamma;
+//        imageLabel = gamma;
     }
     if(selectChannelHistograma == 2)
     {
         gamma = gammaConstImage(imageG,numberOperationsHistograma,2);
-        imageLabel = &gamma;
+//        imageLabel = gamma;
     }
     if(selectChannelHistograma == 3)
     {
         gamma = gammaConstImage(imageB,numberOperationsHistograma,3);
-        imageLabel = &gamma;
+//        imageLabel = gamma;
     }
 
 
     render_Miniature_Image();
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
     // Crear y mostrar el histograma en el QGraphicsScene Maximum
-    create_Histograma(*imageLabel,selectChannelHistograma,true);
+//    create_Histograma(imageLabel,selectChannelHistograma,true);
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
-    create_Histograma(*imageLabel,selectChannelHistograma,false);
+//    create_Histograma(imageLabel,selectChannelHistograma,false);
 }
 
 // Funcion que suma una constante al histograma
@@ -652,30 +566,30 @@ void MainWindow::on_btnPlus_clicked()
     if(selectChannelHistograma == 0)
     {
         imageT = sumConstImage(imageT,numberOperationsHistograma,0);
-        imageLabel = &imageT;
+//        imageLabel = imageT;
     }
     if(selectChannelHistograma == 1)
     {
         imageR = sumConstImage(imageR,numberOperationsHistograma,1);
-        imageLabel = &imageR;
+//        imageLabel = imageR;
     }
     if(selectChannelHistograma == 2)
     {
         imageG = sumConstImage(imageG,numberOperationsHistograma,2);
-        imageLabel = &imageG;
+//        imageLabel = imageG;
     }
     if(selectChannelHistograma == 3)
     {
         imageB = sumConstImage(imageB,numberOperationsHistograma,3);
-        imageLabel = &imageB;
+//        imageLabel = imageB;
     }
 
     render_Miniature_Image();
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
     // Crear y mostrar el histograma en el QGraphicsScene Maximum
-    create_Histograma(*imageLabel,selectChannelHistograma,true);
+//    create_Histograma(imageLabel,selectChannelHistograma,true);
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
-    create_Histograma(*imageLabel,selectChannelHistograma,false);
+//    create_Histograma(imageLabel,selectChannelHistograma,false);
 }
 
 // Funcion que setea en el spinbox el valor del slider que corresponde al numero gamma
@@ -690,31 +604,31 @@ void MainWindow::on_btnSubstract_clicked()
     if(selectChannelHistograma == 0)
     {
         imageT = susbtractConstImage(imageT,numberOperationsHistograma,0);
-        imageLabel = &imageT;
+//        imageLabel = imageT;
     }
     if(selectChannelHistograma == 1)
     {
         imageR = susbtractConstImage(imageR,numberOperationsHistograma,1);
-        imageLabel = &imageR;
+//        imageLabel = imageR;
     }
     if(selectChannelHistograma == 2)
     {
         imageG = susbtractConstImage(imageG,numberOperationsHistograma,2);
-        imageLabel = &imageG;
+//        imageLabel = imageG;
     }
     if(selectChannelHistograma == 3)
     {
         imageB = susbtractConstImage(imageB,numberOperationsHistograma,3);
-        imageLabel = &imageB;
+//        imageLabel = imageB;
     }
 
 
     render_Miniature_Image();
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
     // Crear y mostrar el histograma en el QGraphicsScene Maximum
-    create_Histograma(*imageLabel,selectChannelHistograma,true);
+//    create_Histograma(imageLabel,selectChannelHistograma,true);
     // Crear y mostrar el histograma en el QGraphicsScene Minimum
-    create_Histograma(*imageLabel,selectChannelHistograma,false);
+//    create_Histograma(imageLabel,selectChannelHistograma,false);
 }
 
 /*-----------------------------------------------------------------------------------------------------------/*
@@ -772,14 +686,6 @@ void MainWindow::on_horizontalSlider_sliderReleased()
 {
    // on_btnSobel_clicked();
 }
-
-
-
-
-
-
-
-
 
 
 

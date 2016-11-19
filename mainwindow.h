@@ -36,16 +36,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QImage origin;
     QImage image;
     QImage imageT;
     QImage imageR;
     QImage imageG;
-    QImage imageB;    
+    QImage imageB;
     QImage *imageLabel;
 
     QString channelR;
     QString channelG;
     QString channelB;
+    QString channel;
+    QString edgeDetection;
 
     QChart *chart;
     QGraphicsScene *scene;
@@ -56,7 +59,10 @@ public:
     QFuture<QImage> futureB;
 
 
-    void show_histograma();
+
+    void show_histograma();//que es esto verificar si puedo eliminarlo
+
+    void render_Histograma(bool maximum,  QColor color, QString channel, int spaceColor);
 
 
     Ui::MainWindow *ui;
@@ -66,6 +72,10 @@ private slots:
     void on_actionOpen_triggered();
 
     void on_actionSave_triggered();
+
+    void convert_Image_To_Space_Color(QString r, QString g, QString b, int spaceColor);
+
+    void select_Space_Colors_Convert(int index);
 
     void on_actionRGB_to_RGB_triggered();
 
@@ -119,9 +129,7 @@ private slots:
 
     void on_btnMedium_clicked();
 
-    void on_btnMaximum_clicked();
-
-    void on_btnSigma_clicked();
+    void on_btnMaximum_clicked();    
 
     void on_btnNagao_clicked();
 
@@ -161,6 +169,12 @@ private slots:
 
     void on_btnClosing_clicked();
 
+    void on_btnSigma_clicked();
+
+    void on_btnEdgeDetection_clicked();
+
+    void on_actionNormalizeHistograma_triggered();
+
 private:
 
     void clear_Label_Miniature_Image();
@@ -171,33 +185,15 @@ private:
 
     void action_Filter_Select(QImage image);
 
-    void create_Histograma(QImage image, int channel, bool maximum);
+    int create_Histograma(QImage image, int channel, bool maximum);
 
     void show_Label_Image_Hide_Histograma(int index);
 
+    void show_Image_In_Label(QImage &image,int channel);
+
+    void render_Histograma_Min_Or_Max(bool maximum, int spaceColor);
+
     QImage equalization_Histograma(QImage image, int channel);
-
-    void render_Histograma(bool maximum,  QColor color, QString channel, int spaceColor);
-
-    void render_Histograma_Min_Or_Max(bool maximum);
-
-    void futureRGB();
-
-    void futureYYY();
-
-    void futureYUV();
-
-    void futureYIQ();
-
-    void futureCMY();
-
-    void futureHSV();
-
-    void futureHSL();
-
-    void futureXYZ();
-
-    void futureOOO();
 
     // metodo que me retorna el valor del threshold
     int threshold();
@@ -216,6 +212,8 @@ private:
     void clean_Input();
 
 };
+
+
 
 
 
