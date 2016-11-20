@@ -1,8 +1,6 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-
-
 #include <QDebug>
 #include <QColor>
 #include <QRgb>
@@ -10,29 +8,25 @@
 #include <algorithm>    // sort
 #include <vector>       // vector
 #include "globals.h"
-#include <QtConcurrent> // ejecutar procesos en hilos generados automaticamente
 
-using namespace QtConcurrent;
 using namespace std;
 
-// Kernel por default
+// Kernel para filtros de paso bajo
 QString stringAverage = "1 1 1 1 1 1 1 1 1";
 QString stringGaussiano = "1 2 1 2 4 2 1 2 1";
-QString stringSobelOnX = "-1 -2 -1 0 0 0 1 2 1";
-QString stringSobelOnY = "-1 0 1 -2 0 2 -1 0 1";
-QString stringRobertOnX = "0 1 -1 0";
-QString stringRobertOnY = "-1 0 0 1";
-QString stringPrewittOnX = "1 1 1 0 0 0 -1 -1 -1";
-QString stringPrewittOnY = "1 0 -1 1 0 -1 1 0 -1";
-
 QStringList listAverage = stringAverage.split(' ');
 QStringList listGaussiano = stringGaussiano.split(' ');
-QStringList listSobelOnX = stringSobelOnX.split(' ');
-QStringList listSobelOnY = stringSobelOnY.split(' ');
-QStringList listRobertOnX = stringRobertOnX.split(' ');
-QStringList listRobertOnY = stringRobertOnY.split(' ');
-QStringList listPrewittOnX = stringPrewittOnX.split(' ');
-QStringList listPrewittOnY = stringPrewittOnY.split(' ');
+
+// Kernel para filtros de paso alto
+int sobelX[3][3] = {{1,2,1},{0,0,0},{-1,-2,-1}};
+int sobelY[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
+int prewittX[3][3] = {{1,1,1},{0,0,0},{-1,-1,-1}};
+int prewittY[3][3] = {{1,0,-1},{1,0,-1},{1,0,-1}};
+// esto kernel son de 2x2 pero los constituyo de 3x3
+// debido a la funcion que los recibe como parametro
+int robertX[3][3] = {{0,1,0},{-1,0,0},{0,0,0}};
+int robertY[3][3] = {{-1,0,0},{0,1,0},{0,0,0}};
+
 
 // Almaceno el tamano del kernel, si es 0 trabaja con el kernel default de [3][3]
 int sizeList = 0;
@@ -51,9 +45,8 @@ int selectFilter = 0;
 // numero sigma por default
 int numberSigma = 5;
 
-/*
- * Funcion para convertir un string a una matriz de 3x3 5x5 7x7 9x9
- */
+
+// Funcion para convertir un string a una matriz de 3x3 5x5 7x7 9x9
 void createMatriz(QStringList list)
 {
     int count = 0, number;
@@ -602,38 +595,21 @@ QImage filterNagao(QImage image)
                 if(arrayVariance[x] == minVariace)index = x;
             }
 
-//            qDebug()<<arrayVariance[0]<<arrayVariance[1]<<arrayVariance[2];
-//            qDebug()<<arrayAverage[0]<<arrayAverage[1]<<arrayAverage[2];
-//            qDebug()<<"varianza1: "<<QColor(varianceOne).red()<<QColor(varianceOne).green()<<QColor(varianceOne).blue();
-//            qDebug()<<"varianza2: "<<QColor(varianceTwo).red()<<QColor(varianceTwo).green()<<QColor(varianceTwo).blue();
-//            qDebug()<<"varianza3: "<<QColor(varianceThree).red()<<QColor(varianceThree).green()<<QColor(varianceThree).blue();
-
-//            qDebug()<<"Minimo: "<<minVariace;
-//            qDebug()<<"Promedio: "<<arrayAverage[index];
-//            qDebug()<<"Suma  "<<rOne<<gOne<<bOne;
-//            qDebug()<<endl;
-
-
-
             result.setPixelColor(i,j,arrayAverage[index]);
         }
     }
     return result;
 }
 
-
 /* Edge Detection*/
-QImage filterSobel(QImage image, int threshold, bool background = true)
+QImage filterEdgeDetection(QImage image, int kernelX[][3], int kernelY[][3] ,int sizeKernel, int threshold, bool background = true)
 {
-    int mitad,mm,nn,ii,jj,sizeKernel = 3;
+    int mitad,mm,nn,ii,jj;
     int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;       
     QImage result = image;
     QRgb value;
     mitad = sizeKernel / 2;
 
-    int arrayX[3][3] = {{1,2,1},{0,0,0},{-1,-2,-1}};
-    int arrayY[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
-
     // Filas
     for (int i = 0; i < image.width(); i++)
     {
@@ -660,79 +636,13 @@ QImage filterSobel(QImage image, int threshold, bool background = true)
                     // validar limites de la imagen 00000
                     if (ii >= 0 && ii < image.width() && jj >= 0 && jj < image.height())
                     {
-                        x1 += QColor(image.pixel(ii,jj)).red() * arrayX[mm][nn];
-                        x2 += QColor(image.pixel(ii,jj)).green() * arrayX[mm][nn];
-                        x3 += QColor(image.pixel(ii,jj)).blue() * arrayX[mm][nn];
+                        x1 += QColor(image.pixel(ii,jj)).red() * kernelX[mm][nn];
+                        x2 += QColor(image.pixel(ii,jj)).green() * kernelX[mm][nn];
+                        x3 += QColor(image.pixel(ii,jj)).blue() * kernelX[mm][nn];
 
-                        y1 += QColor(image.pixel(ii,jj)).red() * arrayY[mm][nn];
-                        y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
-                        y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
-
-                        if(background)
-                        {
-                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 0 : 255;
-                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 0 : 255;
-                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 0 : 255;
-                        }
-                        else
-                        {
-                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 255 : 0;
-                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 255 : 0;
-                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 255 : 0;
-                        }
-                    }
-                }
-            }
-            value = qRgb(xy1,xy2,xy3);
-            result.setPixelColor(i,j,value);
-        }
-    }
-    return result;
-}
-QImage filterRobert(QImage image, int threshold , bool background = true)
-{
-    int mitad,mm,nn,ii,jj,sizeKernel = 2;
-    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;
-    QImage result = image;
-    QRgb value;
-    mitad = sizeKernel / 2;
-
-    int arrayX[2][2] = {{0,1},{-1,0}};
-    int arrayY[2][2] = {{-1,0},{0,1}};
-
-    // Filas
-    for (int i = 0; i < image.width(); i++)
-    {
-        // Columnas
-        for (int j = 0; j < image.height(); j++)
-        {
-            // Incializo valores r g b a 0
-            x1 = 0, x2 = 0,x3 = 0,y1 = 0, y2 = 0, y3 = 0;
-
-            // Filas del Kernel
-            for (int m = 0; m < sizeKernel; m++)
-            {
-                // Indice de la fila del kernel alrevez
-                mm = sizeKernel - 1 - m;
-
-                // Columnas del kernel
-                for (int n = 0; n < sizeKernel; n++)
-                {
-                    // Indice de la columna del kernel alrevez
-                    nn = sizeKernel - 1 - n;
-                    ii = i + (m - mitad);
-                    jj = j + (n - mitad);
-
-                    // validar limites de la imagen 00000
-                    if (ii >= 0 && ii < image.width() && jj >= 0 && jj < image.height())
-                    {
-                        x1 += QColor(image.pixel(ii,jj)).red() * arrayX[mm][nn];
-                        x2 += QColor(image.pixel(ii,jj)).green() * arrayX[mm][nn];
-                        x3 += QColor(image.pixel(ii,jj)).blue() * arrayX[mm][nn];
-
-                        y1 += QColor(image.pixel(ii,jj)).red() * arrayY[mm][nn];
-                        y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
-                        y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
+                        y1 += QColor(image.pixel(ii,jj)).red() * kernelY[mm][nn];
+                        y2 += QColor(image.pixel(ii,jj)).green() * kernelY[mm][nn];
+                        y3 += QColor(image.pixel(ii,jj)).blue() * kernelY[mm][nn];
 
                         if(background)
                         {
@@ -755,75 +665,6 @@ QImage filterRobert(QImage image, int threshold , bool background = true)
     }
     return result;
 }
-QImage filterPrewitt(QImage image, int threshold , bool background = true)
-{
-    int mitad,mm,nn,ii,jj,sizeKernel = 3;
-    int x1,x2,x3,y1,y2,y3,xy1,xy2,xy3;
-    QImage result = image;
-    QRgb value;
-    mitad = sizeKernel / 2;
-
-    int arrayX[3][3] = {{1,1,1},{0,0,0},{-1,-1,-1}};
-    int arrayY[3][3] = {{1,0,-1},{1,0,-1},{1,0,-1}};
-
-    // Filas
-    for (int i = 0; i < image.width(); i++)
-    {
-        // Columnas
-        for (int j = 0; j < image.height(); j++)
-        {
-            // Incializo valores r g b a 0
-            x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0;
-
-            // Filas del Kernel
-            for (int m = 0; m < sizeKernel; m++)
-            {
-                // Indice de la fila del kernel alrevez
-                mm = sizeKernel - 1 - m;
-
-                // Columnas del kernel
-                for (int n = 0; n < sizeKernel; n++)
-                {
-                    // Indice de la columna del kernel alrevez
-                    nn = sizeKernel - 1 - n;
-                    ii = i + (m - mitad);
-                    jj = j + (n - mitad);
-
-                    // validar limites de la imagen 00000
-                    if (ii >= 0 && ii < image.width() && jj >= 0 && jj < image.height())
-                    {
-                        x1 += QColor(image.pixel(ii,jj)).red() * arrayX[mm][nn];
-                        x2 += QColor(image.pixel(ii,jj)).green() * arrayX[mm][nn];
-                        x3 += QColor(image.pixel(ii,jj)).blue() * arrayX[mm][nn];
-
-                        y1 += QColor(image.pixel(ii,jj)).red() * arrayY[mm][nn];
-                        y2 += QColor(image.pixel(ii,jj)).green() * arrayY[mm][nn];
-                        y3 += QColor(image.pixel(ii,jj)).blue() * arrayY[mm][nn];
-
-                        if(background)
-                        {
-                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 0 : 255;
-                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 0 : 255;
-                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 0 : 255;
-                        }
-                        else
-                        {
-                            xy1 = fabs(x1) + fabs(y1) >= threshold ? 255 : 0;
-                            xy2 = fabs(x2) + fabs(y2) >= threshold ? 255 : 0;
-                            xy3 = fabs(x3) + fabs(y3) >= threshold ? 255 : 0;
-                        }
-                    }
-                }
-            }
-            value = qRgb(xy1,xy2,xy3);
-            result.setPixelColor(i,j,value);
-        }
-    }
-    return result;
-}
-
-
-
 
 
 #endif // FILTER_H

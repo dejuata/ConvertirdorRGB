@@ -5,8 +5,10 @@
 #include "ui_mainwindow.h"
 #include "globals.h"
 
+// namespace de qtconcurrent para poder usar el metodo run y poder correr procesos en diferentes hilos
 using namespace QtConcurrent;
-//Resize a la imagen original
+
+// Resize a la imagen original
 QSize resizeImage(int width, int height)
 {
     width = width/2;
@@ -27,24 +29,21 @@ void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, i
     {
         // Variable que almacena el nombre de los canales para poder mostrarlos en el histograma
         channelR = r, channelG = g, channelB = b;
-
         // Funcion que selecciona que transformacion de color voy a realizar
-        select_Space_Colors_Convert(spaceColor);//converitr imagenes
-
+        select_Space_Colors_Convert(spaceColor);
         //Funcion que crea el histograma para los cuatro canales
-        run(createHistograma,imageT).result();
-
+        setearHistograma(4);
+        run(createHistograma,imageT,4).result();
         // Funcion que muestra las imagenes convertidas en miniatura
         if(spaceColor == 1){render_Miniature_Image(false);}
         else{render_Miniature_Image(true);}
-
         // Muestra en el label principal la imagen original por defecto
-        ui->origin->setPixmap(QPixmap::fromImage(image));
-
+        ui->origin->setPixmap(QPixmap::fromImage(imageT));
+        imageLabel = &imageT;
+        channel = 0;
         // Muestra en los botones de las imagenes miniaturas, las iniciales de los espacio de color
         if(spaceColor == 8){show_Text_UI(r.mid(0,2),g.mid(0,2),b.mid(0,2));}
         else{show_Text_UI(r.mid(0,1),g.mid(0,1),b.mid(0,1));}
-
         // Muestra el histograma promedio por defecto
         show_Label_Image_Hide_Histograma(0);
     }
@@ -57,22 +56,20 @@ void MainWindow::clear_Label_Miniature_Image()
     ui->g->clear();
     ui->b->clear();
 }
-
-// funcion para mostra la imagen en el label origin al igual que almacenar las imagenes en el puntero
-// para trabajar con ellas
-void MainWindow::show_Image_In_Label(QImage &image, int channel)
+// funcion para mostra la imagen en el label origin al igual que almacenar las imagenes en el puntero para trabajar con ellas
+void MainWindow::show_Image_In_Label(QImage &image, int index)
 {
     // Almaceno en un puntero la imagen que selecciona el usuario para poder aplicar las diferentes operaciones
     imageLabel = &image;
+    // Almaceno una referencia de que canales trabajo para pasarlo como argumento en algunas funciones
+    channel = index;
     // Muestra la imagen en el Label
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     // Crea y muestra el histograma dependiendo del canal seleccionado
     // 0 -> T / 1 -> R / 2 -> G / 3 -> B
-    show_Label_Image_Hide_Histograma(channel);
+    show_Label_Image_Hide_Histograma(index);
 }
-/*
- * Funcion para renderizar las imagenes procesadas en miniatura
- */
+// Funcion para renderizar las imagenes procesadas en miniatura
 void MainWindow::render_Miniature_Image(bool NoGrayscale)
 {
     ui->before->setPixmap(QPixmap::fromImage(imageT));    
@@ -98,25 +95,18 @@ void MainWindow::render_Miniature_Image(bool NoGrayscale)
         ui->btn_three->setEnabled(NoGrayscale);
     }
 }
-/*
- * Funcion para mostrar los textos de la interfaz en zonas como convert y filter, dependiendo
- * del tipo de formato de imagen a procesar
- */
+// Funcion para mostrar los textos en los btn de la pestaña convert, dependiendo
+// del tipo de formato de imagen a procesar
 void MainWindow::show_Text_UI(QString r, QString g, QString b)
 {
     // Seteo el valor de los btn
     ui->btn_transform->setText("CHANNEL " + r + g + b);
     ui->btn_one->setText("CHANNEL " + r);
     ui->btn_two->setText("CHANNEL " + g);
-    ui->btn_three->setText("CHANNEL " + b);
-
-    // Setear el texto de los filtros
-    ui->actionTransform->setText("Filter to " + r + g + b);
-    ui->actionChannel_One->setText("Filter to " + r);
-    ui->actionChannel_Two->setText("Filter to " + g);
-    ui->actionChannel_Three->setText("Filter to " + b);
+    ui->btn_three->setText("CHANNEL " + b);   
 }
 
+/*********************** revisar *****************************/
 // Limpiar el archivo txt de espacios y rotuladores
 QString firstLineFilterTxt;
 
@@ -133,52 +123,7 @@ QStringList cleanMatriz(QString text){
 
     return cleanList;
 }
-
-void MainWindow::action_Filter_Select(QImage image)
-{
-    // Si selecciona el filtro promedio, llama a la funcion para transformar imageT
-    if(sizeList >= 0 && selectFilter == 0)
-    {
-        createMatriz(listAverage);
-        ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, 3, "average")));
-    }
-    // Si selecciona el filtro gaussiano, llama a la funcion para transformar imageT
-    if(sizeList >= 0 && selectFilter == 1)
-    {
-        createMatriz(listGaussiano);
-        ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, 3, "gaussiano")));
-    }
-    // Si selecciona el filtro minimo, llama a la función para transformar imageT
-    if(sizeList >= 0 && selectFilter == 2)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(image, 0)));
-    }
-    // Si selecciona el filtro mediano, llama a la función para transformar imageT
-    if(sizeList >= 0 && selectFilter == 3)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(image, 1)));
-    }
-    // Si selecciona el filtro maximo, llama a la función para transformar imageT
-    if(sizeList >= 0 && selectFilter == 4)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterMinMedMax(image, 2)));
-    }
-    if(sizeList >= 0 && selectFilter == 5)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterSigma(image,numberSigma)));
-    }
-    if(sizeList >= 0 && selectFilter == 6)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterNagao(image)));
-    }
-    /* Diferentes opciones de kernel por si el usuario llega a cargar un kernel diferente,
-     * por defecto trabaja con el promedio
-     */
-    if(selectFilter == 9)
-    {
-        ui->origin->setPixmap(QPixmap::fromImage(filterAverageAndGaussiano(image, sizeList, firstLineFilterTxt)));
-    }
-}
+/*********************** revisar *****************************/
 // Funciones para procesar las conversiones en diferentes hilos
 void MainWindow::select_Space_Colors_Convert(int index)
 {
@@ -240,13 +185,11 @@ void MainWindow::select_Space_Colors_Convert(int index)
 
         default: qDebug()<< "Usted ha ingresado una opción incorrecta";
     }
-    imageT = futureT.result();
-    imageR = futureR.result();
-    imageG = futureG.result();
-    imageB = futureB.result();
+
+    imageT = futureT.result();imageR = futureR.result();imageG = futureG.result();imageB = futureB.result();
 }
 
-
+// Funcion que muestra los input dependiendo del tamaño de kernel que seleccione el usuario 3x3 5x5
 void MainWindow::show_hide_Input_Morphologic(int index)
 {
     ui->structure->show();
@@ -276,6 +219,7 @@ void MainWindow::show_hide_Input_Morphologic(int index)
         ui->e_4_0->show();ui->e_4_1->show();ui->e_4_2->show();ui->e_4_3->show();ui->e_4_4->show();
     }
 }
+// Funcion que setea los input de la pestaña de operaciones morfologicas
 void MainWindow::clean_Input()
 {
     ui->e_0_0->clear();ui->e_0_1->clear();ui->e_0_2->clear();ui->e_0_3->clear();ui->e_0_4->clear();
@@ -284,7 +228,8 @@ void MainWindow::clean_Input()
     ui->e_3_0->clear();ui->e_3_1->clear();ui->e_3_2->clear();ui->e_3_3->clear();ui->e_3_4->clear();
     ui->e_4_0->clear();ui->e_4_1->clear();ui->e_4_2->clear();ui->e_4_3->clear();ui->e_4_4->clear();
 }
-
+// Funcion que inserta en los input de la pestaña de operaciones morfologicas,
+// los diferentes kernel que viene por defecto en un lista
 void MainWindow::show_Structure(QStringList lists)
 {
     clean_Input();

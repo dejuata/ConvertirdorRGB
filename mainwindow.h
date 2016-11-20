@@ -47,8 +47,12 @@ public:
     QString channelR;
     QString channelG;
     QString channelB;
-    QString channel;
+    // me permite llevar un control de que imagen quiero que
+    // se guarde cuando sea procesado por sobel, robert o prewitt
     QString edgeDetection;
+    int channel = 0;
+    int morphologic = 0;
+    int constOperationHistograma;
 
     QChart *chart;
     QGraphicsScene *scene;
@@ -101,21 +105,11 @@ private slots:
 
     void on_actionRGB_to_YIQ_triggered();
 
-    void on_actionRGB_to_O1O2O3_triggered();    
-
-    void on_actionTransform_triggered();
-
-    void on_actionChannel_One_triggered();
-
-    void on_actionChannel_Two_triggered();
-
-    void on_actionChannel_Three_triggered();
+    void on_actionRGB_to_O1O2O3_triggered();
 
     void on_actionSettings_triggered();
 
     void on_btn_histograma_clicked();
-
-    void on_selectChannelHistograma_currentIndexChanged(int index);    
 
     void on_equalizarHistograma_clicked();
 
@@ -149,8 +143,6 @@ private slots:
 
     void on_gamma_sliderReleased();
 
-    void on_horizontalSlider_sliderReleased();
-
     void on_sliderSigma_sliderReleased();
 
     void on_btnThreshold_clicked();
@@ -163,8 +155,6 @@ private slots:
 
     void on_btnErosion_clicked();
 
-
-
     void on_btnOpening_clicked();
 
     void on_btnClosing_clicked();
@@ -174,6 +164,12 @@ private slots:
     void on_btnEdgeDetection_clicked();
 
     void on_actionNormalizeHistograma_triggered();
+
+    void on_btnGamma_clicked();
+
+    void on_selectChannelHistograma_activated(int index);
+
+    void on_btnMorphologic_clicked();
 
 private:
 
@@ -189,7 +185,7 @@ private:
 
     void show_Label_Image_Hide_Histograma(int index);
 
-    void show_Image_In_Label(QImage &image,int channel);
+    void show_Image_In_Label(QImage &image, int index);
 
     void render_Histograma_Min_Or_Max(bool maximum, int spaceColor);
 

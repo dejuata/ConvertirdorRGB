@@ -1,12 +1,11 @@
 #ifndef THRESHOLD_H
 #define THRESHOLD_H
 
-#include <iostream>
+
 #include <algorithm> // std::min_element, std::max_element
 #include <math.h>
-#include <QtConcurrent>
 #include <QDebug>
-#include "globals.h"
+
 
 //#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
@@ -22,96 +21,100 @@ double varianceBack[256];
 double varianceFore[256];
 double classVariance[256];
 
-void calculateAccHistograma()
+void calculateAccHistograma(double histograma[])
 {
     int sumB = 0;
     int sumF = 0;
+    int size = 256;
 
     accHistogramaBack[0] = 0;
-    for(int i = 1; i < lengthArray(histogramaT); i++)
+    for(int i = 1; i < size; i++)
     {
-        sumB += histogramaT[i-1];
+        sumB += histograma[i-1];
         accHistogramaBack[i] = sumB;
     }
-    for(int i = lengthArray(histogramaT) - 1; i >= 0 ; i--)
+    for(int i = size - 1; i >= 0 ; i--)
     {
-        sumF += histogramaT[i];
+        sumF += histograma[i];
         accHistogramaFore[i] = sumF;
-    }
+    }    
 }
-void calculateWeight()
+void calculateWeight(double histograma[])
 {
     double sumB = 0;
     double sumF = 0;
+    int size = 256;
 
     weightBack[0] = sumB;
 
-    for(int i = 1; i < lengthArray(histogramaT); i++)
+    for(int i = 1; i < size; i++)
     {
-        sumB += histogramaT[i-1] / sizeImage;
+        sumB += histograma[i-1] / sizeImage;
         weightBack[i] = sumB;
     }
 
-    for(int i = lengthArray(histogramaT) - 1; i >= 0 ; i--)
+    for(int i = size - 1; i >= 0 ; i--)
     {
-        sumF += histogramaT[i] / sizeImage;
+        sumF += histograma[i] / sizeImage;
         weightFore[i] = sumF;
     }
 }
-void calculateMean()
+void calculateMean(double histograma[])
 {
     int sumB = 0;
     int sumF = 0;
+    int size = 256;
 
     meanBack[0] = 0;
-    for(int i = 1; i < lengthArray(histogramaT); i++)
+    for(int i = 1; i < size; i++)
     {
-        sumB += (i - 1) * histogramaT[i - 1];
+        sumB += (i - 1) * histograma[i - 1];
         meanBack[i] = sumB / accHistogramaBack[i];
     }
 
-    for(int i = lengthArray(histogramaT) - 1; i >= 0 ; i--)
+    for(int i = size - 1; i >= 0 ; i--)
     {
-        sumF += i * histogramaT[i];
+        sumF += i * histograma[i];
         meanFore[i] = sumF / accHistogramaFore[i];
     }
 }
-void calculateVariance()
+void calculateVariance(double histograma[])
 {
     int countB = 0;
     int countF = lengthArray(histogramaT);
+    int size = 256;
     double sumB;
     double sumF;
 
     varianceBack[0] = 0;
 
-    for(int i = 1; i < lengthArray(histogramaT); i++)
+    for(int i = 1; i < size; i++)
     {
         sumB = 0;
         countB = countB + 1;
 
         for(int j = 0; j < countB; j++)
         {
-            sumB += pow(j - meanBack[i] , 2) * histogramaT[j];
+            sumB += pow(j - meanBack[i] , 2) * histograma[j];
         }
         varianceBack[i] = sumB / accHistogramaBack[i];
     }
 
-    for(int i = lengthArray(histogramaT) - 1; i >= 0  ; i--)
+    for(int i = size - 1; i >= 0  ; i--)
     {
         sumF = 0;
         countF = countF - 1;//9-8
 
-        for(int j = lengthArray(histogramaT) - 1; j >= countF; j--)
+        for(int j = size - 1; j >= countF; j--)
         {
-            sumF += pow(j - meanFore[i] , 2) * histogramaT[j];
+            sumF += pow(j - meanFore[i] , 2) * histograma[j];
         }
         varianceFore[i] = sumF / accHistogramaFore[i];
 
     }
 
     // calcula la within class variance y almacena los valores en un arreglo
-    for(int i = 0; i < lengthArray(histogramaT); i++)
+    for(int i = 0; i < size; i++)
     {
         classVariance[i] = (weightBack[i] * varianceBack[i]) + (weightFore[i] * varianceFore[i]);
     }
@@ -119,19 +122,19 @@ void calculateVariance()
 
 // Funcion que realiza el llamado de las anteriores funciones
 // y retorna el threshold de acuerdo al algoritmo de otsu
-int thresholdOtsu()
+int thresholdOtsu(double histograma[])
 {
     double minClassVariance;
     int threshold;
 
     // Funcion que calcula el histograma acumulado
-    calculateAccHistograma();
+    calculateAccHistograma(histograma);
     // Funcion que calcula el promedio y lo almacena en un array
-    calculateWeight();
+    calculateWeight(histograma);
     // Funcion que calcula la media
-    calculateMean();
+    calculateMean(histograma);
     // Funcion que calcula la varianza
-    calculateVariance();
+    calculateVariance(histograma);
 
     // hallar la varianza minima
     minClassVariance = *std::min_element(classVariance,classVariance+lengthArray(classVariance));
@@ -144,14 +147,15 @@ int thresholdOtsu()
 
     return threshold;
 }
+
 void thresholdIsodata()
 {
-    calculateWeight();
+//    calculateWeight(histogra);
 
-    for(int i = 0; i < lengthArray(histogramaT); i++ )
-    {
-//        qDebug()<<"W1:"<<weightBack[i]<<"W2: "<<weightFore[i]<<"WF: "<<(weightBack[i] + weightFore[i])/2;
-    }
+//    for(int i = 0; i < lengthArray(histogramaT); i++ )
+//    {
+////        qDebug()<<"W1:"<<weightBack[i]<<"W2: "<<weightFore[i]<<"WF: "<<(weightBack[i] + weightFore[i])/2;
+//    }
 
 }
 

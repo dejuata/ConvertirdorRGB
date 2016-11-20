@@ -5,7 +5,7 @@
 #include "convertImage.h"
 #include "filter.h"
 #include "histograma.h"
-#include "resources.h"
+#include "AuxFunctions.h"
 #include "threshold.h"
 #include "morphological.h"
 
@@ -138,28 +138,23 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 void MainWindow::on_btn_origin_clicked()
 {    
     ui->origin->setPixmap(QPixmap::fromImage(image));
-    show_Label_Image_Hide_Histograma(0);
-    channel = "origin";
+    show_Label_Image_Hide_Histograma(0);    
 }
 void MainWindow::on_btn_transform_clicked()
 {    
     show_Image_In_Label(imageT, 0);
-    channel = "t";
 }
 void MainWindow::on_btn_one_clicked()
 {
     show_Image_In_Label(imageR, 1);
-    channel = "r";
 }
 void MainWindow::on_btn_two_clicked()
 {
     show_Image_In_Label(imageG, 2);
-    channel = "g";
 }
 void MainWindow::on_btn_three_clicked()
 {
     show_Image_In_Label(imageB, 3);
-    channel = "b";
 }
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
@@ -188,7 +183,6 @@ void MainWindow::on_actionSettings_triggered()
  * 5 -> Filtro Sigma
  * 6 -> Filtro Nagao
  */
-
 // funcion que setea el valor de una variable global llamada selectFilter
 // para poder saber que funcion debo llamar para poder aplicarle el filtro a la imagen
 void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
@@ -249,7 +243,6 @@ void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
         qDebug()<<"Seleccione nagao";
     }
 }
-
 // Funcion que lee un filtro de un archivo txt, el filtro puede contener un kernel de 3x3, 5x5, 7x7 y 9x9
 void SettingsFilter::on_pushButton_clicked()
 {
@@ -304,25 +297,6 @@ void SettingsFilter::on_pushButton_clicked()
 
 }
 
-// Si el usuario selecciona en el menu filter -> channel T o channel R, etc,
-// llama a una funcion que aplicar el filtro seleccionado en la ventana settings y lo aplica
-// a la imagen que corresponde
-void MainWindow::on_actionTransform_triggered()
-{
-    action_Filter_Select(imageT);
-}
-void MainWindow::on_actionChannel_One_triggered()
-{
-    action_Filter_Select(imageR);
-}
-void MainWindow::on_actionChannel_Two_triggered()
-{
-   action_Filter_Select(imageG);
-}
-void MainWindow::on_actionChannel_Three_triggered()
-{
-    action_Filter_Select(imageB);
-}
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
@@ -330,7 +304,9 @@ void MainWindow::on_actionChannel_Three_triggered()
 /*-----------------------------------------------------------------------------------------------------------/*
  * Filtros configurados como botones
  *-----------------------------------------------------------------------------------------------------------*/
+
 /******************** Paso bajo ********************/
+
 void MainWindow::on_btnAverage_clicked()
 {    
     createMatriz(listAverage);
@@ -363,7 +339,7 @@ void MainWindow::on_btnMaximum_clicked()
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
 }
-// retorna el numero sigma que ingresa el usuario
+// Retorna el numero sigma que ingresa el usuario
 int MainWindow::sigma()
 {
     return ui->numberSigma->value();
@@ -388,25 +364,38 @@ void MainWindow::on_btnNagao_clicked()
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
 }
+
 /*********************** Fin ***********************/
 
 /******************** Paso alto ********************/
+
 // Metodo que retorna el valor del threshold del spin box seleccionado por el usuario
 int MainWindow::threshold()
 {
     return ui->threshold->value();
 }
-
 // calcula el threshold con el algoritmo de otsu o isodata
 // dependienda de la opcion del radio button que halla escogido el usuario
 void MainWindow::on_btnThreshold_clicked()
 {
-    int threshold = thresholdOtsu();
-    ui->threshold->setValue(threshold);
-    ui->horizontalSlider->setValue(threshold);
-    thresholdIsodata();
-}
+    int threshold = 0;
 
+    switch(channel)
+    {
+        case 0: threshold = thresholdOtsu(histogramaT);
+        break;
+        case 1: threshold = thresholdOtsu(histogramaR);
+        break;
+        case 2: threshold = thresholdOtsu(histogramaG);
+        break;
+        case 3: threshold = thresholdOtsu(histogramaB);
+        break;
+        default: qDebug()<<"Error threshold";
+    }
+
+    ui->threshold->setValue(threshold);
+    ui->horizontalSlider->setValue(threshold);    
+}
 // Metodo que retorna true o false si el fondo es blanco o negro
 bool MainWindow::background()
 {
@@ -414,17 +403,17 @@ bool MainWindow::background()
 }
 void MainWindow::on_btnSobel_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterSobel(*imageLabel, threshold(), background())));
+    ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,sobelX,sobelY,3,threshold(), background())));
     edgeDetection = "Sobel";
 }
 void MainWindow::on_btnRobert_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterRobert(*imageLabel, threshold(), background())));
+    ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,robertX,robertY,2,threshold(), background())));
     edgeDetection = "Robert";
 }
 void MainWindow::on_btnPrewitt_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(filterPrewitt(*imageLabel, threshold(), background())));
+    ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,prewittX,prewittY,3,threshold(), background())));
     edgeDetection = "Prewitt";
 }
 // Guardo los cambios de la imagen al aplicar Sobel, Robert o Prewitt
@@ -434,21 +423,23 @@ void MainWindow::on_btnEdgeDetection_clicked()
 
     if(edgeDetection == "Sobel")
     {
-        *imageLabel = filterSobel(*imageLabel, threshold(), background());
+        *imageLabel = filterEdgeDetection(*imageLabel, sobelX, sobelY, 3, threshold(), background());
         render_Miniature_Image(!grayscale);
     }
     if(edgeDetection == "Robert")
     {
-        *imageLabel = filterRobert(*imageLabel, threshold(), background());
+        *imageLabel = filterEdgeDetection(*imageLabel, robertX, robertY, 2, threshold(), background());
         render_Miniature_Image(!grayscale);
     }
     if(edgeDetection == "Prewitt")
     {
-        *imageLabel = filterPrewitt(*imageLabel, threshold(), background());
+        *imageLabel = filterEdgeDetection(*imageLabel, prewittX, prewittY, 3, threshold(), background());
         render_Miniature_Image(!grayscale);
     }
 }
+
 /*********************** Fin ***********************/
+
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
@@ -458,178 +449,111 @@ void MainWindow::on_btnEdgeDetection_clicked()
  *-----------------------------------------------------------------------------------------------------------*/
 // Metodo que almacena en una variable global el indice del combo box el cual me indica
 // que canal RGB quiero que cree el histograma y lo renderize en una miniatura
-void MainWindow::on_selectChannelHistograma_currentIndexChanged(int index)
+void MainWindow::on_selectChannelHistograma_activated(int index)
 {
-    selectChannelHistograma = index;
-    // cuando cambia el indice se renderiza el histograma que corresponde a su canal
-    render_Histograma_Min_Or_Max(false,index);
-}
+    switch(index)
+    {
+        case 0: imageLabel = &imageT;
+        break;
+        case 1: imageLabel = &imageR;
+        break;
+        case 2: imageLabel = &imageG;
+        break;
+        case 3: imageLabel = &imageB;
+        break;
+        default: qDebug()<<"No hay imagen";
+    }
 
+    channel = index;
+    render_Histograma_Min_Or_Max(false,index);
+    render_Histograma_Min_Or_Max(true,index);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+}
 // Metodo que renderiza el histograma en su tamaño maximo al ser clickeado el btn
 void MainWindow::on_btn_histograma_clicked()
 {
     ui->origin->hide();
     ui->histograma->show();
-    render_Histograma_Min_Or_Max(true,selectChannelHistograma);
+    render_Histograma_Min_Or_Max(true,channel);
 }
 // Metodo que normaliza el histograma en valores de 0 a 1
 void MainWindow::on_actionNormalizeHistograma_triggered()
 {
     normalizeHistograma();
-    render_Histograma_Min_Or_Max(true,selectChannelHistograma);
+    render_Histograma_Min_Or_Max(true,channel);
 }
-
 // Metodo que ecualiza el histograma de la imagen dependiendo del valor almacenado
 // en la variable global selectChannelHistograma
 void MainWindow::on_equalizarHistograma_clicked()
-{
-    // asignar a las imagenes el resultado correspondendiente de equalizar el histograma para cada canal
-    if(selectChannelHistograma == 0)
-    {
-        imageT = equalization_Histograma(imageT,selectChannelHistograma);
-//        imageLabel = imageT;
-    }
-    if(selectChannelHistograma == 1)
-    {
-        imageR = equalization_Histograma(imageR,selectChannelHistograma);
-//        imageLabel = imageR;
-    }
-    if(selectChannelHistograma == 2)
-    {
-        imageG = equalization_Histograma(imageG,selectChannelHistograma);
-//        imageLabel = imageG;
-    }
-    if(selectChannelHistograma == 3)
-    {
-        imageB = equalization_Histograma(imageB,selectChannelHistograma);
-//        imageLabel = imageB;
-    }
-
+{    
+    //cuidado con selectChannelHistograma ya que desde ahi lo controlo desde el combo box, cambiar esto por channel
+    *imageLabel = equalization_Histograma(*imageLabel, channel);
+    // limpiar los valores del array histograma para cada canal para evitar que se sobreescriba
+    setearHistograma(channel);
+    // crear histograma equalizado
+    createHistograma(*imageLabel,channel);
+    // Renderizar el histograma tanto maximo como minimo
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
+    // Renderizar la imagen si el histograma cambia, este efecto sucede si el label esta activo -> show()
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     // renderizar imagenes en miniatura
     render_Miniature_Image();
-
-    // Renderizar la imagen si el histograma cambia, este efecto sucede si el label esta activo -> show()
-//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
-
-    // Crear y mostrar el histograma en el QGraphicsScene Maximum
-//    create_Histograma(imageLabel,selectChannelHistograma,true);
-
-    // Crear y mostrar el histograma en el QGraphicsScene Minimum
-//    create_Histograma(imageLabel,selectChannelHistograma,false);
 }
 
-/* Operaciones con histogramas */
+/*************** Operaciones con histogramas ***************/
 
 // Funcion que captura el valor del spin box cuando cambia
 void MainWindow::on_const_2_valueChanged(double arg1)
 {
-    numberOperationsHistograma = arg1;
+    constOperationHistograma = arg1;
+    ui->gamma->setValue((ui->const_2->value())/0.001);
 }
-
-// Funcion que aplica a la imagen el valor gama del slider seleccionado automaticamente
+// Funcion que aplica a la imagen el valor gamma del slider seleccionado automaticamente
 void MainWindow::on_gamma_sliderReleased()
 {
-    QImage gamma;
-    if(selectChannelHistograma == 0)
-    {
-        gamma = gammaConstImage(imageT,numberOperationsHistograma,0);
-//        imageLabel = gamma;
-    }
-    if(selectChannelHistograma == 1)
-    {
-        gamma = gammaConstImage(imageR,numberOperationsHistograma,1);
-//        imageLabel = gamma;
-    }
-    if(selectChannelHistograma == 2)
-    {
-        gamma = gammaConstImage(imageG,numberOperationsHistograma,2);
-//        imageLabel = gamma;
-    }
-    if(selectChannelHistograma == 3)
-    {
-        gamma = gammaConstImage(imageB,numberOperationsHistograma,3);
-//        imageLabel = gamma;
-    }
-
-
-    render_Miniature_Image();
-//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
-    // Crear y mostrar el histograma en el QGraphicsScene Maximum
-//    create_Histograma(imageLabel,selectChannelHistograma,true);
-    // Crear y mostrar el histograma en el QGraphicsScene Minimum
-//    create_Histograma(imageLabel,selectChannelHistograma,false);
+    QImage gamma = gammaConstImage(*imageLabel,constOperationHistograma);
+    // setear los valores del histograma en 0 dependiendo del canal
+    qDebug()<<channel;
+    setearHistograma(channel);
+    createHistograma(gamma,channel);
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
+    ui->origin->setPixmap(QPixmap::fromImage(gamma));
 }
-
-// Funcion que suma una constante al histograma
-void MainWindow::on_btnPlus_clicked()
-{
-    if(selectChannelHistograma == 0)
-    {
-        imageT = sumConstImage(imageT,numberOperationsHistograma,0);
-//        imageLabel = imageT;
-    }
-    if(selectChannelHistograma == 1)
-    {
-        imageR = sumConstImage(imageR,numberOperationsHistograma,1);
-//        imageLabel = imageR;
-    }
-    if(selectChannelHistograma == 2)
-    {
-        imageG = sumConstImage(imageG,numberOperationsHistograma,2);
-//        imageLabel = imageG;
-    }
-    if(selectChannelHistograma == 3)
-    {
-        imageB = sumConstImage(imageB,numberOperationsHistograma,3);
-//        imageLabel = imageB;
-    }
-
-    render_Miniature_Image();
-//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
-    // Crear y mostrar el histograma en el QGraphicsScene Maximum
-//    create_Histograma(imageLabel,selectChannelHistograma,true);
-    // Crear y mostrar el histograma en el QGraphicsScene Minimum
-//    create_Histograma(imageLabel,selectChannelHistograma,false);
-}
-
 // Funcion que setea en el spinbox el valor del slider que corresponde al numero gamma
 void MainWindow::on_gamma_sliderMoved(int position)
 {
     ui->const_2->setValue(position*0.001);
 }
-
+// Guarda los cambios aplicados a la imagen sobre el gamma
+void MainWindow::on_btnGamma_clicked()
+{
+    *imageLabel = gammaConstImage(*imageLabel,constOperationHistograma);
+    render_Miniature_Image();
+}
+// Funcion que suma una constante al histograma
+void MainWindow::on_btnPlus_clicked()
+{   
+    *imageLabel = sumConstImage(*imageLabel,constOperationHistograma,channel);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    createHistograma(*imageLabel,channel);
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
+    render_Miniature_Image();
+}
 // Funcion que resta una constante al histograma
 void MainWindow::on_btnSubstract_clicked()
 {
-    if(selectChannelHistograma == 0)
-    {
-        imageT = susbtractConstImage(imageT,numberOperationsHistograma,0);
-//        imageLabel = imageT;
-    }
-    if(selectChannelHistograma == 1)
-    {
-        imageR = susbtractConstImage(imageR,numberOperationsHistograma,1);
-//        imageLabel = imageR;
-    }
-    if(selectChannelHistograma == 2)
-    {
-        imageG = susbtractConstImage(imageG,numberOperationsHistograma,2);
-//        imageLabel = imageG;
-    }
-    if(selectChannelHistograma == 3)
-    {
-        imageB = susbtractConstImage(imageB,numberOperationsHistograma,3);
-//        imageLabel = imageB;
-    }
-
-
+    *imageLabel = susbtractConstImage(*imageLabel,constOperationHistograma,channel);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    createHistograma(*imageLabel,channel);
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
     render_Miniature_Image();
-//    ui->origin->setPixmap(QPixmap::fromImage(imageLabel));
-    // Crear y mostrar el histograma en el QGraphicsScene Maximum
-//    create_Histograma(imageLabel,selectChannelHistograma,true);
-    // Crear y mostrar el histograma en el QGraphicsScene Minimum
-//    create_Histograma(imageLabel,selectChannelHistograma,false);
 }
+
+/********************** Fin **********************/
 
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
@@ -660,33 +584,59 @@ void MainWindow::on_optionsEstruc_currentIndexChanged(int index)
        ui->btnClosing->setEnabled(true);
     }
 }
+
+/*************** Operaciones Morfologicas ***************/
+
 void MainWindow::on_btnDilation_clicked()
-{
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(imageT,true)));
+{    
+    morphologic = 0;
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,true)));
 }
 void MainWindow::on_btnErosion_clicked()
 {
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(imageT,false)));
+    morphologic = 1;
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,false)));
 }
 void MainWindow::on_btnOpening_clicked()
 {
-    QImage opening = dilationOrErosion(imageT,false);
+    morphologic = 2;
+    QImage opening = dilationOrErosion(*imageLabel,false);
     ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(opening,true)));
 }
 void MainWindow::on_btnClosing_clicked()
 {
-    QImage closing = dilationOrErosion(imageT,true);
+    morphologic = 3;
+    QImage closing = dilationOrErosion(*imageLabel,true);
     ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(closing,false)));
 }
+// Funcion que guarda la imagen dependiendo de la operacion morfologica aplicada
+void MainWindow::on_btnMorphologic_clicked()
+{
+    switch(morphologic)
+    {
+        case 0: *imageLabel = dilationOrErosion(*imageLabel,true);
+        break;
+        case 1: *imageLabel = dilationOrErosion(*imageLabel,false);
+        break;
+        case 2:
+        {
+            *imageLabel = dilationOrErosion(*imageLabel,false);
+            *imageLabel = dilationOrErosion(*imageLabel,true);
+        }
+        break;
+        case 3:
+        {
+            *imageLabel = dilationOrErosion(*imageLabel,true);
+            *imageLabel = dilationOrErosion(*imageLabel,false);
+        }
+        break;
+        default: qDebug()<<"No se puede guardar la operacion morfologica";
+    }
+    render_Miniature_Image();
+}
+
+/********************** Fin **********************/
+
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
-
-void MainWindow::on_horizontalSlider_sliderReleased()
-{
-   // on_btnSobel_clicked();
-}
-
-
-
-

@@ -18,15 +18,15 @@ extern QString firstLineFilterTxt;
 /* Variables de tipo QStringList que contiene los valores por defecto
  * del filtro promedio y el filtro gaussiano
  */
-extern QStringList listAverage;
-extern QStringList listGaussiano;
+//extern QStringList listAverage;
+//extern QStringList listGaussiano;
 /* Variables de tipo matriz que me van a almacenar los datos que tenga un archivo
  * txt correspondiente para cada matriz 3x3 5x5 7x7 9x9
  */
-extern int kernelThree [3][3];
-extern int kernelFive  [5][5];
-extern int kernelSeven [7][7];
-extern int kernelNine  [9][9];
+//extern int kernelThree [3][3];
+//extern int kernelFive  [5][5];
+//extern int kernelSeven [7][7];
+//extern int kernelNine  [9][9];
 /* variable que cambia al seleccionar un kernel por default,
  * esta variable controla el estado de la aplicacion respecto al manejo de filtros,
  * ya que por medio de esta, sé que filtro aplico
@@ -39,17 +39,6 @@ extern int sizeList;
 // Almaceno el numero sigma que ingresa el usuario
 extern int numberSigma;
 
-// Arreglo que contiene los valores del histograma
-extern double histogramaT[];
-extern double histogramaR[];
-extern double histogramaG[];
-extern double histogramaB[];
-
-// variable que me almacena el canal del histrograma que quiero que me muestre
-extern int selectChannelHistograma;
-
-// variable que me almacena la constante para poder aplicar las operaciones elementales del histograma
-extern double numberOperationsHistograma;
 
 // variable que almacena el tamaño de la imagen
 extern int sizeImage;

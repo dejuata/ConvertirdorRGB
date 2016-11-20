@@ -4,29 +4,24 @@
 #include <QImage>
 #include <QColor>
 #include <math.h>
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-
 
 int channelOne(int r, int g, int b, char channel)
 {
     int channelOne;
 
-    // Format YUV || YIQ
-    if(channel == 'y')
+    switch(channel)
     {
-        channelOne = round((0.299 * r) + (0.587 * g) + (0.114 * b));
+         // Format YUV || YIQ
+        case 'y': channelOne = round((0.299 * r) + (0.587 * g) + (0.114 * b));
+        break;
+        // Format CMY
+        case 'c': channelOne = 255 - r;
+        break;
+        // Format XYZ
+        case 'x': channelOne = round((0.431 * r) + (0.342 * g) + (0.178 * b));
+        break;
     }
-    // Format CMY
-    if(channel == 'c')
-    {
-        channelOne = 255 - r;
-    }
-    // Format XYZ
-    if(channel == 'x')
-    {
-        channelOne = round((0.431 * r) + (0.342 * g) + (0.178 * b));
-    }
+
     return channelOne;
 }
 
@@ -34,26 +29,22 @@ int channelTwo(int r, int g, int b, char channel)
 {
     int channelTwo;
 
-    // Format YUV
-    if(channel == 'u')
+    switch (channel)
     {
-        channelTwo = round((-0.147 * r) + (-0.289 * g) + (0.436 * b));
+        // Format YUV
+        case 'u': channelTwo = round((-0.147 * r) + (-0.289 * g) + (0.436 * b));
+        break;
+        // Format YIQ
+        case 'i': channelTwo = round((0.596 * r) - (0.274 * g) - (0.322 * b));
+        break;
+        // Format CMY
+        case 'm': channelTwo = 255 - g;
+        break;
+        // Format XYZ
+        case 'y': channelTwo = round((0.222 * r) + (0.707 * g) + (0.071 * b));
+        break;
     }
-    // Format YIQ
-    if(channel == 'i')
-    {
-        channelTwo = round((0.596 * r) - (0.274 * g) - (0.322 * b));
-    }
-    // Format CMY
-    if(channel == 'm')
-    {
-        channelTwo = 255 - g;
-    }
-    // Format XYZ
-    if(channel == 'y')
-    {
-        channelTwo = round((0.222 * r) + (0.707 * g) + (0.071 * b));
-    }
+
     return channelTwo;
 }
 
@@ -61,26 +52,22 @@ int channelThree(int r, int g, int b, char channel)
 {
     int channelThree;
 
-    // Format YUV
-    if(channel == 'v')
+    switch(channel)
     {
-        channelThree = round((0.615 * r) + (-0.515 * g) + (-0.100 * b));
+     // Format YUV
+        case 'v': channelThree = round((0.615 * r) + (-0.515 * g) + (-0.100 * b));
+        break;
+        // Format YIQ
+        case 'q': channelThree = round((0.212 * r) - (0.523 * g) + (0.311 * b));
+        break;
+        // Format CMY
+        case 'y': channelThree = 255 - b;
+        break;
+         // Format XYZ
+        case 'z': channelThree = round((0.020 * r) + (0.130 * g) + (0.939 * b));
+        break;
     }
-    // Format YIQ
-    if(channel == 'q')
-    {
-        channelThree = round((0.212 * r) - (0.523 * g) + (0.311 * b));
-    }
-    // Format CMY
-    if(channel == 'y')
-    {
-        channelThree = 255 - b;
-    }
-    // Format XYZ
-    if(channel == 'z')
-    {
-        channelThree = round((0.020 * r) + (0.130 * g) + (0.939 * b));
-    }
+
     return channelThree;
 }
 
@@ -92,9 +79,6 @@ QImage convertToRGB(QImage image, char channel)
     {       
         for(int j = 0; j < image.height(); j++)
         {
-            //.pixel es un metodo ineficaz cuando hay mucho pixeles en la imagen, solucionar esto
-            //const uchar *a = image.constScanLine(j);
-
             // Format RGB
             if (channel == 'a')
             {
@@ -143,7 +127,6 @@ QImage convertToYYY(QImage image)
     }
     return image;
 }
-
 QImage convertToYUV(QImage image, char channel)
 {
     int r,g,b,y,u,v;
@@ -189,7 +172,6 @@ QImage convertToYUV(QImage image, char channel)
 
     return image;
 }
-
 QImage convertToYIQ(QImage image, char channel)
 {
     int r,g,b,y,ii,q;
@@ -234,7 +216,6 @@ QImage convertToYIQ(QImage image, char channel)
     }
     return image;
 }
-
 QImage convertToCMY(QImage image, char channel)
 {
     int r,g,b,c,m,y;
@@ -283,7 +264,6 @@ QImage convertToCMY(QImage image, char channel)
     }
     return image;
 }
-
 QImage convertToHSV(QImage image, char channel)
 {
     int h,s,v;
@@ -323,7 +303,6 @@ QImage convertToHSV(QImage image, char channel)
     }
     return image;
 }
-
 QImage convertToHSL(QImage image, char channel)
 {
     int h,s,l;
@@ -363,7 +342,6 @@ QImage convertToHSL(QImage image, char channel)
     }
     return image;
 }
-
 QImage convertToXYZ(QImage image, char channel)
 {
     int r,g,b,x,y,z;
@@ -408,7 +386,6 @@ QImage convertToXYZ(QImage image, char channel)
     }
     return image;
 }
-
 QImage convertToOOO(QImage image, char channel)
 {
     int r,g,b,x,y,z;
@@ -465,6 +442,5 @@ QImage convertToOOO(QImage image, char channel)
     }
     return image;
 }
-
 
 #endif // PROCESS_H

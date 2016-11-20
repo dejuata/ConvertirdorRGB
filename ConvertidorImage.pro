@@ -19,14 +19,14 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     settingsfilter.h \
-    resources.h \
     globals.h \
     filter.h \
     histograma.h \
     convertImage \
     convertImage.h \
     threshold.h \
-    morphological.h
+    morphological.h \
+    AuxFunctions.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui

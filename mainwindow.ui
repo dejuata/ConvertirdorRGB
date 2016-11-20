@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>977</width>
-    <height>636</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,7 +72,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>2</number>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideRight</enum>
@@ -172,7 +172,7 @@
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
+                  <verstretch>10</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="maximumSize">
@@ -506,7 +506,7 @@
                <x>0</x>
                <y>0</y>
                <width>182</width>
-               <height>477</height>
+               <height>491</height>
               </rect>
              </property>
              <attribute name="label">
@@ -872,8 +872,8 @@ QPushButton:hover:!pressed
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-9</y>
-               <width>165</width>
+               <y>0</y>
+               <width>182</width>
                <height>491</height>
               </rect>
              </property>
@@ -1433,7 +1433,14 @@ QPushButton:hover:!pressed
                <cursorShape>PointingHandCursor</cursorShape>
               </property>
               <property name="styleSheet">
-               <string notr="true">border: 1px solid #F05542;</string>
+               <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
               </property>
               <property name="text">
                <string>Equalizer Histograma</string>
@@ -1463,6 +1470,9 @@ QPushButton:hover:!pressed
                <set>Qt::AlignCenter</set>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_14">
+               <property name="spacing">
+                <number>6</number>
+               </property>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
                  <property name="sizeConstraint">
@@ -1498,6 +1508,54 @@ QPushButton:hover:!pressed
                   </widget>
                  </item>
                 </layout>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnGamma">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string>QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>Guardar</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Line" name="line_2">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>1</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="lineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -1553,7 +1611,14 @@ QPushButton:hover:!pressed
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border: 1px solid #F05542;</string>
+                  <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
                  </property>
                  <property name="text">
                   <string>Const</string>
@@ -1589,7 +1654,14 @@ QPushButton:hover:!pressed
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border: 1px solid #F05542;</string>
+                  <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
                  </property>
                  <property name="text">
                   <string>Const</string>
@@ -1610,6 +1682,8 @@ QPushButton:hover:!pressed
               </layout>
               <zorder>btnPlus</zorder>
               <zorder>btnSubstract</zorder>
+              <zorder>line_2</zorder>
+              <zorder>btnGamma</zorder>
              </widget>
             </item>
            </layout>
@@ -2486,7 +2560,14 @@ QPushButton:hover:!pressed
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border: 1px solid #F05542;</string>
+                  <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
                  </property>
                  <property name="text">
                   <string> Dilation</string>
@@ -2522,7 +2603,14 @@ QPushButton:hover:!pressed
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border: 1px solid #F05542;</string>
+                  <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
                  </property>
                  <property name="text">
                   <string> Erosion</string>
@@ -2558,7 +2646,14 @@ QPushButton:hover:!pressed
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true"/>
+                  <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
                  </property>
                  <property name="text">
                   <string> Opening</string>
@@ -2591,7 +2686,14 @@ QPushButton:hover:!pressed
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true"/>
+                  <string notr="true">QPushButton
+{
+border: 1px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 1px solid #F6863A;
+}</string>
                  </property>
                  <property name="text">
                   <string> Closing</string>
@@ -2606,6 +2708,32 @@ QPushButton:hover:!pressed
                    <width>35</width>
                    <height>35</height>
                   </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnMorphologic">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton
+{
+border: 2px solid #F05542;
+}
+QPushButton:hover:!pressed
+{
+  border: 2px solid #F6863A;
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>Guardar</string>
                  </property>
                 </widget>
                </item>
@@ -2758,10 +2886,6 @@ QPushButton:hover:!pressed
     <property name="title">
      <string>Filter</string>
     </property>
-    <addaction name="actionTransform"/>
-    <addaction name="actionChannel_One"/>
-    <addaction name="actionChannel_Two"/>
-    <addaction name="actionChannel_Three"/>
     <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuContrast">
@@ -2934,12 +3058,12 @@ QPushButton:hover:!pressed
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>182</x>
-     <y>519</y>
+     <x>108</x>
+     <y>472</y>
     </hint>
     <hint type="destinationlabel">
-     <x>177</x>
-     <y>487</y>
+     <x>109</x>
+     <y>440</y>
     </hint>
    </hints>
   </connection>
@@ -2954,8 +3078,8 @@ QPushButton:hover:!pressed
      <y>141</y>
     </hint>
     <hint type="destinationlabel">
-     <x>125</x>
-     <y>193</y>
+     <x>148</x>
+     <y>222</y>
     </hint>
    </hints>
   </connection>
