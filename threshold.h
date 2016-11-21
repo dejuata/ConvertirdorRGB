@@ -39,7 +39,7 @@ void calculateAccHistograma(double histograma[])
         accHistogramaFore[i] = sumF;
     }    
 }
-void calculateWeight(double histograma[])
+void calculateWeight(double histograma[], int sizeImage)
 {
     double sumB = 0;
     double sumF = 0;
@@ -122,7 +122,7 @@ void calculateVariance(double histograma[])
 
 // Funcion que realiza el llamado de las anteriores funciones
 // y retorna el threshold de acuerdo al algoritmo de otsu
-int thresholdOtsu(double histograma[])
+int thresholdOtsu(double histograma[], int sizeImage)
 {
     double minClassVariance;
     int threshold;
@@ -130,7 +130,7 @@ int thresholdOtsu(double histograma[])
     // Funcion que calcula el histograma acumulado
     calculateAccHistograma(histograma);
     // Funcion que calcula el promedio y lo almacena en un array
-    calculateWeight(histograma);
+    calculateWeight(histograma, sizeImage);
     // Funcion que calcula la media
     calculateMean(histograma);
     // Funcion que calcula la varianza

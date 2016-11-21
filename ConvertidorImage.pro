@@ -19,7 +19,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     settingsfilter.h \
-    globals.h \
     filter.h \
     histograma.h \
     convertImage \

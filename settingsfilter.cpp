@@ -1,15 +1,12 @@
 #include "settingsfilter.h"
 #include "ui_settingsfilter.h"
-#include "globals.h"
 
 
 SettingsFilter::SettingsFilter(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingsFilter)
 {
-    ui->setupUi(this);
-    ui->optionsLabel->hide();
-    ui->optionsNumber->hide();
+    ui->setupUi(this);    
     ui->show->hide();
     ui->loaded->hide();
 }
@@ -131,13 +128,16 @@ void SettingsFilter::show_value_kernel(QStringList lists, int value)
     }
 }
 
-void SettingsFilter::clear_options()
+void SettingsFilter::enable_Input(bool disabled)
 {
-    ui->optionsLabel->hide();
-    ui->optionsNumber->hide();
+    ui->f_0_0->setDisabled(disabled);ui->f_0_1->setDisabled(disabled);ui->f_0_2->setDisabled(disabled);ui->f_0_3->setDisabled(disabled);ui->f_0_4->setDisabled(disabled);ui->f_0_5->setDisabled(disabled);ui->f_0_6->setDisabled(disabled);ui->f_0_7->setDisabled(disabled);ui->f_0_8->setDisabled(disabled);
+    ui->f_1_0->setDisabled(disabled);ui->f_1_1->setDisabled(disabled);ui->f_1_2->setDisabled(disabled);ui->f_1_3->setDisabled(disabled);ui->f_1_4->setDisabled(disabled);ui->f_1_5->setDisabled(disabled);ui->f_1_6->setDisabled(disabled);ui->f_1_7->setDisabled(disabled);ui->f_1_8->setDisabled(disabled);
+    ui->f_2_0->setDisabled(disabled);ui->f_2_1->setDisabled(disabled);ui->f_2_2->setDisabled(disabled);ui->f_2_3->setDisabled(disabled);ui->f_2_4->setDisabled(disabled);ui->f_2_5->setDisabled(disabled);ui->f_2_6->setDisabled(disabled);ui->f_2_7->setDisabled(disabled);ui->f_2_8->setDisabled(disabled);
+    ui->f_3_0->setDisabled(disabled);ui->f_3_1->setDisabled(disabled);ui->f_3_2->setDisabled(disabled);ui->f_3_3->setDisabled(disabled);ui->f_3_4->setDisabled(disabled);ui->f_3_5->setDisabled(disabled);ui->f_3_6->setDisabled(disabled);ui->f_3_7->setDisabled(disabled);ui->f_3_8->setDisabled(disabled);
+    ui->f_4_0->setDisabled(disabled);ui->f_4_1->setDisabled(disabled);ui->f_4_2->setDisabled(disabled);ui->f_4_3->setDisabled(disabled);ui->f_4_4->setDisabled(disabled);ui->f_4_5->setDisabled(disabled);ui->f_4_6->setDisabled(disabled);ui->f_4_7->setDisabled(disabled);ui->f_4_8->setDisabled(disabled);
+    ui->f_5_0->setDisabled(disabled);ui->f_5_1->setDisabled(disabled);ui->f_5_2->setDisabled(disabled);ui->f_5_3->setDisabled(disabled);ui->f_5_4->setDisabled(disabled);ui->f_5_5->setDisabled(disabled);ui->f_5_6->setDisabled(disabled);ui->f_5_7->setDisabled(disabled);ui->f_5_8->setDisabled(disabled);
+    ui->f_6_0->setDisabled(disabled);ui->f_6_1->setDisabled(disabled);ui->f_6_2->setDisabled(disabled);ui->f_6_3->setDisabled(disabled);ui->f_6_4->setDisabled(disabled);ui->f_6_5->setDisabled(disabled);ui->f_6_6->setDisabled(disabled);ui->f_6_7->setDisabled(disabled);ui->f_6_8->setDisabled(disabled);
+    ui->f_7_0->setDisabled(disabled);ui->f_7_1->setDisabled(disabled);ui->f_7_2->setDisabled(disabled);ui->f_7_3->setDisabled(disabled);ui->f_7_4->setDisabled(disabled);ui->f_7_5->setDisabled(disabled);ui->f_7_6->setDisabled(disabled);ui->f_7_7->setDisabled(disabled);ui->f_7_8->setDisabled(disabled);
+    ui->f_8_0->setDisabled(disabled);ui->f_8_1->setDisabled(disabled);ui->f_8_2->setDisabled(disabled);ui->f_8_3->setDisabled(disabled);ui->f_8_4->setDisabled(disabled);ui->f_8_5->setDisabled(disabled);ui->f_8_6->setDisabled(disabled);ui->f_8_7->setDisabled(disabled);ui->f_8_8->setDisabled(disabled);
 }
 
-void SettingsFilter::on_buttonBox_accepted()
-{
-    numberSigma = ui->optionsNumber->value();
-}

@@ -7,7 +7,6 @@
 #include <math.h>
 #include <algorithm>    // sort
 #include <vector>       // vector
-#include "globals.h"
 
 using namespace std;
 

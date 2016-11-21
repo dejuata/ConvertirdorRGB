@@ -24,19 +24,17 @@ public:
 
 private slots:
 
-    void on_selectFilter_currentIndexChanged(int index);    
-
-    void on_pushButton_clicked();
+    void on_selectFilter_currentIndexChanged(int index);
 
     void on_filterByDefault_currentIndexChanged(int index);
 
-    void on_buttonBox_accepted();
+    void on_btnLoad_clicked();
 
 private:
 
     void show_value_kernel(QStringList lists, int value);
 
-    void clear_options();
+    void enable_Input(bool disabled = true);
 
 };
 

@@ -11,10 +11,6 @@
 
 using namespace std;
 
-
-// variable para almacenar el tamaño de la imagen, este valor cambia cuando cargo la imagen
-int sizeImage = 0;
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -170,87 +166,37 @@ void MainWindow::on_actionSettings_triggered()
     averange->setModal(true);
     averange->show();
 }
-
-/*
- * CONFIGURACIÓN DE FILTROS POR DEFAULT -> VENTANA SETTINGSFILTER
- *
- * Si la variable int selectFilter esta inicialida con estos valores, corresponde a:
- * 0 -> Filtro promedio
- * 1 -> Filtro Gaussiano
- * 2 -> Filtro Minimo
- * 3 -> Filtro Mediano
- * 4 -> Filtro Maximo
- * 5 -> Filtro Sigma
- * 6 -> Filtro Nagao
- */
-// funcion que setea el valor de una variable global llamada selectFilter
-// para poder saber que funcion debo llamar para poder aplicarle el filtro a la imagen
+// Funcion que muestra los valores de los kernel para el filtro promedio o gaussiano
 void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
 {
     // Filtro Promedio
     if(index == 1)
     {
-        clear_options();
-        // por default trabaja con el kernel promedio
-        selectFilter = 0;
         // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
         on_selectFilter_currentIndexChanged(1);
         // Insertar los valores que trae el filtro por defecto
         show_value_kernel(listAverage, 1);
+        // Muestra los input desahabilitados
+        enable_Input();
     }
     // Filtro Gaussiano
     if(index == 2)
     {
-        clear_options();
-        selectFilter = 1;
-        qDebug()<<"Seleccione kernel gaussiano";
         on_selectFilter_currentIndexChanged(1);
         show_value_kernel(listGaussiano, 1);
-    }
-    // Filtro Minimo
-    if(index == 3)
-    {
-        clear_options();
-        selectFilter = 2;
-        qDebug()<<"Seleccione minimo";
-    }
-    // Filtro Mediano
-    if(index == 4)
-    {
-        clear_options();
-        selectFilter = 3;
-        qDebug()<<"Seleccione mediano";
-    }
-    // Filtro Maximo
-    if(index == 5)
-    {
-        clear_options();
-        selectFilter = 4;
-        qDebug()<<"Seleccione maximo";
-    }
-    // Filtro Sigma
-    if(index == 6)
-    {
-        selectFilter = 5;
-        qDebug()<<"Seleccione sigma";
-        ui->optionsLabel->show();
-        ui->optionsNumber->show();
-    }
-    // Filtro Nagao
-    if(index == 7)
-    {
-        selectFilter = 6;
-        qDebug()<<"Seleccione nagao";
+        enable_Input();
     }
 }
 // Funcion que lee un filtro de un archivo txt, el filtro puede contener un kernel de 3x3, 5x5, 7x7 y 9x9
-void SettingsFilter::on_pushButton_clicked()
+void SettingsFilter::on_btnLoad_clicked()
 {
     QString text;
-    QStringList lists;
+    QString filter;
+    QStringList lists;    
 
     // cargo el txt con el filtro
     QFile file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.txt)"));
+    enable_Input();
     file.open(QIODevice::ReadOnly);
 
     QTextStream result(&file);
@@ -258,7 +204,15 @@ void SettingsFilter::on_pushButton_clicked()
     text = result.readAll();
 
     // Limpiar el string
-    lists = cleanMatriz(text);
+    QStringList list = text.split("\r\n");
+
+    // almaceno el nombre del filtro
+    filter = list[0];
+
+    for(int i = 1; i < list.length(); i++)
+    {
+        lists.append(list[i].split(' '));
+    }
 
     if (lists.length() == 9)
     {
@@ -277,17 +231,18 @@ void SettingsFilter::on_pushButton_clicked()
     }
     if (lists.length() == 81)
     {
-        on_selectFilter_currentIndexChanged(3);
-        show_value_kernel(lists, 3);
+        on_selectFilter_currentIndexChanged(4);
+        show_value_kernel(lists, 4);
     }
 
-    qDebug()<<"list: "<<lists;
 
-    // Asignar a la matriz los valores del string
-    createMatriz(lists);
-
-    // Asigno este valor para indicar que el programa trabaje con la matriz cargada
-    selectFilter = 9;
+    if(filter == "average")listAverage = lists;
+    if(filter == "gaussiano")listGaussiano = lists;
+    if(filter != "average" || filter != "gaussiano")
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Invalid filter"));
+        return;
+    }
 
     ui->loaded->show();
 
@@ -309,15 +264,15 @@ void SettingsFilter::on_pushButton_clicked()
 
 void MainWindow::on_btnAverage_clicked()
 {    
-    createMatriz(listAverage);
-    *imageLabel = filterAverageAndGaussiano(*imageLabel, 3, "average");
+    createMatriz(listAverage);    
+    *imageLabel = filterAverageAndGaussiano(*imageLabel, sqrt(listAverage.length()), "average");
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));    
     render_Miniature_Image();
 }
 void MainWindow::on_btnGaussiano_clicked()
 {
     createMatriz(listGaussiano);
-    *imageLabel = filterAverageAndGaussiano(*imageLabel, 3, "gaussiano");
+    *imageLabel = filterAverageAndGaussiano(*imageLabel, sqrt(listGaussiano.length()), "gaussiano");
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
 }
@@ -382,13 +337,13 @@ void MainWindow::on_btnThreshold_clicked()
 
     switch(channel)
     {
-        case 0: threshold = thresholdOtsu(histogramaT);
+        case 0: threshold = thresholdOtsu(histogramaT, sizeImage);
         break;
-        case 1: threshold = thresholdOtsu(histogramaR);
+        case 1: threshold = thresholdOtsu(histogramaR, sizeImage);
         break;
-        case 2: threshold = thresholdOtsu(histogramaG);
+        case 2: threshold = thresholdOtsu(histogramaG, sizeImage);
         break;
-        case 3: threshold = thresholdOtsu(histogramaB);
+        case 3: threshold = thresholdOtsu(histogramaB, sizeImage);
         break;
         default: qDebug()<<"Error threshold";
     }

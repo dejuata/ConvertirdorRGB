@@ -22,6 +22,9 @@
 #include <QtConcurrent>
 #include <QtWidgets>
 
+#define lengthArray(x) (sizeof(x)/sizeof(x[0]))
+
+
 using namespace QtCharts;
 
 namespace Ui {
@@ -47,11 +50,13 @@ public:
     QString channelR;
     QString channelG;
     QString channelB;
+
     // me permite llevar un control de que imagen quiero que
     // se guarde cuando sea procesado por sobel, robert o prewitt
     QString edgeDetection;
     int channel = 0;
     int morphologic = 0;
+    int sizeImage;
     int constOperationHistograma;
 
     QChart *chart;
@@ -191,6 +196,8 @@ private:
 
     QImage equalization_Histograma(QImage image, int channel);
 
+
+
     // metodo que me retorna el valor del threshold
     int threshold();
     // obtener el numero sigma
@@ -208,6 +215,8 @@ private:
     void clean_Input();
 
 };
+
+
 
 
 

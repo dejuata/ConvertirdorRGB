@@ -2,8 +2,6 @@
 #define MORPHOLOGICAL_H
 
 #include <QImage>
-#include "globals.h"
-
 
 QString arrayStructure[7] = {"0 0 0 0 1 1 0 0 0",
                              "0 0 0 1 1 0 0 0 0",

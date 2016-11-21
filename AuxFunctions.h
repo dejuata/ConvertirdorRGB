@@ -3,7 +3,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "globals.h"
+
 
 // namespace de qtconcurrent para poder usar el metodo run y poder correr procesos en diferentes hilos
 using namespace QtConcurrent;
@@ -105,25 +105,6 @@ void MainWindow::show_Text_UI(QString r, QString g, QString b)
     ui->btn_two->setText("CHANNEL " + g);
     ui->btn_three->setText("CHANNEL " + b);   
 }
-
-/*********************** revisar *****************************/
-// Limpiar el archivo txt de espacios y rotuladores
-QString firstLineFilterTxt;
-
-QStringList cleanMatriz(QString text){
-
-    QStringList list = text.split("\r\n");
-    QStringList cleanList;
-    firstLineFilterTxt = list[0];
-
-    for(int i = 1; i < list.length(); i++)
-    {
-        cleanList.append(list[i].split(' '));
-    }
-
-    return cleanList;
-}
-/*********************** revisar *****************************/
 // Funciones para procesar las conversiones en diferentes hilos
 void MainWindow::select_Space_Colors_Convert(int index)
 {
@@ -188,7 +169,6 @@ void MainWindow::select_Space_Colors_Convert(int index)
 
     imageT = futureT.result();imageR = futureR.result();imageG = futureG.result();imageB = futureB.result();
 }
-
 // Funcion que muestra los input dependiendo del tamaño de kernel que seleccione el usuario 3x3 5x5
 void MainWindow::show_hide_Input_Morphologic(int index)
 {
