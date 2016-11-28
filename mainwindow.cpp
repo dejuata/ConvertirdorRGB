@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->histograma->hide();
     ui->structure->hide();
 
+    statusProgressBar = new QProgressBar(this);
+    statusProgressBar->setTextVisible(false);
+     ui->statusBar->addPermanentWidget(statusProgressBar,1);
 
     this->setWindowState(Qt::WindowMaximized);
 }
@@ -27,7 +30,11 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+void MainWindow::setearProgessBar(int index)
+{
+    qDebug()<<index;
+    statusProgressBar->setValue(index);
+}
 // Función para cargar la imagen
 void MainWindow::on_actionOpen_triggered()
 {
@@ -61,6 +68,9 @@ void MainWindow::on_actionOpen_triggered()
     ui->after->setPixmap(QPixmap::fromImage(image));
     ui->origin->setPixmap(QPixmap::fromImage(image));
 
+    // Show Message status bar Loaded
+    show_Message_Status_Bar(1);
+
     // Funcion que limpia los label cada vez que se abre una nueva imagen
     clear_Label_Miniature_Image();
 
@@ -83,6 +93,8 @@ void MainWindow::on_actionSave_triggered()
         }
         imageT.save(fileName);
     }
+    // Show Message status bar Save
+    show_Message_Status_Bar(2);
 }
 
 /*-----------------------------------------------------------------------------------------------------------/*
@@ -134,7 +146,9 @@ void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 void MainWindow::on_btn_origin_clicked()
 {    
     ui->origin->setPixmap(QPixmap::fromImage(image));
-    show_Label_Image_Hide_Histograma(0);    
+    show_Label_Image_Hide_Histograma(0);
+    // Show Message status bar Origin image
+    show_Message_Status_Bar(5);
 }
 void MainWindow::on_btn_transform_clicked()
 {    
@@ -167,23 +181,50 @@ void MainWindow::on_actionSettings_triggered()
     averange->show();
 }
 // Funcion que muestra los valores de los kernel para el filtro promedio o gaussiano
+void SettingsFilter::on_selectFilter_currentTextChanged(QString arg1)
+{
+    QString index = ui->filterByDefault->currentText();
+    int size = 0;
+
+    if(arg1 == "3 x 3")size = 1;
+    if(arg1 == "5 x 5")size = 2;
+    if(arg1 == "7 x 7")size = 3;
+    if(arg1 == "9 x 9")size = 4;
+
+    if(index == "Average")
+    {
+        // Creo la lista correspondiente al tamaño seleccionado
+        listAverage = sizeKernelAverageOrGaussiano(size,"average");
+        // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
+        on_selectFilter_currentIndexChanged(size);
+        // Insertar los valores que trae el filtro por defecto
+        show_value_kernel(listAverage, size);
+    }
+    if(index == "Gaussiano")
+    {
+        // Creo la lista correspondiente al tamaño seleccionado
+        listGaussiano = sizeKernelAverageOrGaussiano(size,"gaussiano");
+        // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
+        on_selectFilter_currentIndexChanged(size);
+        // Insertar los valores que trae el filtro por defecto
+        show_value_kernel(listGaussiano, size);
+    }
+}
 void SettingsFilter::on_filterByDefault_currentIndexChanged(int index)
 {
-    // Filtro Promedio
     if(index == 1)
     {
-        // Desplegar las casillas vacias correspondientes al tamaño del filtro en pantalla
-        on_selectFilter_currentIndexChanged(1);
-        // Insertar los valores que trae el filtro por defecto
-        show_value_kernel(listAverage, 1);
+        // Habilitar comboBox
+        ui->selectFilter->setEnabled(true);
         // Muestra los input desahabilitados
         enable_Input();
     }
     // Filtro Gaussiano
     if(index == 2)
     {
-        on_selectFilter_currentIndexChanged(1);
-        show_value_kernel(listGaussiano, 1);
+        // Habilitar comboBox
+        ui->selectFilter->setEnabled(true);
+        // Muestra los input desahabilitados
         enable_Input();
     }
 }
@@ -262,37 +303,88 @@ void SettingsFilter::on_btnLoad_clicked()
 
 /******************** Paso bajo ********************/
 
+// Retorna el tamaño del kernel seleccionado del comboBox
+int MainWindow::sizeKernel()
+{
+    int index = ui->kernelMinMedMax->currentIndex();
+
+    switch(index)
+    {
+        case 1: return 3;
+        break;
+        case 2: return 5;
+        break;
+        case 3: return 7;
+        break;
+        case 4: return 9;
+        break;
+        default: return 3;
+    }
+}
+
 void MainWindow::on_btnAverage_clicked()
 {    
-    createMatriz(listAverage);    
-    *imageLabel = filterAverageAndGaussiano(*imageLabel, sqrt(listAverage.length()), "average");
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
+
+    int sizeKernel = ui->kernelMinMedMax->currentIndex();    
+
+    listAverage = sizeKernelAverageOrGaussiano(sizeKernel,"average");
+    createMatriz(listAverage);
+
+    *imageLabel = filterAverageAndGaussiano(*imageLabel,sqrt(listAverage.length()) , "average");
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));    
     render_Miniature_Image();
+
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnGaussiano_clicked()
 {
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
+
+    int sizeKernel = ui->kernelMinMedMax->currentIndex();
+
+    listGaussiano = sizeKernelAverageOrGaussiano(sizeKernel,"gaussiano");
     createMatriz(listGaussiano);
+
     *imageLabel = filterAverageAndGaussiano(*imageLabel, sqrt(listGaussiano.length()), "gaussiano");
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnMinimum_clicked()
-{
-    *imageLabel = filterMinMedMax(*imageLabel, 0);
+{   
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
+    *imageLabel = filterMinMedMax(*imageLabel,sizeKernel(),0);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
+    // Show Message status bar Applying Ready!
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnMedium_clicked()
 {
-    *imageLabel = filterMinMedMax(*imageLabel, 1);
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
+    *imageLabel = filterMinMedMax(*imageLabel,sizeKernel(), 1);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnMaximum_clicked()
 {
-    *imageLabel = filterMinMedMax(*imageLabel, 2);
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
+    *imageLabel = filterMinMedMax(*imageLabel,sizeKernel(), 2);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 // Retorna el numero sigma que ingresa el usuario
 int MainWindow::sigma()
@@ -301,23 +393,35 @@ int MainWindow::sigma()
 }
 void MainWindow::on_sliderSigma_sliderReleased()
 {
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
     numberSigma = sigma();    
     ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 // guardar los cambios de la imagen cuando se escoja un sigma satisfactorio, es decir
 // no se sobreescribe los cambios cada vez que se cambia el sigma, sino que estos se
 // aplican a la imagen original
 void MainWindow::on_btnSigma_clicked()
 {
+    // Show Message status bar Saving..
+    show_Message_Status_Bar(11);
     numberSigma = sigma();
     *imageLabel = filterSigma(*imageLabel,numberSigma);
     render_Miniature_Image();
+    // Show Message status bar Saved..
+    show_Message_Status_Bar(12);
 }
 void MainWindow::on_btnNagao_clicked()
 {
+    // Show Message status bar Applying filter..
+    show_Message_Status_Bar(10);
     *imageLabel = filterNagao(*imageLabel);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 
 /*********************** Fin ***********************/
@@ -333,6 +437,9 @@ int MainWindow::threshold()
 // dependienda de la opcion del radio button que halla escogido el usuario
 void MainWindow::on_btnThreshold_clicked()
 {
+    // Show Message status bar Calculated..
+    show_Message_Status_Bar(13);
+
     int threshold = 0;
 
     switch(channel)
@@ -349,7 +456,10 @@ void MainWindow::on_btnThreshold_clicked()
     }
 
     ui->threshold->setValue(threshold);
-    ui->horizontalSlider->setValue(threshold);    
+    ui->horizontalSlider->setValue(threshold);
+
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 // Metodo que retorna true o false si el fondo es blanco o negro
 bool MainWindow::background()
@@ -358,22 +468,37 @@ bool MainWindow::background()
 }
 void MainWindow::on_btnSobel_clicked()
 {
+    // Show Message status bar Calculated..
+    show_Message_Status_Bar(10);
     ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,sobelX,sobelY,3,threshold(), background())));
     edgeDetection = "Sobel";
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnRobert_clicked()
 {
+    // Show Message status bar Calculated..
+    show_Message_Status_Bar(10);
     ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,robertX,robertY,2,threshold(), background())));
     edgeDetection = "Robert";
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnPrewitt_clicked()
 {
+    // Show Message status bar Calculated..
+    show_Message_Status_Bar(10);
     ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,prewittX,prewittY,3,threshold(), background())));
     edgeDetection = "Prewitt";
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 // Guardo los cambios de la imagen al aplicar Sobel, Robert o Prewitt
 void MainWindow::on_btnEdgeDetection_clicked()
 {
+    // Show Message status bar Saving..
+    show_Message_Status_Bar(11);
+
     bool grayscale = imageT.isGrayscale();
 
     if(edgeDetection == "Sobel")
@@ -391,6 +516,9 @@ void MainWindow::on_btnEdgeDetection_clicked()
         *imageLabel = filterEdgeDetection(*imageLabel, prewittX, prewittY, 3, threshold(), background());
         render_Miniature_Image(!grayscale);
     }
+
+    // Show Message status bar Saving..
+    show_Message_Status_Bar(12);
 }
 
 /*********************** Fin ***********************/
@@ -408,13 +536,13 @@ void MainWindow::on_selectChannelHistograma_activated(int index)
 {
     switch(index)
     {
-        case 0: imageLabel = &imageT;
+        case 0: {imageLabel = &imageT;show_Message_Status_Bar(6);}
         break;
-        case 1: imageLabel = &imageR;
+        case 1: {imageLabel = &imageR;show_Message_Status_Bar(7);}
         break;
-        case 2: imageLabel = &imageG;
+        case 2: {imageLabel = &imageG;show_Message_Status_Bar(8);}
         break;
-        case 3: imageLabel = &imageB;
+        case 3: {imageLabel = &imageB;show_Message_Status_Bar(9);}
         break;
         default: qDebug()<<"No hay imagen";
     }
@@ -434,13 +562,17 @@ void MainWindow::on_btn_histograma_clicked()
 // Metodo que normaliza el histograma en valores de 0 a 1
 void MainWindow::on_actionNormalizeHistograma_triggered()
 {
+    show_Message_Status_Bar(19);
     normalizeHistograma();
     render_Histograma_Min_Or_Max(true,channel);
+    show_Message_Status_Bar(4);
 }
 // Metodo que ecualiza el histograma de la imagen dependiendo del valor almacenado
 // en la variable global selectChannelHistograma
 void MainWindow::on_equalizarHistograma_clicked()
 {    
+    // Show Message status bar Processing..
+    show_Message_Status_Bar(16);
     //cuidado con selectChannelHistograma ya que desde ahi lo controlo desde el combo box, cambiar esto por channel
     *imageLabel = equalization_Histograma(*imageLabel, channel);
     // limpiar los valores del array histograma para cada canal para evitar que se sobreescriba
@@ -454,6 +586,8 @@ void MainWindow::on_equalizarHistograma_clicked()
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     // renderizar imagenes en miniatura
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 
 /*************** Operaciones con histogramas ***************/
@@ -467,6 +601,8 @@ void MainWindow::on_const_2_valueChanged(double arg1)
 // Funcion que aplica a la imagen el valor gamma del slider seleccionado automaticamente
 void MainWindow::on_gamma_sliderReleased()
 {
+    // Show Message status bar Calculated gamma...
+    show_Message_Status_Bar(17);
     QImage gamma = gammaConstImage(*imageLabel,constOperationHistograma);
     // setear los valores del histograma en 0 dependiendo del canal
     qDebug()<<channel;
@@ -475,6 +611,8 @@ void MainWindow::on_gamma_sliderReleased()
     render_Histograma_Min_Or_Max(true,channel);
     render_Histograma_Min_Or_Max(false,channel);
     ui->origin->setPixmap(QPixmap::fromImage(gamma));
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 // Funcion que setea en el spinbox el valor del slider que corresponde al numero gamma
 void MainWindow::on_gamma_sliderMoved(int position)
@@ -484,28 +622,40 @@ void MainWindow::on_gamma_sliderMoved(int position)
 // Guarda los cambios aplicados a la imagen sobre el gamma
 void MainWindow::on_btnGamma_clicked()
 {
+    // Show Message status bar Saving...
+    show_Message_Status_Bar(11);
     *imageLabel = gammaConstImage(*imageLabel,constOperationHistograma);
     render_Miniature_Image();
+    // Show Message status bar Saved!
+    show_Message_Status_Bar(12);
 }
 // Funcion que suma una constante al histograma
 void MainWindow::on_btnPlus_clicked()
 {   
+    // Show Message status bar Applying...
+    show_Message_Status_Bar(18);
     *imageLabel = sumConstImage(*imageLabel,constOperationHistograma,channel);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     createHistograma(*imageLabel,channel);
     render_Histograma_Min_Or_Max(true,channel);
     render_Histograma_Min_Or_Max(false,channel);
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 // Funcion que resta una constante al histograma
 void MainWindow::on_btnSubstract_clicked()
 {
+    // Show Message status bar Applying
+    show_Message_Status_Bar(18);
     *imageLabel = susbtractConstImage(*imageLabel,constOperationHistograma,channel);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     createHistograma(*imageLabel,channel);
     render_Histograma_Min_Or_Max(true,channel);
     render_Histograma_Min_Or_Max(false,channel);
     render_Miniature_Image();
+    // Show Message status bar Ready!
+    show_Message_Status_Bar(4);
 }
 
 /********************** Fin **********************/
@@ -527,7 +677,7 @@ void MainWindow::on_optionsEstruc_currentIndexChanged(int index)
     if(ui->sizeEstruc->currentIndex() == 1 && index > 0)
     {
        // selecciono la estructura de un array y la convierto a una lista
-       QStringList listStructure = arrayStructure[index-1].split(' ');
+       QStringList listStructure = arrayStructure3x3[index-1].split(' ');
        // Funcion que muestra en pantalla los datos de la estructura
        show_Structure(listStructure);
        // Funcion que rellena una matriz con los valores de la estructura
@@ -537,57 +687,123 @@ void MainWindow::on_optionsEstruc_currentIndexChanged(int index)
        ui->btnErosion->setEnabled(true);
        ui->btnOpening->setEnabled(true);
        ui->btnClosing->setEnabled(true);
+       ui->btnMorphologic->setEnabled(true);
     }
+    if(ui->sizeEstruc->currentIndex() == 2 && index > 0)
+    {
+        // selecciono la estructura de un array y la convierto a una lista
+        QStringList listStructure = arrayStructure5x5[index-1].split(' ');
+        // Funcion que muestra en pantalla los datos de la estructura
+        show_Structure(listStructure);
+        // Funcion que rellena una matriz con los valores de la estructura
+        createMatrizStructure(listStructure);
+        // Activo el btnDilation
+        ui->btnDilation->setEnabled(true);
+        ui->btnErosion->setEnabled(true);
+        ui->btnOpening->setEnabled(true);
+        ui->btnClosing->setEnabled(true);
+        ui->btnMorphologic->setEnabled(true);
+    }
+}
+void MainWindow::on_btnLeft_clicked()
+{
+    int index = ui->optionsEstruc->currentIndex();
+
+    if(index <= 0)
+    {
+        ui->optionsEstruc->setCurrentIndex(7);
+    }
+
+    ui->optionsEstruc->setCurrentIndex(index-1);
+}
+void MainWindow::on_btnRight_clicked()
+{
+    int index = ui->optionsEstruc->currentIndex();
+
+    if(index > 0)
+    {
+        ui->btnLeft->setEnabled(true);
+    }
+
+    if(index == 7)
+    {
+        ui->optionsEstruc->setCurrentIndex(1);
+    }
+
+    ui->optionsEstruc->setCurrentIndex(index+1);
+}
+
+// retornar un numero que corresponde al tamaño del kernel segun lo seleccionado en el comboBox
+int MainWindow::sizeKernelOperatiosMorphologics()
+{
+    int index = ui->sizeEstruc->currentIndex();
+    int size;
+
+    if(index == 1)size = 3;
+    if(index == 2)size = 5;
+
+    return size;
 }
 
 /*************** Operaciones Morfologicas ***************/
 
 void MainWindow::on_btnDilation_clicked()
 {    
+    show_Message_Status_Bar(18);
     morphologic = 0;
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,true)));
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics())));
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnErosion_clicked()
 {
+    show_Message_Status_Bar(18);
     morphologic = 1;
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,false)));
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics())));
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnOpening_clicked()
 {
+    show_Message_Status_Bar(18);
     morphologic = 2;
-    QImage opening = dilationOrErosion(*imageLabel,false);
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(opening,true)));
+    QImage opening = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(opening,true,sizeKernelOperatiosMorphologics())));
+    show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnClosing_clicked()
 {
+    show_Message_Status_Bar(18);
     morphologic = 3;
-    QImage closing = dilationOrErosion(*imageLabel,true);
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(closing,false)));
+    QImage closing = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(closing,false,sizeKernelOperatiosMorphologics())));
+    show_Message_Status_Bar(4);
 }
 // Funcion que guarda la imagen dependiendo de la operacion morfologica aplicada
 void MainWindow::on_btnMorphologic_clicked()
 {
+    show_Message_Status_Bar(11);
+
     switch(morphologic)
     {
-        case 0: *imageLabel = dilationOrErosion(*imageLabel,true);
+        case 0: *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
         break;
-        case 1: *imageLabel = dilationOrErosion(*imageLabel,false);
+        case 1: *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
         break;
         case 2:
         {
-            *imageLabel = dilationOrErosion(*imageLabel,false);
-            *imageLabel = dilationOrErosion(*imageLabel,true);
+            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
         }
         break;
         case 3:
         {
-            *imageLabel = dilationOrErosion(*imageLabel,true);
-            *imageLabel = dilationOrErosion(*imageLabel,false);
+            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
         }
         break;
         default: qDebug()<<"No se puede guardar la operacion morfologica";
     }
     render_Miniature_Image();
+    show_Message_Status_Bar(12);
 }
 
 /********************** Fin **********************/
@@ -595,3 +811,17 @@ void MainWindow::on_btnMorphologic_clicked()
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
+
+void MainWindow::on_actionDemo_triggered()
+{
+    // showMessage(const QString & message, int timeout = 0)
+//        ui->statusBar->showMessage("Status");
+
+    // When the action triggered, set the progress bar at 51%
+        for(int i=0; i < 1000; i++)
+        {
+            statusProgressBar->setValue(i);
+        }
+
+}
+

@@ -2,6 +2,7 @@
 #include "ui_settingsfilter.h"
 
 
+
 SettingsFilter::SettingsFilter(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingsFilter)
@@ -20,6 +21,20 @@ void SettingsFilter::on_selectFilter_currentIndexChanged(int index)
 {
     ui->show->show();
 
+    if(index == 0)
+    {
+        // Oculto los file input
+        ui->f_0_0->hide();ui->f_0_1->hide();ui->f_0_2->hide();ui->f_0_3->hide();ui->f_0_4->hide();ui->f_0_5->hide();ui->f_0_6->hide();ui->f_0_7->hide();ui->f_0_8->hide();
+        ui->f_1_0->hide();ui->f_1_1->hide();ui->f_1_2->hide();ui->f_1_3->hide();ui->f_1_4->hide();ui->f_1_5->hide();ui->f_1_6->hide();ui->f_1_7->hide();ui->f_1_8->hide();
+        ui->f_2_0->hide();ui->f_2_1->hide();ui->f_2_2->hide();ui->f_2_3->hide();ui->f_2_4->hide();ui->f_2_5->hide();ui->f_2_6->hide();ui->f_2_7->hide();ui->f_2_8->hide();
+        ui->f_3_0->hide();ui->f_3_1->hide();ui->f_3_2->hide();ui->f_3_3->hide();ui->f_3_4->hide();ui->f_3_5->hide();ui->f_3_6->hide();ui->f_3_7->hide();ui->f_3_8->hide();
+        ui->f_4_0->hide();ui->f_4_1->hide();ui->f_4_2->hide();ui->f_4_3->hide();ui->f_4_4->hide();ui->f_4_5->hide();ui->f_4_6->hide();ui->f_4_7->hide();ui->f_4_8->hide();
+        ui->f_5_0->hide();ui->f_5_1->hide();ui->f_5_2->hide();ui->f_5_3->hide();ui->f_5_4->hide();ui->f_5_5->hide();ui->f_5_6->hide();ui->f_5_7->hide();ui->f_5_8->hide();
+        ui->f_6_0->hide();ui->f_6_1->hide();ui->f_6_2->hide();ui->f_6_3->hide();ui->f_6_4->hide();ui->f_6_5->hide();ui->f_6_6->hide();ui->f_6_7->hide();ui->f_6_8->hide();
+        ui->f_7_0->hide();ui->f_7_1->hide();ui->f_7_2->hide();ui->f_7_3->hide();ui->f_7_4->hide();ui->f_7_5->hide();ui->f_7_6->hide();ui->f_7_7->hide();ui->f_7_8->hide();
+        ui->f_8_0->hide();ui->f_8_1->hide();ui->f_8_2->hide();ui->f_8_3->hide();ui->f_8_4->hide();ui->f_8_5->hide();ui->f_8_6->hide();ui->f_8_7->hide();ui->f_8_8->hide();
+
+    }
     if(index == 1)
     {
         // Oculto los file input
@@ -140,4 +155,12 @@ void SettingsFilter::enable_Input(bool disabled)
     ui->f_7_0->setDisabled(disabled);ui->f_7_1->setDisabled(disabled);ui->f_7_2->setDisabled(disabled);ui->f_7_3->setDisabled(disabled);ui->f_7_4->setDisabled(disabled);ui->f_7_5->setDisabled(disabled);ui->f_7_6->setDisabled(disabled);ui->f_7_7->setDisabled(disabled);ui->f_7_8->setDisabled(disabled);
     ui->f_8_0->setDisabled(disabled);ui->f_8_1->setDisabled(disabled);ui->f_8_2->setDisabled(disabled);ui->f_8_3->setDisabled(disabled);ui->f_8_4->setDisabled(disabled);ui->f_8_5->setDisabled(disabled);ui->f_8_6->setDisabled(disabled);ui->f_8_7->setDisabled(disabled);ui->f_8_8->setDisabled(disabled);
 }
+
+// retorna el index para saber si el kernel es de 3x3 5x5 7x7 9x9
+int SettingsFilter::indexSizeFilter()
+{
+   return ui->selectFilter->currentIndex();
+}
+
+
 

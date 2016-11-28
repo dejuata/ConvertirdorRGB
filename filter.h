@@ -11,10 +11,18 @@
 using namespace std;
 
 // Kernel para filtros de paso bajo
-QString stringAverage = "1 1 1 1 1 1 1 1 1";
-QString stringGaussiano = "1 2 1 2 4 2 1 2 1";
-QStringList listAverage = stringAverage.split(' ');
-QStringList listGaussiano = stringGaussiano.split(' ');
+QString stringAverage3x3 = "1 1 1 1 1 1 1 1 1";
+QString stringAverage5x5 = "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1";
+QString stringAverage7x7 = "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1";
+QString stringAverage9x9 = "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1";
+
+QString stringGaussiano3x3 = "1 2 1 2 4 2 1 2 1";
+QString stringGaussiano5x5 = "0 1 2 1 0 1 3 5 3 1 2 5 9 5 2 1 3 5 3 1 0 1 2 1 0";
+QString stringGaussiano7x7 = "0 0 1 2 1 0 0 0 3 13 22 13 3 0 1 13 59 97 59 13 1 2 22 97 159 97 22 2 1 13 59 97 59 13 1 0 3 13 22 13 3 0 0 0 1 2 1 0 0";
+QString stringGaussiano9x9 = "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1";
+
+QStringList listAverage = stringAverage3x3.split(' ');
+QStringList listGaussiano = stringGaussiano3x3.split(' ');
 
 // Kernel para filtros de paso alto
 int sobelX[3][3] = {{1,2,1},{0,0,0},{-1,-2,-1}};
@@ -26,6 +34,43 @@ int prewittY[3][3] = {{1,0,-1},{1,0,-1},{1,0,-1}};
 int robertX[3][3] = {{0,1,0},{-1,0,0},{0,0,0}};
 int robertY[3][3] = {{-1,0,0},{0,1,0},{0,0,0}};
 
+
+// Funcion que setea la lista dependiendo del tamaño del kernel que escoja para promedio o gaussiano
+QStringList sizeKernelAverageOrGaussiano(int size, QString filter)
+{
+    QStringList lista;
+
+    if(filter == "average")
+    {
+        switch(size)
+        {
+            case 1: lista = stringAverage3x3.split(' ');
+            break;
+            case 2: lista = stringAverage5x5.split(' ');
+            break;
+            case 3: lista = stringAverage7x7.split(' ');
+            break;
+            case 4: lista = stringAverage9x9.split(' ');
+            break;
+        }
+    }
+    if(filter == "gaussiano")
+    {
+        switch(size)
+        {
+            case 1: lista = stringGaussiano3x3.split(' ');
+            break;
+            case 2: lista = stringGaussiano5x5.split(' ');
+            break;
+            case 3: lista = stringGaussiano7x7.split(' ');
+            break;
+            case 4: lista = stringGaussiano9x9.split(' ');
+            break;
+        }
+    }
+
+    return lista;
+}
 
 // Almaceno el tamano del kernel, si es 0 trabaja con el kernel default de [3][3]
 int sizeList = 0;
@@ -109,8 +154,7 @@ QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilt
     QRgb value;    
     mitad = sizeKernel / 2;
 
-    average = numberDivisorIfAverageOrGaussiano(sizeKernel, typeFilter);
-    qDebug()<<"Average: "<<average;
+    average = numberDivisorIfAverageOrGaussiano(sizeKernel, typeFilter);    
 
     // Filas
     for (int i = 0; i < image.width(); i++)
@@ -183,13 +227,11 @@ QImage filterAverageAndGaussiano (QImage image, int sizeKernel, QString typeFilt
  * 1 -> medium
  * 2 -> maximum
  */
-QImage filterMinMedMax(QImage image, int operation)
+QImage filterMinMedMax(QImage image, int size, int operation)
 {
     int mm,nn,ii,jj,mitad;
     int countArray,countVector;
-    double min,max,medio;
-    int size = 3;
-
+    double min,max,medio;    
     QImage result = image;
     mitad = size / 2;
 
@@ -200,7 +242,15 @@ QImage filterMinMedMax(QImage image, int operation)
         for (int j = 0; j < image.height(); j++)
         {
             // Incializo arreglos para valores rgb
-            double array[] = {1256,1256,1256,1256,1256,1256,1256,1256,1256};
+            double array[] = {1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256,
+                              1256,1256,1256,1256,1256,1256,1256,1256,1256};
 
             countArray = 0;
 
@@ -222,8 +272,8 @@ QImage filterMinMedMax(QImage image, int operation)
                     // validar limites de la imagen 00000
                     if (ii >= 0 && ii < image.width() && jj >= 0 && jj < image.height())
                     {
-                      array[countArray] = image.pixel(ii,jj);
-                      countArray++;
+                        array[countArray] = image.pixel(ii,jj);
+                        countArray++;
                     }
                 }
             }

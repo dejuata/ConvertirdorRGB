@@ -4,6 +4,9 @@
 #include <QImage>
 #include <QColor>
 #include <math.h>
+#include "mainwindow.h"
+
+
 
 int channelOne(int r, int g, int b, char channel)
 {
@@ -73,10 +76,18 @@ int channelThree(int r, int g, int b, char channel)
 
 QImage convertToRGB(QImage image, char channel)
 {
+    MainWindow ventana;
+
     int r,g,b;
 
     for(int i = 0; i < image.width(); i++)
-    {       
+    {
+
+ventana.setearProgessBar(i);
+
+        // agregue esto
+//        MainWindow::setearProgessBar(i);
+
         for(int j = 0; j < image.height(); j++)
         {
             // Format RGB

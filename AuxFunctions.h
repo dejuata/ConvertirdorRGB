@@ -29,6 +29,8 @@ void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, i
     {
         // Variable que almacena el nombre de los canales para poder mostrarlos en el histograma
         channelR = r, channelG = g, channelB = b;
+        // Show Message status bar Processing image to
+        show_Message_Status_Bar(3);
         // Funcion que selecciona que transformacion de color voy a realizar
         select_Space_Colors_Convert(spaceColor);
         //Funcion que crea el histograma para los cuatro canales
@@ -46,6 +48,8 @@ void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, i
         else{show_Text_UI(r.mid(0,1),g.mid(0,1),b.mid(0,1));}
         // Muestra el histograma promedio por defecto
         show_Label_Image_Hide_Histograma(0);
+        // Show Message status bar Ready!
+        show_Message_Status_Bar(4);
     }
 }
 // Funcion para limpiar labels cuando se desea cambiar la imagen a procesar
@@ -68,6 +72,8 @@ void MainWindow::show_Image_In_Label(QImage &image, int index)
     // Crea y muestra el histograma dependiendo del canal seleccionado
     // 0 -> T / 1 -> R / 2 -> G / 3 -> B
     show_Label_Image_Hide_Histograma(index);
+    // Show Message status bar channel RGB
+    show_Message_Status_Bar(index+6);
 }
 // Funcion para renderizar las imagenes procesadas en miniatura
 void MainWindow::render_Miniature_Image(bool NoGrayscale)
@@ -214,17 +220,47 @@ void MainWindow::show_Structure(QStringList lists)
 {
     clean_Input();
 
-    /*if(ui->sizeEstruc->currentIndex() == 0)
-    {
-        clean_Input();
-    }*/
     if(ui->sizeEstruc->currentIndex() == 1)
     {
         ui->e_1_1->insert(lists[0]);ui->e_1_2->insert(lists[1]);ui->e_1_3->insert(lists[2]);
         ui->e_2_1->insert(lists[3]);ui->e_2_2->insert(lists[4]);ui->e_2_3->insert(lists[5]);
         ui->e_3_1->insert(lists[6]);ui->e_3_2->insert(lists[7]);ui->e_3_3->insert(lists[8]);
     }
+    if(ui->sizeEstruc->currentIndex() == 2)
+    {
+       ui->e_0_0->insert(lists[0]);ui->e_0_1->insert(lists[1]);ui->e_0_2->insert(lists[2]);ui->e_0_3->insert(lists[3]);ui->e_0_4->insert(lists[4]);
+       ui->e_1_0->insert(lists[5]);ui->e_1_1->insert(lists[6]);ui->e_1_2->insert(lists[7]);ui->e_1_3->insert(lists[8]);ui->e_1_4->insert(lists[9]);
+       ui->e_2_0->insert(lists[10]);ui->e_2_1->insert(lists[11]);ui->e_2_2->insert(lists[12]);ui->e_2_3->insert(lists[13]);ui->e_2_4->insert(lists[14]);
+       ui->e_3_0->insert(lists[15]);ui->e_3_1->insert(lists[16]);ui->e_3_2->insert(lists[17]);ui->e_3_3->insert(lists[18]);ui->e_3_4->insert(lists[19]);
+       ui->e_4_0->insert(lists[20]);ui->e_4_1->insert(lists[21]);ui->e_4_2->insert(lists[22]);ui->e_4_3->insert(lists[23]);ui->e_4_4->insert(lists[24]);
+    }
 }
+// Funcion que muestra los diferentes mensajes en la QStatusBar
+void MainWindow::show_Message_Status_Bar(int index)
+{
+    if(index == 1)ui->statusBar->showMessage(" Image loaded!");
+    if(index == 2)ui->statusBar->showMessage(" Image saved!");
+    if(index == 3)ui->statusBar->showMessage(" Transforming image to "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+"...");
+    if(index == 4)ui->statusBar->showMessage(" Ready!");
 
+    if(index == 5)ui->statusBar->showMessage(" Original image selected!");
+    if(index == 6)ui->statusBar->showMessage(" Channel "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+" selected!");
+    if(index == 7)ui->statusBar->showMessage(" Channel "+channelR.mid(0,1)+" selected!");
+    if(index == 8)ui->statusBar->showMessage(" Channel "+channelG.mid(0,1)+" selected!");
+    if(index == 9)ui->statusBar->showMessage(" Channel "+channelB.mid(0,1)+" selected!");
+
+    if(index == 10)ui->statusBar->showMessage(" Applying filter...");
+    if(index == 11)ui->statusBar->showMessage(" Saving...");
+    if(index == 12)ui->statusBar->showMessage(" Saved!");
+    if(index == 13)ui->statusBar->showMessage(" Calculated threshold...");
+    if(index == 14)ui->statusBar->showMessage(" White background selected!");
+    if(index == 15)ui->statusBar->showMessage(" Black background selected!");
+
+    if(index == 16)ui->statusBar->showMessage(" Equalizing histogram...");
+    if(index == 17)ui->statusBar->showMessage(" Calculated gamma...");
+    if(index == 18)ui->statusBar->showMessage(" Applying...");
+    if(index == 19)ui->statusBar->showMessage(" Normalizing histogram...");
+
+}
 
 #endif // RESOURCES_H

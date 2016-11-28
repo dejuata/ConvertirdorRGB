@@ -3,15 +3,34 @@
 
 #include <QImage>
 
-QString arrayStructure[7] = {"0 0 0 0 1 1 0 0 0",
-                             "0 0 0 1 1 0 0 0 0",
-                             "0 0 0 1 1 1 0 0 0",
-                             "0 1 0 0 1 0 0 0 0",
-                             "0 0 0 0 1 0 0 1 0",
-                             "0 1 0 0 1 0 0 1 0",
-                             "0 1 0 1 1 1 0 1 0"};
+QString arrayStructure3x3[12] = {"0 0 0 0 1 1 0 0 0",
+                                "0 1 0 0 1 0 0 0 0",
+                                "0 0 0 1 1 0 0 0 0",
+                                "0 0 0 0 1 0 0 1 0",
+                                "0 1 0 0 1 1 0 0 0",
+                                "0 1 0 1 1 0 0 0 0",
+                                "0 0 0 1 1 0 0 1 0",
+                                "0 0 0 0 1 1 0 1 0",
+                                "0 1 0 0 1 1 0 1 0",
+                                "0 1 0 1 1 0 0 1 0",
+                                "0 0 0 1 1 1 0 1 0",
+                                "0 1 0 1 1 1 0 1 0"     };
+
+QString arrayStructure5x5[12] = {   "0 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0",
+                                    "1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0",
+                                    "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 0",
+                                    "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1",
+                                    "0 0 1 0 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0",
+                                    "1 0 1 0 0 0 1 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0",
+                                    "0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 1 1 0 0 1 0 1 0 0",
+                                    "0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 1 1 0 0 0 1 0 1",
+                                    "0 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 0",
+                                    "1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1",
+                                    "1 0 0 0 1 0 1 0 1 0 0 0 1 0 0 0 1 0 1 0 1 0 0 0 1",
+                                    "1 0 1 0 1 0 1 1 1 0 1 1 1 1 1 0 1 1 1 0 1 0 1 0 1"  };
 
 int kernel3x3[3][3];
+int kernel5x5[5][5];
 
 void createMatrizStructure(QStringList list)
 {
@@ -28,7 +47,7 @@ void createMatrizStructure(QStringList list)
 
             if(sizeList == 3)kernel3x3[i][j] = number;
 
-//            if(sizeList == 5)kernelFive[i][j] = number;
+            if(sizeList == 5)kernel5x5[i][j] = number;
 
 //            if(sizeList == 7)kernelSeven[i][j] = number;
 
@@ -44,34 +63,53 @@ void createMatrizStructure(QStringList list)
 // con el kernel que ingreso el usuario
 void mirrorMatrizForErosion(int mitad, int sizeKernel)
 {
-    int espejo[3][3];
+    int espejo3x3[3][3];
+    int espejo5x5[5][5];
     int size = sizeKernel - 1;
 
-    for(int x = 0; x < lengthArray(espejo); x++)
+    for(int x = 0; x < sizeKernel; x++)
     {
-        for(int y = 0; y < lengthArray(espejo); y++)
+        for(int y = 0; y < sizeKernel; y++)
         {
-           espejo[x][y] = y < mitad ? kernel3x3[x][size-y] : y == mitad ? kernel3x3[x][mitad] : y > mitad ? kernel3x3[x][size-y] : 1;
+            if(sizeKernel == 3)
+            {
+                espejo3x3[x][y] = y < mitad ? kernel3x3[x][size-y] : y == mitad ? kernel3x3[x][mitad] : y > mitad ? kernel3x3[x][size-y] : 1;
+            }
+            if(sizeKernel == 5)
+            {
+                espejo5x5[x][y] = y < mitad ? kernel5x5[x][size-y] : y == mitad ? kernel5x5[x][mitad] : y > mitad ? kernel5x5[x][size-y] : 1;
+            }
+
         }
     }
-    for(int x = 0; x < lengthArray(espejo); x++)
+    for(int x = 0; x < sizeKernel; x++)
     {
-        for(int y = 0; y < lengthArray(espejo); y++)
+        for(int y = 0; y < sizeKernel; y++)
         {
-           kernel3x3[x][y] = x < mitad ? espejo[size-x][y] : x == mitad ? espejo[mitad][y] : x > mitad ? espejo[size-x][y] : 1;
+            if(sizeKernel == 3)
+            {
+                kernel3x3[x][y] = x < mitad ? espejo3x3[size-x][y] : x == mitad ? espejo3x3[mitad][y] : x > mitad ? espejo3x3[size-x][y] : 1;
+            }
+            if(sizeKernel == 5)
+            {
+                kernel5x5[x][y] = x < mitad ? espejo5x5[size-x][y] : x == mitad ? espejo5x5[mitad][y] : x > mitad ? espejo5x5[size-x][y] : 1;
+            }
         }
     }
 }
 // retorna el numero de elementos del kernel
-int valueKernel()
+int valueKernel(int sizeKernel)
 {
     int sumKernel = 0;
 
-    for(int x = 0; x < lengthArray(kernel3x3); x++)
+    for(int x = 0; x < sizeKernel; x++)
     {
-        for(int y = 0; y < lengthArray(kernel3x3); y++)
+        for(int y = 0; y < sizeKernel; y++)
         {
-            sumKernel += kernel3x3[x][y];
+            if(sizeKernel == 3)sumKernel += kernel3x3[x][y];
+
+            if(sizeKernel == 5)sumKernel += kernel5x5[x][y];
+
         }
     }
 
@@ -81,18 +119,17 @@ int valueKernel()
 // debe recibir una imagen binaria que sea de fondo negro
 // true -> dilation
 // false -> erosion
-QImage dilationOrErosion(QImage image, bool flag)
+QImage dilationOrErosion(QImage image, bool flag, int sizeKernel)
 {
     int mitad,mm,nn,ii,jj,r,g,b;
-    QImage result = image;
-    int sizeKernel = lengthArray(kernel3x3);
+    QImage result = image;    
     mitad = sizeKernel / 2;
     int erosion = 0;
 
     if(!flag)
     {
         mirrorMatrizForErosion(mitad,sizeKernel);
-        erosion = valueKernel() * 255;
+        erosion = valueKernel(sizeKernel) * 255;
     }
 
     // Filas
@@ -128,6 +165,12 @@ QImage dilationOrErosion(QImage image, bool flag)
                             r += QColor(image.pixel(ii,jj)).red() * kernel3x3[mm][nn];
                             g += QColor(image.pixel(ii,jj)).green() * kernel3x3[mm][nn];
                             b += QColor(image.pixel(ii,jj)).blue() * kernel3x3[mm][nn];
+                        }
+                        if(sizeKernel == 5)
+                        {
+                            r += QColor(image.pixel(ii,jj)).red() * kernel5x5[mm][nn];
+                            g += QColor(image.pixel(ii,jj)).green() * kernel5x5[mm][nn];
+                            b += QColor(image.pixel(ii,jj)).blue() * kernel5x5[mm][nn];
                         }
                     }
                 }

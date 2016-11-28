@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 
+
 namespace Ui {
 class SettingsFilter;
 }
@@ -30,11 +31,15 @@ private slots:
 
     void on_btnLoad_clicked();
 
+    void on_selectFilter_currentTextChanged(QString arg1);
+
 private:
 
     void show_value_kernel(QStringList lists, int value);
 
     void enable_Input(bool disabled = true);
+
+    int indexSizeFilter();
 
 };
 
