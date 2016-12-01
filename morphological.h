@@ -118,7 +118,7 @@ int valueKernel(int sizeKernel)
 
 // debe recibir una imagen binaria que sea de fondo negro
 // true -> dilation
-// false -> erosion
+// false -> erosion http://www2.elo.utfsm.cl/~elo328/PDI12_Morfologia.pdf
 QImage dilationOrErosion(QImage image, bool flag, int sizeKernel)
 {
     int mitad,mm,nn,ii,jj,r,g,b;
@@ -188,7 +188,7 @@ QImage dilationOrErosion(QImage image, bool flag, int sizeKernel)
             }
             else
             {
-                if(r == erosion)
+                if(r == erosion && g == erosion && b == erosion)
                 {
                     result.setPixelColor(i,j,qRgb(255,255,255));
                 }
@@ -199,8 +199,36 @@ QImage dilationOrErosion(QImage image, bool flag, int sizeKernel)
             }
 
         }
-        qDebug()<<endl;
+
     }
+    return result;
+}
+
+bool imageBinaria(QImage image)
+{
+    bool result;
+    int count = 0;
+
+    for (int i = 0; i < image.width(); i++)
+    {
+        for (int j = 0; j < image.height(); j++)
+        {
+            if(image.pixel(i,j) != qRgb(0,0,0) && image.pixel(i,j) != qRgb(255,255,255))
+            {
+                count++;
+            }
+        }
+    }
+
+    if(count > 0)
+    {
+        result = false;
+    }
+    else
+    {
+        result = true;
+    }
+
     return result;
 }
 

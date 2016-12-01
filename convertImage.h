@@ -4,9 +4,6 @@
 #include <QImage>
 #include <QColor>
 #include <math.h>
-#include "mainwindow.h"
-
-
 
 int channelOne(int r, int g, int b, char channel)
 {
@@ -76,18 +73,10 @@ int channelThree(int r, int g, int b, char channel)
 
 QImage convertToRGB(QImage image, char channel)
 {
-    MainWindow ventana;
-
     int r,g,b;
 
     for(int i = 0; i < image.width(); i++)
     {
-
-ventana.setearProgessBar(i);
-
-        // agregue esto
-//        MainWindow::setearProgessBar(i);
-
         for(int j = 0; j < image.height(); j++)
         {
             // Format RGB
@@ -119,10 +108,11 @@ ventana.setearProgessBar(i);
 }
 QImage convertToYYY(QImage image)
 {
-    int r,g,b,y;
+    int r,g,b,y;    
 
     for(int i = 0; i < image.width(); i++)
     {
+//        run(dialog->progressDialog(i));
         for(int j = 0; j < image.height(); j++)
         {
             // get pixels
@@ -135,7 +125,7 @@ QImage convertToYYY(QImage image)
 
             image.setPixelColor(i,j,qRgb(y,y,y));
         }
-    }
+    }    
     return image;
 }
 QImage convertToYUV(QImage image, char channel)

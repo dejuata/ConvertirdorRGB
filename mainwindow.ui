@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>650</height>
+    <width>2424</width>
+    <height>712</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -213,6 +213,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
                <widget class="QPushButton" name="btn_transform">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -291,6 +294,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
                <widget class="QPushButton" name="btn_one">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -357,6 +363,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
                <widget class="QPushButton" name="btn_two">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -423,6 +432,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QPushButton" name="btn_three">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -508,8 +520,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>151</width>
-               <height>498</height>
+               <width>168</width>
+               <height>542</height>
               </rect>
              </property>
              <attribute name="label">
@@ -561,6 +573,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="btnAverage">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -611,6 +626,9 @@ QPushButton:hover:!pressed
               </item>
               <item>
                <widget class="QPushButton" name="btnGaussiano">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -648,6 +666,9 @@ QPushButton:hover:!pressed
               </item>
               <item>
                <widget class="QPushButton" name="btnMinimum">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -685,6 +706,9 @@ QPushButton:hover:!pressed
               </item>
               <item>
                <widget class="QPushButton" name="btnMedium">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -722,6 +746,9 @@ QPushButton:hover:!pressed
               </item>
               <item>
                <widget class="QPushButton" name="btnMaximum">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -2881,35 +2908,6 @@ QPushButton:hover:!pressed
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QPushButton" name="btnMorphologic">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="cursor">
-                  <cursorShape>PointingHandCursor</cursorShape>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QPushButton
-{
-border: 2px solid #F05542;
-}
-QPushButton:hover:!pressed
-{
-  border: 2px solid #F6863A;
-}</string>
-                 </property>
-                 <property name="text">
-                  <string>Guardar</string>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </widget>
             </item>
@@ -3031,7 +3029,7 @@ QPushButton:hover:!pressed
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>977</width>
+     <width>2424</width>
      <height>21</height>
     </rect>
    </property>
@@ -3055,7 +3053,7 @@ QPushButton:hover:!pressed
     <addaction name="actionRGB_to_HSL"/>
     <addaction name="actionRGB_to_XYZ"/>
     <addaction name="actionRGB_to_O1O2O3"/>
-    <addaction name="actionRGB_to_Binaria"/>
+    <addaction name="actionConvert_to_YYY"/>
    </widget>
    <widget class="QMenu" name="menuFilter">
     <property name="title">
@@ -3070,10 +3068,17 @@ QPushButton:hover:!pressed
     <addaction name="actionNormalizeHistograma"/>
     <addaction name="actionDemo"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionNew_Convertion"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
    <addaction name="menuFilter"/>
    <addaction name="menuContrast"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizePolicy">
@@ -3090,7 +3095,7 @@ QPushButton:hover:!pressed
    </property>
    <property name="font">
     <font>
-     <pointsize>10</pointsize>
+     <pointsize>11</pointsize>
     </font>
    </property>
    <property name="contextMenuPolicy">
@@ -3228,7 +3233,7 @@ QPushButton:hover:!pressed
   </action>
   <action name="actionRGB_to_Binaria">
    <property name="text">
-    <string>RGB to Binaria</string>
+    <string>Convert to YYY</string>
    </property>
   </action>
   <action name="actionNormalizeHistograma">
@@ -3239,6 +3244,19 @@ QPushButton:hover:!pressed
   <action name="actionDemo">
    <property name="text">
     <string>demo</string>
+   </property>
+  </action>
+  <action name="actionConvert_to_YYY">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Convert to YYY</string>
+   </property>
+  </action>
+  <action name="actionNew_Convertion">
+   <property name="text">
+    <string>New Convertion</string>
    </property>
   </action>
  </widget>

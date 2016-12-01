@@ -9,6 +9,7 @@
 #include "threshold.h"
 #include "morphological.h"
 
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,12 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);    
     ui->histograma->hide();
-    ui->structure->hide();
-
-    statusProgressBar = new QProgressBar(this);
-    statusProgressBar->setTextVisible(false);
-     ui->statusBar->addPermanentWidget(statusProgressBar,1);
-
+    ui->structure->hide();    
     this->setWindowState(Qt::WindowMaximized);
 }
 
@@ -30,39 +26,37 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-void MainWindow::setearProgessBar(int index)
-{
-    qDebug()<<index;
-    statusProgressBar->setValue(index);
-}
 // Función para cargar la imagen
 void MainWindow::on_actionOpen_triggered()
 {
-   QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
 
-   origin.load(file);
+    // Show Message status bar Opening...
+    show_Message_Status_Bar(0);
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
 
-   if(origin.width() >= 3000)
-   {
-       image = origin.scaled(resizeImage(origin.width(),origin.height()),Qt::KeepAspectRatio,Qt::SmoothTransformation);
-   }
-   else
-   {
-       image = origin;
-   }
+    origin.load(file);
 
-   // convertir la imagen a formato rgb 8 bits;
-   //image = image.convertToFormat(QImage::Format_RGB888);
-   /************************************/
-   //imageLabel = image;
-   /************************************/
-   if (!file.isEmpty())
-   {
-       if (!origin.load(file))
-       {
-           QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-           return;
-       }       
+    if(origin.width() >= 3000)
+    {
+        image = origin.scaled(resizeImage(origin.width(),origin.height()),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+    }
+    else
+    {
+        image = origin;
+    }
+
+    // convertir la imagen a formato rgb 8 bits;
+    //image = image.convertToFormat(QImage::Format_RGB888);
+    /************************************/
+
+    /************************************/
+    if (!file.isEmpty())
+    {
+        if (!origin.load(file))
+        {
+            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+            return;
+        }
     }
 
     ui->after->setPixmap(QPixmap::fromImage(image));
@@ -135,6 +129,18 @@ void MainWindow::on_actionRGB_to_XYZ_triggered()
 void MainWindow::on_actionRGB_to_O1O2O3_triggered()
 {
     convert_Image_To_Space_Color("O1","O2","O3",8);
+}
+void MainWindow::on_actionConvert_to_YYY_triggered()
+{
+    *imageLabel = convertToYYY(*imageLabel);
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    // crear el histograma para esa imagen
+    run(createHistograma,*imageLabel,channel).result();
+    // pintar el histograma
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
+    // renderizar la miniatura
+    render_Miniature_Image();
 }
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
@@ -306,7 +312,7 @@ void SettingsFilter::on_btnLoad_clicked()
 // Retorna el tamaño del kernel seleccionado del comboBox
 int MainWindow::sizeKernel()
 {
-    int index = ui->kernelMinMedMax->currentIndex();
+    int index = ui->kernelMinMedMax->currentIndex();    
 
     switch(index)
     {
@@ -319,9 +325,29 @@ int MainWindow::sizeKernel()
         case 4: return 9;
         break;
         default: return 3;
+        break;
     }
 }
-
+// Funcion que activa los botones al escoger un kernel
+void MainWindow::on_kernelMinMedMax_currentIndexChanged(int index)
+{
+    if(index != 0)
+    {
+        ui->btnAverage->setEnabled(true);
+        ui->btnGaussiano->setEnabled(true);
+        ui->btnMinimum->setEnabled(true);
+        ui->btnMedium->setEnabled(true);
+        ui->btnMaximum->setEnabled(true);
+    }
+    if(index == 0)
+    {
+        ui->btnAverage->setEnabled(false);
+        ui->btnGaussiano->setEnabled(false);
+        ui->btnMinimum->setEnabled(false);
+        ui->btnMedium->setEnabled(false);
+        ui->btnMaximum->setEnabled(false);
+    }
+}
 void MainWindow::on_btnAverage_clicked()
 {    
     // Show Message status bar Applying filter..
@@ -468,30 +494,54 @@ bool MainWindow::background()
 }
 void MainWindow::on_btnSobel_clicked()
 {
-    // Show Message status bar Calculated..
-    show_Message_Status_Bar(10);
-    ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,sobelX,sobelY,3,threshold(), background())));
-    edgeDetection = "Sobel";
-    // Show Message status bar Ready!
-    show_Message_Status_Bar(4);
+    if(imageLabel->isGrayscale())
+    {
+        // Show Message status bar Calculated..
+        show_Message_Status_Bar(10);
+        ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,sobelX,sobelY,3,threshold(), background())));
+        edgeDetection = "Sobel";
+        // Show Message status bar Ready!
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+        messageBoxGrayscale("grayscale");
+    }
+
 }
 void MainWindow::on_btnRobert_clicked()
 {
-    // Show Message status bar Calculated..
-    show_Message_Status_Bar(10);
-    ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,robertX,robertY,2,threshold(), background())));
-    edgeDetection = "Robert";
-    // Show Message status bar Ready!
-    show_Message_Status_Bar(4);
+    if(imageLabel->isGrayscale())
+    {
+        // Show Message status bar Calculated..
+        show_Message_Status_Bar(10);
+        ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,robertX,robertY,2,threshold(), background())));
+        edgeDetection = "Robert";
+        // Show Message status bar Ready!
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+        messageBoxGrayscale("grayscale");
+    }
+
 }
 void MainWindow::on_btnPrewitt_clicked()
 {
-    // Show Message status bar Calculated..
-    show_Message_Status_Bar(10);
-    ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,prewittX,prewittY,3,threshold(), background())));
-    edgeDetection = "Prewitt";
-    // Show Message status bar Ready!
-    show_Message_Status_Bar(4);
+    if(imageLabel->isGrayscale())
+    {
+        // Show Message status bar Calculated..
+        show_Message_Status_Bar(10);
+        ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,prewittX,prewittY,3,threshold(), background())));
+        edgeDetection = "Prewitt";
+        // Show Message status bar Ready!
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+        messageBoxGrayscale("grayscale");
+    }
+
 }
 // Guardo los cambios de la imagen al aplicar Sobel, Robert o Prewitt
 void MainWindow::on_btnEdgeDetection_clicked()
@@ -499,7 +549,7 @@ void MainWindow::on_btnEdgeDetection_clicked()
     // Show Message status bar Saving..
     show_Message_Status_Bar(11);
 
-    bool grayscale = imageT.isGrayscale();
+    bool grayscale = false;
 
     if(edgeDetection == "Sobel")
     {
@@ -687,7 +737,7 @@ void MainWindow::on_optionsEstruc_currentIndexChanged(int index)
        ui->btnErosion->setEnabled(true);
        ui->btnOpening->setEnabled(true);
        ui->btnClosing->setEnabled(true);
-       ui->btnMorphologic->setEnabled(true);
+//       ui->btnMorphologic->setEnabled(true);
     }
     if(ui->sizeEstruc->currentIndex() == 2 && index > 0)
     {
@@ -702,7 +752,7 @@ void MainWindow::on_optionsEstruc_currentIndexChanged(int index)
         ui->btnErosion->setEnabled(true);
         ui->btnOpening->setEnabled(true);
         ui->btnClosing->setEnabled(true);
-        ui->btnMorphologic->setEnabled(true);
+//        ui->btnMorphologic->setEnabled(true);
     }
 }
 void MainWindow::on_btnLeft_clicked()
@@ -749,62 +799,74 @@ int MainWindow::sizeKernelOperatiosMorphologics()
 
 void MainWindow::on_btnDilation_clicked()
 {    
-    show_Message_Status_Bar(18);
-    morphologic = 0;
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics())));
-    show_Message_Status_Bar(4);
+    if(imageBinaria(*imageLabel))
+    {
+        show_Message_Status_Bar(18);
+        morphologic = 0;
+        *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+        ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+         messageBoxGrayscale("binaria");
+    }
+
 }
 void MainWindow::on_btnErosion_clicked()
 {
     show_Message_Status_Bar(18);
     morphologic = 1;
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics())));
+    *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnOpening_clicked()
 {
     show_Message_Status_Bar(18);
     morphologic = 2;
-    QImage opening = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(opening,true,sizeKernelOperatiosMorphologics())));
+    *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+    *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     show_Message_Status_Bar(4);
 }
 void MainWindow::on_btnClosing_clicked()
 {
     show_Message_Status_Bar(18);
-    morphologic = 3;
-    QImage closing = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-    ui->origin->setPixmap(QPixmap::fromImage(dilationOrErosion(closing,false,sizeKernelOperatiosMorphologics())));
+    morphologic = 3;    
+    *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+    *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     show_Message_Status_Bar(4);
 }
 // Funcion que guarda la imagen dependiendo de la operacion morfologica aplicada
-void MainWindow::on_btnMorphologic_clicked()
-{
-    show_Message_Status_Bar(11);
+//void MainWindow::on_btnMorphologic_clicked()
+//{
+//    show_Message_Status_Bar(11);
 
-    switch(morphologic)
-    {
-        case 0: *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-        break;
-        case 1: *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-        break;
-        case 2:
-        {
-            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-        }
-        break;
-        case 3:
-        {
-            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-        }
-        break;
-        default: qDebug()<<"No se puede guardar la operacion morfologica";
-    }
-    render_Miniature_Image();
-    show_Message_Status_Bar(12);
-}
+//    switch(morphologic)
+//    {
+//        case 0: *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+//        break;
+//        case 1: *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+//        break;
+//        case 2:
+//        {
+//            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+//            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+//        }
+//        break;
+//        case 3:
+//        {
+//            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+//            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+//        }
+//        break;
+//        default: qDebug()<<"No se puede guardar la operacion morfologica";
+//    }
+//    render_Miniature_Image();
+//    show_Message_Status_Bar(12);
+//}
 
 /********************** Fin **********************/
 
@@ -814,14 +876,44 @@ void MainWindow::on_btnMorphologic_clicked()
 
 void MainWindow::on_actionDemo_triggered()
 {
-    // showMessage(const QString & message, int timeout = 0)
-//        ui->statusBar->showMessage("Status");
-
-    // When the action triggered, set the progress bar at 51%
-        for(int i=0; i < 1000; i++)
-        {
-            statusProgressBar->setValue(i);
-        }
+    Progress *progress = new Progress(this);
+    progress->setModal(true);
+    progress->show();
 
 }
 
+
+
+
+
+/*-----------------------------------------------------------------------------------------------------------/*
+ * Options
+ *-----------------------------------------------------------------------------------------------------------*/
+// Seteo la variable image con el valor actual de imageLabel
+// para inciar una nueva conversion de espacios de color
+void MainWindow::on_actionNew_Convertion_triggered()
+{
+
+    image = *imageLabel;
+    // renderizar miniaturas vacias
+    render_Miniature_Image(false);
+    // Deshabilitar botones
+    enable_BtnImage(false);
+    // Seteo los valores para el histograma
+    setearHistograma(5);
+    // pintar el histograma
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
+    // Desahabilitar la opcion de convertir a YYY
+    ui->actionConvert_to_YYY->setEnabled(false);
+
+    ui->before->clear();
+    ui->after->setPixmap(QPixmap::fromImage(*imageLabel));
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+}
+
+
+/*-----------------------------------------------------------------------------------------------------------/*
+ * Fin
+ *-----------------------------------------------------------------------------------------------------------*/

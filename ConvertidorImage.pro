@@ -15,7 +15,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settingsfilter.cpp
+    settingsfilter.cpp \
+    progress.cpp
 
 HEADERS  += mainwindow.h \
     settingsfilter.h \
@@ -25,10 +26,12 @@ HEADERS  += mainwindow.h \
     convertImage.h \
     threshold.h \
     morphological.h \
-    AuxFunctions.h
+    AuxFunctions.h \
+    progress.h
 
 FORMS    += mainwindow.ui \
-    settingsfilter.ui
+    settingsfilter.ui \
+    progress.ui
 
 RESOURCES += \
     resources.qrc

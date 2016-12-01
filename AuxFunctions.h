@@ -20,6 +20,7 @@ QSize resizeImage(int width, int height)
 // Funcion que valida que la imagen cargada no sea nula y si es falso ejecuta una serie de funciones
 void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, int spaceColor)
 {
+
     if (image.isNull())
     {
         QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
@@ -29,13 +30,15 @@ void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, i
     {
         // Variable que almacena el nombre de los canales para poder mostrarlos en el histograma
         channelR = r, channelG = g, channelB = b;
-        // Show Message status bar Processing image to
+        // Show Message status bar Processing image to        
         show_Message_Status_Bar(3);
         // Funcion que selecciona que transformacion de color voy a realizar
         select_Space_Colors_Convert(spaceColor);
         //Funcion que crea el histograma para los cuatro canales
         setearHistograma(4);
         run(createHistograma,imageT,4).result();
+        // Habilitar botones
+        enable_BtnImage();
         // Funcion que muestra las imagenes convertidas en miniatura
         if(spaceColor == 1){render_Miniature_Image(false);}
         else{render_Miniature_Image(true);}
@@ -50,6 +53,7 @@ void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, i
         show_Label_Image_Hide_Histograma(0);
         // Show Message status bar Ready!
         show_Message_Status_Bar(4);
+
     }
 }
 // Funcion para limpiar labels cuando se desea cambiar la imagen a procesar
@@ -65,6 +69,9 @@ void MainWindow::show_Image_In_Label(QImage &image, int index)
 {
     // Almaceno en un puntero la imagen que selecciona el usuario para poder aplicar las diferentes operaciones
     imageLabel = &image;
+    // Habilitar opcion para convertir a escala de grises
+    ui->actionConvert_to_YYY->setEnabled(true);
+
     // Almaceno una referencia de que canales trabajo para pasarlo como argumento en algunas funciones
     channel = index;
     // Muestra la imagen en el Label
@@ -78,20 +85,22 @@ void MainWindow::show_Image_In_Label(QImage &image, int index)
 // Funcion para renderizar las imagenes procesadas en miniatura
 void MainWindow::render_Miniature_Image(bool NoGrayscale)
 {
-    ui->before->setPixmap(QPixmap::fromImage(imageT));    
+    ui->before->setPixmap(QPixmap::fromImage(imageT));
+
 
     if(NoGrayscale)
     {
         ui->r->setPixmap(QPixmap::fromImage(imageR));
         ui->g->setPixmap(QPixmap::fromImage(imageG));
-        ui->b->setPixmap(QPixmap::fromImage(imageB));
+        ui->b->setPixmap(QPixmap::fromImage(imageB));        
 
         ui->btn_one->setEnabled(NoGrayscale);
         ui->btn_two->setEnabled(NoGrayscale);
         ui->btn_three->setEnabled(NoGrayscale);
     }
     else
-    {
+    {        
+
         ui->r->clear();
         ui->g->clear();
         ui->b->clear();
@@ -235,31 +244,134 @@ void MainWindow::show_Structure(QStringList lists)
        ui->e_4_0->insert(lists[20]);ui->e_4_1->insert(lists[21]);ui->e_4_2->insert(lists[22]);ui->e_4_3->insert(lists[23]);ui->e_4_4->insert(lists[24]);
     }
 }
+// Funcion que retorna un mesanje de acuerdo a la opcion o proceso que se este ejecutando
+QString MainWindow::stateMessage(int index)
+{
+    QString message;
+
+    if(index == 0)message = "Opening...";
+    if(index == 1)message = "Image loaded!";
+    if(index == 2)message = "Image saved!";
+    if(index == 3)message = "Transforming image to "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+"...";
+    if(index == 4)message = "Ready!";
+
+    if(index == 5)message = "Original image selected!";
+    if(index == 6)message = "Channel "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+" selected!";
+    if(index == 7)message = "Channel "+channelR.mid(0,1)+" selected!";
+    if(index == 8)message = "Channel "+channelG.mid(0,1)+" selected!";
+    if(index == 9)message = "Channel "+channelB.mid(0,1)+" selected!";
+
+    if(index == 10)message = "Applying filter...";
+    if(index == 11)message = "Saving...";
+    if(index == 12)message = "Saved!";
+    if(index == 13)message = "Calculated threshold...";
+    if(index == 14)message = "White background selected!";
+    if(index == 15)message = "Black background selected!";
+
+    if(index == 16)message = "Equalizing histogram...";
+    if(index == 17)message = "Calculated gamma...";
+    if(index == 18)message = "Applying...";
+    if(index == 19)message = "Normalizing histogram...";
+
+    return message;
+}
+
 // Funcion que muestra los diferentes mensajes en la QStatusBar
 void MainWindow::show_Message_Status_Bar(int index)
 {
-    if(index == 1)ui->statusBar->showMessage(" Image loaded!");
-    if(index == 2)ui->statusBar->showMessage(" Image saved!");
-    if(index == 3)ui->statusBar->showMessage(" Transforming image to "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+"...");
-    if(index == 4)ui->statusBar->showMessage(" Ready!");
+    if(index == 0)ui->statusBar->showMessage("  Opening...");
+    if(index == 1)ui->statusBar->showMessage("  Image loaded!");
+    if(index == 2)ui->statusBar->showMessage("  Image saved!");
+    if(index == 3)ui->statusBar->showMessage("  Transforming image to "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+"...");
+    if(index == 4)ui->statusBar->showMessage("  Ready!");
 
-    if(index == 5)ui->statusBar->showMessage(" Original image selected!");
-    if(index == 6)ui->statusBar->showMessage(" Channel "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+" selected!");
-    if(index == 7)ui->statusBar->showMessage(" Channel "+channelR.mid(0,1)+" selected!");
-    if(index == 8)ui->statusBar->showMessage(" Channel "+channelG.mid(0,1)+" selected!");
-    if(index == 9)ui->statusBar->showMessage(" Channel "+channelB.mid(0,1)+" selected!");
+    if(index == 5)ui->statusBar->showMessage("  Original image selected!");
+    if(index == 6)ui->statusBar->showMessage("  Channel "+channelR.mid(0,1)+channelG.mid(0,1)+channelB.mid(0,1)+" selected!");
+    if(index == 7)ui->statusBar->showMessage("  Channel "+channelR.mid(0,1)+" selected!");
+    if(index == 8)ui->statusBar->showMessage("  Channel "+channelG.mid(0,1)+" selected!");
+    if(index == 9)ui->statusBar->showMessage("  Channel "+channelB.mid(0,1)+" selected!");
 
-    if(index == 10)ui->statusBar->showMessage(" Applying filter...");
-    if(index == 11)ui->statusBar->showMessage(" Saving...");
-    if(index == 12)ui->statusBar->showMessage(" Saved!");
-    if(index == 13)ui->statusBar->showMessage(" Calculated threshold...");
-    if(index == 14)ui->statusBar->showMessage(" White background selected!");
-    if(index == 15)ui->statusBar->showMessage(" Black background selected!");
+    if(index == 10)ui->statusBar->showMessage("  Applying filter...");
+    if(index == 11)ui->statusBar->showMessage("  Saving...");
+    if(index == 12)ui->statusBar->showMessage("  Saved!");
+    if(index == 13)ui->statusBar->showMessage("  Calculated threshold...");
+    if(index == 14)ui->statusBar->showMessage("  White background selected!");
+    if(index == 15)ui->statusBar->showMessage("  Black background selected!");
 
     if(index == 16)ui->statusBar->showMessage(" Equalizing histogram...");
     if(index == 17)ui->statusBar->showMessage(" Calculated gamma...");
     if(index == 18)ui->statusBar->showMessage(" Applying...");
     if(index == 19)ui->statusBar->showMessage(" Normalizing histogram...");
+
+}
+
+
+// Funcion que llama a la ventana de Progress con el mensaje que es pasado como parametro
+void MainWindow::show_Window_Message()
+{
+//    Progress *progress = new Progress(this);
+//    progress->setModal(true);
+//    progress->show();
+//    progress->movie->start();
+//    progress->insertMessage(message);
+
+
+//    if(show)
+//    {
+//        progress->show();
+//    }
+//    else
+//    {
+//        progress->hide();
+//    }
+}
+// Habilitar botones
+void MainWindow::enable_BtnImage(bool enable)
+{
+    if(enable)
+    {
+        ui->btn_transform->setEnabled(true);
+        ui->btn_one->setEnabled(true);
+        ui->btn_two->setEnabled(true);
+        ui->btn_three->setEnabled(true);
+    }
+    else
+    {
+        ui->btn_transform->setEnabled(false);
+        ui->btn_one->setEnabled(false);
+        ui->btn_two->setEnabled(false);
+        ui->btn_three->setEnabled(false);
+    }
+
+}
+void MainWindow::messageBoxGrayscale(QString option)
+{
+    QMessageBox::StandardButton reply;
+
+
+    if(option == "grayscale")
+    {
+        reply = QMessageBox::question(this, tr("Informative"), tr("Image must be grayscale, Convert?"));
+
+        if (reply == QMessageBox::Yes)
+        {
+            on_actionConvert_to_YYY_triggered();
+        }
+
+    }
+    if(option == "binaria")
+    {
+        reply = QMessageBox::question(this, tr("Informative"), tr("Image must be binaria, Convert?"));
+
+        if (reply == QMessageBox::Yes)
+        {
+            on_actionConvert_to_YYY_triggered();
+            on_btnThreshold_clicked();
+            on_btnSobel_clicked();
+            on_btnEdgeDetection_clicked();
+        }
+    }
+
 
 }
 

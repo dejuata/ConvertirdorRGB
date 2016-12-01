@@ -21,6 +21,9 @@
 #include <QFuture>
 #include <QtConcurrent>
 #include <QtWidgets>
+#include <QMovie>
+#include "progress.h"
+//#include "ui_progress.h"
 
 #define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
@@ -84,9 +87,8 @@ public:
     // puntero que almacena la escena para poder renderizar el grafico de QtCharts
     QGraphicsScene *scene;
 
-    QProgressBar *statusProgressBar;
-
-    void setearProgessBar(int index);
+    QMovie *movie = new QMovie(":/img/loading.gif");
+    QLabel *statusLabel;
 
     Ui::MainWindow *ui;
 
@@ -125,6 +127,7 @@ private slots:
     // funcion que retorna el tamaño del kernel para trabajar con
     // con los filtros Average, Gaussiano, Minimum, Medium, Maximum
     int sizeKernel();
+    void on_kernelMinMedMax_currentIndexChanged(int index);
     void on_btnAverage_clicked();
     void on_btnGaussiano_clicked();    
     void on_btnMinimum_clicked();
@@ -136,7 +139,7 @@ private slots:
     void on_btnSigma_clicked();
 
     // Filtros de paso alto
-    int threshold(); // Retorna el valor del threshold
+    int threshold(); // Retorna el valor del threshold    
     void on_btnThreshold_clicked();
     bool background(); // Retorna true o false si el fondo es blanco o negro
     void on_btnSobel_clicked();
@@ -170,9 +173,15 @@ private slots:
     void on_btnErosion_clicked();
     void on_btnOpening_clicked();
     void on_btnClosing_clicked();
-    void on_btnMorphologic_clicked();
+//    void on_btnMorphologic_clicked();
 
     void on_actionDemo_triggered();
+
+    void on_actionConvert_to_YYY_triggered();
+
+    void on_actionNew_Convertion_triggered();
+
+    void enable_BtnImage(bool enable = true);
 
 private:
 
@@ -205,9 +214,20 @@ private:
 
     void clean_Input();
 
+
+    // Funcion que retorna una mensaje
+    QString MainWindow::stateMessage(int index);
+
     void show_Message_Status_Bar(int index);
 
+    void show_Window_Message();
+
+    // retroalimentacion
+    void MainWindow::messageBoxGrayscale(QString option);
+
 };
+
+
 
 
 

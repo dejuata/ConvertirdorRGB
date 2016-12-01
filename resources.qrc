@@ -18,6 +18,8 @@
         <file>img/opening.ico</file>
         <file>img/dilation.ico</file>
         <file>img/erosion.ico</file>
+        <file>img/loading.gif</file>
+        <file>img/loading-circle.gif</file>
     </qresource>
     <qresource prefix="/filters">
         <file>Filters/3x3.txt</file>
