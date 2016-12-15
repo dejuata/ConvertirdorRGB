@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     threshold.h \
     morphological.h \
     AuxFunctions.h \
-    progress.h
+    progress.h \
+    segmentation.h
 
 FORMS    += mainwindow.ui \
     settingsfilter.ui \

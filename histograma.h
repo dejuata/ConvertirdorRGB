@@ -14,6 +14,8 @@ double histogramaR[256];
 double histogramaG[256];
 double histogramaB[256];
 
+double maximoHistograma = 0;
+
 // Funciones que retorna un color para pintar el histograma dependiendo del canal
 QColor selectColorR(QString channel)
 {
@@ -53,6 +55,9 @@ void setearHistograma(int channel)
         }
     }
 }
+// Devuelve el valor maximo del histograma
+
+
 // Funcion que crea el histograma para los cuatros canales y tambien tiene la
 // opcion para crearlo en un canal especifico
 int createHistograma(QImage image, int channel)
@@ -99,12 +104,53 @@ int createHistograma(QImage image, int channel)
             }
         }
     }
+
+    // maximo elemento del histograma
+    double maximo = 0;
+
+    // Inicializo los vectores para manipular los pixeles
+    vector<double> myvectorT (histogramaT, histogramaT+256);
+    vector<double> myvectorR (histogramaR, histogramaR+256);
+    vector<double> myvectorG (histogramaG, histogramaG+256);
+    vector<double> myvectorB (histogramaB, histogramaB+256);
+
+    switch(channel)
+    {
+        case 0:
+        {
+            sort (myvectorT.begin(), myvectorT.begin()+256);
+            maximo = myvectorT[0];
+        }
+        break;
+        case 1:
+        {
+            sort (myvectorR.begin(), myvectorR.begin()+256);
+            maximo = myvectorR[0];
+        }
+        break;
+        case 2:
+        {
+            sort (myvectorG.begin(), myvectorG.begin()+256);
+            maximo = myvectorG[0];
+        }
+        break;
+        case 3:
+        {
+            sort (myvectorB.begin(), myvectorB.begin()+256);
+            maximo = myvectorB[0];
+        }
+        break;
+    }
+
+    maximoHistograma = maximo;
+
     return 0;
 }
 // Funcion que renderiza el histograma dependiendo del canal
-void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, int spaceColor)
+void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, int spaceColor, int otsu)
 {
     scene = new QGraphicsScene(this);
+
 
     if(maximum)
     {
@@ -115,7 +161,14 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, 
     }
 
     QLineSeries *series0 = new QLineSeries();
+    QLineSeries *seriesOtsu = new QLineSeries();
 
+    if(otsu != 0)
+    {
+        *seriesOtsu << QPointF(otsu, 1000);
+    }
+
+    qDebug()<<maximoHistograma;
     // recorro el arreglo para enviar los valores a la grafica
     for(int i = 0; i < lengthArray(histogramaT); i++ )
     {
@@ -129,6 +182,7 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, 
     }
 
     QAreaSeries *series = new QAreaSeries(series0);
+    QAreaSeries *series1 = new QAreaSeries(seriesOtsu);
 
     if (channel == "Histograma Promedio")
     {
@@ -148,7 +202,19 @@ void MainWindow::render_Histograma(bool maximum, QColor color, QString channel, 
 
     chart = new QChart();
     chart->addSeries(series);
+    if(otsu != 0)
+    {
+        QPen pen(Qt::gray);
+        QBrush Brush(Qt::gray);
+        pen.setWidth(3);
+        series1->setPen(pen);
+        series1->setBrush(Brush);
+
+        chart->addSeries(series1);
+        chart->legend()->hide();
+    }
     chart->legend()->hide();
+
 
     if(maximum)
     {
@@ -265,7 +331,7 @@ QImage MainWindow::equalization_Histograma(QImage image, int channel)
 }
 // Funcion que actua como tercero para renderizar el canal y controla algunos
 // datos como el tamaño, el nombre y el color con el cual quiero que se pinte el histograma
-void MainWindow::render_Histograma_Min_Or_Max(bool maximum, int spaceColor)
+void MainWindow::render_Histograma_Min_Or_Max(bool maximum, int spaceColor, int otsu)
 {
     QString channel;
     QColor color(0,0,0);
@@ -278,7 +344,7 @@ void MainWindow::render_Histograma_Min_Or_Max(bool maximum, int spaceColor)
 
     if(spaceColor == 3){channel = channelB;color = selectColorB(channelB);}
 
-    render_Histograma(maximum, color, channel, spaceColor);
+    render_Histograma(maximum, color, channel, spaceColor, otsu);
 }
 // Funcion que se llama cuando se da clic al boton de una image y lo que hace es que oculta
 // el QGraphisScene del histograma, muestra el label de la imagen, actualiza el combox de seleccion
@@ -308,9 +374,9 @@ QImage gammaConstImage(QImage image, double number)
                 g = QColor(image.pixel(i,j)).green();
                 b = QColor(image.pixel(i,j)).blue();
 
-                r = round(pow(r,1/number)) >= 255 ? 255 : round(pow(r,1/number));
-                g = round(pow(g,1/number)) >= 255 ? 255 : round(pow(g,1/number));
-                b = round(pow(b,1/number)) >= 255 ? 255 : round(pow(b,1/number));
+                r = round(pow(r,number)) >= 255 ? 255 : round(pow(r,number));
+                g = round(pow(g,number)) >= 255 ? 255 : round(pow(g,number));
+                b = round(pow(b,number)) >= 255 ? 255 : round(pow(b,number));
 
                 image.setPixel(i,j,qRgb(r,g,b));
         }

@@ -21,8 +21,12 @@ QString stringGaussiano5x5 = "0 1 2 1 0 1 3 5 3 1 2 5 9 5 2 1 3 5 3 1 0 1 2 1 0"
 QString stringGaussiano7x7 = "0 0 1 2 1 0 0 0 3 13 22 13 3 0 1 13 59 97 59 13 1 2 22 97 159 97 22 2 1 13 59 97 59 13 1 0 3 13 22 13 3 0 0 0 1 2 1 0 0";
 QString stringGaussiano9x9 = "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1";
 
+QString stringLaplaciano3x3 = "0 1 0 1 -4 1 0 1 0";
+QString stringLaplaciano5x5 = "0 0 -1 0 0 0 -1 -2 -1 0 -1 -2 16 -2 -1 0 -1 -2 -1 0 0 0 -1 0 0";
+
 QStringList listAverage = stringAverage3x3.split(' ');
 QStringList listGaussiano = stringGaussiano3x3.split(' ');
+QStringList listLaplaciano = stringLaplaciano3x3.split(' ');
 
 // Kernel para filtros de paso alto
 int sobelX[3][3] = {{1,2,1},{0,0,0},{-1,-2,-1}};
@@ -33,6 +37,10 @@ int prewittY[3][3] = {{1,0,-1},{1,0,-1},{1,0,-1}};
 // debido a la funcion que los recibe como parametro
 int robertX[3][3] = {{0,1,0},{-1,0,0},{0,0,0}};
 int robertY[3][3] = {{-1,0,0},{0,1,0},{0,0,0}};
+
+// Prueba filtros norte y este
+int norte[3][3] = {{1,1,1},{1,-2,1},{-1,-1,-1}};
+int este[3][3] = {{-1,1,1},{-1,-2,1},{-1,1,1}};
 
 
 // Funcion que setea la lista dependiendo del tamaño del kernel que escoja para promedio o gaussiano
@@ -715,5 +723,80 @@ QImage filterEdgeDetection(QImage image, int kernelX[][3], int kernelY[][3] ,int
     return result;
 }
 
+QImage filterLaplaciano(QImage image, int sizeKernel, int threshold)
+{
+    int mitad,average,mm,nn,ii,jj,r,g,b;
+    QImage result = image;
+    QRgb value;
+    mitad = sizeKernel / 2;
+
+    average = 1;
+
+    // Filas
+    for (int i = 0; i < image.width(); i++)
+    {
+        // Columnas
+        for (int j = 0; j < image.height(); j++)
+        {
+            // Incializo valores r g b a 0
+            r = 0;
+            g = 0;
+            b = 0;
+
+            // Filas del Kernel
+            for (int m = 0; m < sizeKernel; m++)
+            {
+                // Indice de la fila del kernel alrevez
+                mm = sizeKernel - 1 - m;
+
+                // Columnas del kernel
+                for (int n = 0; n < sizeKernel; n++)
+                {
+                    // Indice de la columna del kernel alrevez
+                    nn = sizeKernel - 1 - n;
+                    ii = i + (m - mitad);
+                    jj = j + (n - mitad);
+
+                    // validar limites de la imagen 00000
+                    if (ii >= 0 && ii < image.width() && jj >= 0 && jj < image.height())
+                    {
+                        if(sizeKernel == 3)
+                        {
+                            r += QColor(image.pixel(ii,jj)).red() * kernelThree[mm][nn];
+                            g += QColor(image.pixel(ii,jj)).green() * kernelThree[mm][nn];
+                            b += QColor(image.pixel(ii,jj)).blue() * kernelThree[mm][nn];
+
+                            r = fabs(r)  >= threshold ? 0 : 255;
+                            g = fabs(g)  >= threshold ? 0 : 255;
+                            b = fabs(b)  >= threshold ? 0 : 255;
+                        }
+                        if(sizeKernel == 5)
+                        {
+                            r += QColor(image.pixel(ii,jj)).red() * kernelFive[mm][nn];
+                            g += QColor(image.pixel(ii,jj)).green() * kernelFive[mm][nn];
+                            b += QColor(image.pixel(ii,jj)).blue() * kernelFive[mm][nn];
+                        }
+                        if(sizeKernel == 7)
+                        {
+                            r += QColor(image.pixel(ii,jj)).red() * kernelSeven[mm][nn];
+                            g += QColor(image.pixel(ii,jj)).green() * kernelSeven[mm][nn];
+                            b += QColor(image.pixel(ii,jj)).blue() * kernelSeven[mm][nn];
+                        }
+                        if(sizeKernel == 9)
+                        {
+                            r += QColor(image.pixel(ii,jj)).red() * kernelNine[mm][nn];
+                            g += QColor(image.pixel(ii,jj)).green() * kernelNine[mm][nn];
+                            b += QColor(image.pixel(ii,jj)).blue() * kernelNine[mm][nn];
+                        }
+
+                    }
+                }
+            }
+            value = qRgb(r/average,g/average,b/average);
+            result.setPixelColor(i,j,value);
+        }
+    }
+    return result;
+}
 
 #endif // FILTER_H

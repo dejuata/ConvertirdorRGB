@@ -22,8 +22,7 @@
 #include <QtConcurrent>
 #include <QtWidgets>
 #include <QMovie>
-#include "progress.h"
-//#include "ui_progress.h"
+
 
 #define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
@@ -49,6 +48,8 @@ public:
     QImage imageG;// imagen solo en el canal G
     QImage imageB;// imagen solo en el canal B
     QImage *imageLabel;// puntero que puede contener la direccion de las imagenes anteriores
+    QImage imageRestore;
+    QImage step;
 
     // Almacena los resultados de la conversion de imagenes que se realiza asincronicamente
     // estas variables se setean en las variable QImage normal, esto es necesario por el
@@ -78,9 +79,13 @@ public:
     int morphologic = 0;
     // Almacena el tamaño de la imagen
     int sizeImage;
+    // Almacena la operacion de deteccion de borde aplicada 0 -> Roberts 1 -> Prewitt 2 -> Sobel
+    int edgeOperation;
     // Almacena el valor de una constante, la cual es utilizada para aplicarla
     // en la funcion de substraer o sumar en la pestaña de histograma
-    int constOperationHistograma;
+    double constOperationHistograma;
+
+
 
     // puntero que almacena el grafico de QtCharts
     QChart *chart;
@@ -183,6 +188,16 @@ private slots:
 
     void enable_BtnImage(bool enable = true);
 
+    void on_actionDesaher_triggered();
+
+
+
+    void on_actionConfution_table_triggered();
+
+    void on_actionSave_Step_triggered();
+
+    void on_actionShow_Step_triggered();
+
 private:
 
     void clear_Label_Miniature_Image();
@@ -199,11 +214,11 @@ private:
 
     void show_Image_In_Label(QImage &image, int index);
 
-    void render_Histograma_Min_Or_Max(bool maximum, int spaceColor);
+    void render_Histograma_Min_Or_Max(bool maximum, int spaceColor, int otsu = 0);
 
     QImage equalization_Histograma(QImage image, int channel);
 
-    void render_Histograma(bool maximum,  QColor color, QString channel, int spaceColor);
+    void render_Histograma(bool maximum,  QColor color, QString channel, int spaceColor, int otsu = 0);
 
     //Funcion para mostrar los QInput de las operaciones morfologicas
     // dependiendo del tamaño que seleccione el usuario 3x3 5x5
@@ -216,16 +231,20 @@ private:
 
 
     // Funcion que retorna una mensaje
-    QString MainWindow::stateMessage(int index);
+    QString stateMessage(int index);
 
     void show_Message_Status_Bar(int index);
 
     void show_Window_Message();
 
     // retroalimentacion
-    void MainWindow::messageBoxGrayscale(QString option);
+    void messageBoxGrayscale(QString option);
+
+    void updateHistograma();
 
 };
+
+
 
 
 

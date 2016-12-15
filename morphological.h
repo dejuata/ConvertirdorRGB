@@ -176,7 +176,7 @@ QImage dilationOrErosion(QImage image, bool flag, int sizeKernel)
                 }
             }
             if(flag)
-            {
+            {                
                 if(r >= 255 && g >=255 && b >=255)
                 {
                     result.setPixelColor(i,j,qRgb(255,255,255));

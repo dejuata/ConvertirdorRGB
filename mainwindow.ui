@@ -812,7 +812,7 @@ QPushButton:hover:!pressed
                  <item>
                   <widget class="QSpinBox" name="numberSigma">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">border:none;</string>
@@ -944,8 +944,8 @@ QPushButton:hover:!pressed
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>160</width>
-               <height>491</height>
+               <width>168</width>
+               <height>542</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1048,50 +1048,6 @@ QPushButton:hover:!pressed
                   </widget>
                  </item>
                  <item>
-                  <widget class="QGroupBox" name="groupBox_5">
-                   <property name="styleSheet">
-                    <string notr="true">border:none</string>
-                   </property>
-                   <property name="title">
-                    <string/>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_7">
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="QRadioButton" name="radioBtnOtsu">
-                      <property name="enabled">
-                       <bool>true</bool>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">border:none;</string>
-                      </property>
-                      <property name="text">
-                       <string>Otsu</string>
-                      </property>
-                      <property name="checked">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QRadioButton" name="radioBtnIsodata">
-                      <property name="styleSheet">
-                       <string notr="true">border:none;</string>
-                      </property>
-                      <property name="text">
-                       <string>Isodata</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
                   <widget class="QPushButton" name="btnThreshold">
                    <property name="minimumSize">
                     <size>
@@ -1114,7 +1070,7 @@ QPushButton:hover:!pressed
 </string>
                    </property>
                    <property name="text">
-                    <string>Calculate</string>
+                    <string>Calculate Otsu</string>
                    </property>
                   </widget>
                  </item>
@@ -1170,7 +1126,7 @@ QPushButton:hover:!pressed
                        <string notr="true">border:none;</string>
                       </property>
                       <property name="text">
-                       <string>White</string>
+                       <string>Black</string>
                       </property>
                       <property name="checked">
                        <bool>true</bool>
@@ -1183,7 +1139,7 @@ QPushButton:hover:!pressed
                        <string notr="true">border:none;</string>
                       </property>
                       <property name="text">
-                       <string>Black</string>
+                       <string>White</string>
                       </property>
                      </widget>
                     </item>
@@ -3073,6 +3029,10 @@ QPushButton:hover:!pressed
      <string>Options</string>
     </property>
     <addaction name="actionNew_Convertion"/>
+    <addaction name="actionDesaher"/>
+    <addaction name="actionConfution_table"/>
+    <addaction name="actionSave_Step"/>
+    <addaction name="actionShow_Step"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
@@ -3143,7 +3103,7 @@ QPushButton:hover:!pressed
   </action>
   <action name="actionRGB_to_HSL">
    <property name="text">
-    <string>RGB to HSL</string>
+    <string>RGB to HSI</string>
    </property>
   </action>
   <action name="actionRGB_to_XYZ">
@@ -3257,6 +3217,26 @@ QPushButton:hover:!pressed
   <action name="actionNew_Convertion">
    <property name="text">
     <string>New Convertion</string>
+   </property>
+  </action>
+  <action name="actionDesaher">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionConfution_table">
+   <property name="text">
+    <string>Confusion Table</string>
+   </property>
+  </action>
+  <action name="actionSave_Step">
+   <property name="text">
+    <string>Save Step</string>
+   </property>
+  </action>
+  <action name="actionShow_Step">
+   <property name="text">
+    <string>Show Step</string>
    </property>
   </action>
  </widget>

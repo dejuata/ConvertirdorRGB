@@ -45,6 +45,7 @@ void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, i
         // Muestra en el label principal la imagen original por defecto
         ui->origin->setPixmap(QPixmap::fromImage(imageT));
         imageLabel = &imageT;
+        imageRestore = imageT;
         channel = 0;
         // Muestra en los botones de las imagenes miniaturas, las iniciales de los espacio de color
         if(spaceColor == 8){show_Text_UI(r.mid(0,2),g.mid(0,2),b.mid(0,2));}
@@ -69,6 +70,7 @@ void MainWindow::show_Image_In_Label(QImage &image, int index)
 {
     // Almaceno en un puntero la imagen que selecciona el usuario para poder aplicar las diferentes operaciones
     imageLabel = &image;
+//    imageRestore = image;
     // Habilitar opcion para convertir a escala de grises
     ui->actionConvert_to_YYY->setEnabled(true);
 
@@ -344,6 +346,14 @@ void MainWindow::enable_BtnImage(bool enable)
     }
 
 }
+void MainWindow::updateHistograma()
+{
+    // Update histograma
+    setearHistograma(channel);
+    createHistograma(*imageLabel,channel);
+    render_Histograma_Min_Or_Max(true,channel);
+    render_Histograma_Min_Or_Max(false,channel);
+}
 void MainWindow::messageBoxGrayscale(QString option)
 {
     QMessageBox::StandardButton reply;
@@ -355,7 +365,18 @@ void MainWindow::messageBoxGrayscale(QString option)
 
         if (reply == QMessageBox::Yes)
         {
-            on_actionConvert_to_YYY_triggered();
+            // Se convierte primero la imagen a escala de grises
+            *imageLabel = convertToYYY(*imageLabel);
+
+            switch(edgeOperation)
+            {
+                case 0: on_btnRobert_clicked();
+                break;
+                case 1: on_btnPrewitt_clicked();
+                break;
+                case 2: on_btnSobel_clicked();
+                break;
+            }
         }
 
     }
@@ -365,14 +386,16 @@ void MainWindow::messageBoxGrayscale(QString option)
 
         if (reply == QMessageBox::Yes)
         {
-            on_actionConvert_to_YYY_triggered();
+            // Se convierte primero la imagen a escala de grises
+            *imageLabel = convertToYYY(*imageLabel);
             on_btnThreshold_clicked();
+            // Posteriormente se aplica Sobel como algoritmo de deteccion de
+            // bordes por defecto, calculando el threshold con Otsu
             on_btnSobel_clicked();
             on_btnEdgeDetection_clicked();
         }
-    }
-
-
+    }    
+    updateHistograma();
 }
 
 #endif // RESOURCES_H

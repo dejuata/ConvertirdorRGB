@@ -8,6 +8,9 @@
 #include "AuxFunctions.h"
 #include "threshold.h"
 #include "morphological.h"
+#include "segmentation.h"
+#include "progress.h"
+#include "ui_progress.h"
 
 
 using namespace std;
@@ -32,7 +35,7 @@ void MainWindow::on_actionOpen_triggered()
 
     // Show Message status bar Opening...
     show_Message_Status_Bar(0);
-    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp)"));
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp *.tif *.gif)"));
 
     origin.load(file);
 
@@ -59,6 +62,7 @@ void MainWindow::on_actionOpen_triggered()
         }
     }
 
+
     ui->after->setPixmap(QPixmap::fromImage(image));
     ui->origin->setPixmap(QPixmap::fromImage(image));
 
@@ -72,6 +76,12 @@ void MainWindow::on_actionOpen_triggered()
 
     // almaceno el tamaño de la imagen en una variable global para poder usarla en el algoritmo de otsu
     sizeImage = image.width() * image.height();
+
+    //mostrar especificamente las imagenes de retina
+    if(sizeImage == (565*584))
+    {
+        ui->origin->setScaledContents(false);
+    }
 }
 // Función para guardar la imagen transformada
 void MainWindow::on_actionSave_triggered()
@@ -85,7 +95,8 @@ void MainWindow::on_actionSave_triggered()
             QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
             return;
         }
-        imageT.save(fileName);
+        QImage saveImage = *imageLabel;
+        saveImage.save(fileName);
     }
     // Show Message status bar Save
     show_Message_Status_Bar(2);
@@ -358,9 +369,15 @@ void MainWindow::on_btnAverage_clicked()
     listAverage = sizeKernelAverageOrGaussiano(sizeKernel,"average");
     createMatriz(listAverage);
 
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = filterAverageAndGaussiano(*imageLabel,sqrt(listAverage.length()) , "average");
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));    
     render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
 
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
@@ -375,8 +392,14 @@ void MainWindow::on_btnGaussiano_clicked()
     listGaussiano = sizeKernelAverageOrGaussiano(sizeKernel,"gaussiano");
     createMatriz(listGaussiano);
 
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = filterAverageAndGaussiano(*imageLabel, sqrt(listGaussiano.length()), "gaussiano");
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+    // Update histograma
+    updateHistograma();
 
     render_Miniature_Image();
     // Show Message status bar Ready!
@@ -386,9 +409,18 @@ void MainWindow::on_btnMinimum_clicked()
 {   
     // Show Message status bar Applying filter..
     show_Message_Status_Bar(10);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = filterMinMedMax(*imageLabel,sizeKernel(),0);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
     render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
+
     // Show Message status bar Applying Ready!
     show_Message_Status_Bar(4);
 }
@@ -396,9 +428,18 @@ void MainWindow::on_btnMedium_clicked()
 {
     // Show Message status bar Applying filter..
     show_Message_Status_Bar(10);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = filterMinMedMax(*imageLabel,sizeKernel(), 1);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
     render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -406,9 +447,18 @@ void MainWindow::on_btnMaximum_clicked()
 {
     // Show Message status bar Applying filter..
     show_Message_Status_Bar(10);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = filterMinMedMax(*imageLabel,sizeKernel(), 2);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
     render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -422,7 +472,12 @@ void MainWindow::on_sliderSigma_sliderReleased()
     // Show Message status bar Applying filter..
     show_Message_Status_Bar(10);
     numberSigma = sigma();    
+
     ui->origin->setPixmap(QPixmap::fromImage(filterSigma(*imageLabel,numberSigma)));
+
+    // Update histograma
+    updateHistograma();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -433,9 +488,18 @@ void MainWindow::on_btnSigma_clicked()
 {
     // Show Message status bar Saving..
     show_Message_Status_Bar(11);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     numberSigma = sigma();
     *imageLabel = filterSigma(*imageLabel,numberSigma);
+
     render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
+
     // Show Message status bar Saved..
     show_Message_Status_Bar(12);
 }
@@ -443,9 +507,17 @@ void MainWindow::on_btnNagao_clicked()
 {
     // Show Message status bar Applying filter..
     show_Message_Status_Bar(10);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = filterNagao(*imageLabel);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -484,39 +556,31 @@ void MainWindow::on_btnThreshold_clicked()
     ui->threshold->setValue(threshold);
     ui->horizontalSlider->setValue(threshold);
 
+    render_Histograma_Min_Or_Max(true,channel,threshold);
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
 // Metodo que retorna true o false si el fondo es blanco o negro
 bool MainWindow::background()
 {
-    return ui->white->isChecked() ? true : false;
-}
-void MainWindow::on_btnSobel_clicked()
-{
-    if(imageLabel->isGrayscale())
-    {
-        // Show Message status bar Calculated..
-        show_Message_Status_Bar(10);
-        ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,sobelX,sobelY,3,threshold(), background())));
-        edgeDetection = "Sobel";
-        // Show Message status bar Ready!
-        show_Message_Status_Bar(4);
-    }
-    else
-    {
-        messageBoxGrayscale("grayscale");
-    }
-
+    return ui->white->isChecked() ? false : true;
 }
 void MainWindow::on_btnRobert_clicked()
 {
+    edgeOperation = 0;
+
     if(imageLabel->isGrayscale())
     {
         // Show Message status bar Calculated..
         show_Message_Status_Bar(10);
+
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+
         ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,robertX,robertY,2,threshold(), background())));
         edgeDetection = "Robert";
+
         // Show Message status bar Ready!
         show_Message_Status_Bar(4);
     }
@@ -528,12 +592,43 @@ void MainWindow::on_btnRobert_clicked()
 }
 void MainWindow::on_btnPrewitt_clicked()
 {
+    edgeOperation = 1;
+
     if(imageLabel->isGrayscale())
     {
         // Show Message status bar Calculated..
         show_Message_Status_Bar(10);
+
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+
         ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,prewittX,prewittY,3,threshold(), background())));
         edgeDetection = "Prewitt";
+
+        // Show Message status bar Ready!
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+        messageBoxGrayscale("grayscale");
+    }
+
+}
+void MainWindow::on_btnSobel_clicked()
+{
+    edgeOperation = 2;
+
+    if(imageLabel->isGrayscale())
+    {
+        // Show Message status bar Calculated..
+        show_Message_Status_Bar(10);
+
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+
+        ui->origin->setPixmap(QPixmap::fromImage(filterEdgeDetection(*imageLabel,sobelX,sobelY,3,threshold(), background())));
+        edgeDetection = "Sobel";
+
         // Show Message status bar Ready!
         show_Message_Status_Bar(4);
     }
@@ -566,6 +661,9 @@ void MainWindow::on_btnEdgeDetection_clicked()
         *imageLabel = filterEdgeDetection(*imageLabel, prewittX, prewittY, 3, threshold(), background());
         render_Miniature_Image(!grayscale);
     }
+
+    // Update histograma
+    updateHistograma();
 
     // Show Message status bar Saving..
     show_Message_Status_Bar(12);
@@ -623,19 +721,29 @@ void MainWindow::on_equalizarHistograma_clicked()
 {    
     // Show Message status bar Processing..
     show_Message_Status_Bar(16);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     //cuidado con selectChannelHistograma ya que desde ahi lo controlo desde el combo box, cambiar esto por channel
     *imageLabel = equalization_Histograma(*imageLabel, channel);
+
     // limpiar los valores del array histograma para cada canal para evitar que se sobreescriba
     setearHistograma(channel);
+
     // crear histograma equalizado
     createHistograma(*imageLabel,channel);
+
     // Renderizar el histograma tanto maximo como minimo
     render_Histograma_Min_Or_Max(true,channel);
     render_Histograma_Min_Or_Max(false,channel);
+
     // Renderizar la imagen si el histograma cambia, este efecto sucede si el label esta activo -> show()
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
     // renderizar imagenes en miniatura
     render_Miniature_Image();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -653,7 +761,9 @@ void MainWindow::on_gamma_sliderReleased()
 {
     // Show Message status bar Calculated gamma...
     show_Message_Status_Bar(17);
+
     QImage gamma = gammaConstImage(*imageLabel,constOperationHistograma);
+
     // setear los valores del histograma en 0 dependiendo del canal
     qDebug()<<channel;
     setearHistograma(channel);
@@ -661,6 +771,7 @@ void MainWindow::on_gamma_sliderReleased()
     render_Histograma_Min_Or_Max(true,channel);
     render_Histograma_Min_Or_Max(false,channel);
     ui->origin->setPixmap(QPixmap::fromImage(gamma));
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -674,6 +785,10 @@ void MainWindow::on_btnGamma_clicked()
 {
     // Show Message status bar Saving...
     show_Message_Status_Bar(11);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = gammaConstImage(*imageLabel,constOperationHistograma);
     render_Miniature_Image();
     // Show Message status bar Saved!
@@ -684,12 +799,18 @@ void MainWindow::on_btnPlus_clicked()
 {   
     // Show Message status bar Applying...
     show_Message_Status_Bar(18);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = sumConstImage(*imageLabel,constOperationHistograma,channel);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
-    createHistograma(*imageLabel,channel);
-    render_Histograma_Min_Or_Max(true,channel);
-    render_Histograma_Min_Or_Max(false,channel);
+
+    // Update histograma
+    updateHistograma();
+
     render_Miniature_Image();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -698,12 +819,18 @@ void MainWindow::on_btnSubstract_clicked()
 {
     // Show Message status bar Applying
     show_Message_Status_Bar(18);
+
+    //Guardar imagen de respaldo antes de que se aplique el filtro
+    imageRestore = *imageLabel;
+
     *imageLabel = susbtractConstImage(*imageLabel,constOperationHistograma,channel);
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
-    createHistograma(*imageLabel,channel);
-    render_Histograma_Min_Or_Max(true,channel);
-    render_Histograma_Min_Or_Max(false,channel);
+
+    // Update histograma
+    updateHistograma();
+
     render_Miniature_Image();
+
     // Show Message status bar Ready!
     show_Message_Status_Bar(4);
 }
@@ -802,9 +929,25 @@ void MainWindow::on_btnDilation_clicked()
     if(imageBinaria(*imageLabel))
     {
         show_Message_Status_Bar(18);
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+
         morphologic = 0;
-        *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+
+        if(background())
+        {
+            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+        }
+        else
+        {
+            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+        }
+
         ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+        // Update histograma
+        updateHistograma();
+
         show_Message_Status_Bar(4);
     }
     else
@@ -815,58 +958,109 @@ void MainWindow::on_btnDilation_clicked()
 }
 void MainWindow::on_btnErosion_clicked()
 {
-    show_Message_Status_Bar(18);
-    morphologic = 1;
-    *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
-    show_Message_Status_Bar(4);
+    if(imageBinaria(*imageLabel))
+    {
+        show_Message_Status_Bar(18);
+
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+
+        morphologic = 1;
+
+        if(background())
+        {
+            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+        }
+        else
+        {
+            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+        }
+
+        ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+        // Update histograma
+        updateHistograma();
+
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+         messageBoxGrayscale("binaria");
+    }
 }
 void MainWindow::on_btnOpening_clicked()
 {
-    show_Message_Status_Bar(18);
-    morphologic = 2;
-    *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-    *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
-    show_Message_Status_Bar(4);
+
+    if(imageBinaria(*imageLabel))
+    {
+        show_Message_Status_Bar(18);
+
+        QImage transicion;
+
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+
+        morphologic = 2;
+
+        if(background())
+        {
+            transicion = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+            *imageLabel = dilationOrErosion(transicion,false,sizeKernelOperatiosMorphologics());
+        }
+        else
+        {
+            transicion = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+            *imageLabel = dilationOrErosion(transicion,true,sizeKernelOperatiosMorphologics());
+        }
+
+        ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+        // Update histograma
+        updateHistograma();
+
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+         messageBoxGrayscale("binaria");
+    }
 }
 void MainWindow::on_btnClosing_clicked()
 {
-    show_Message_Status_Bar(18);
-    morphologic = 3;    
-    *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-    *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
-    show_Message_Status_Bar(4);
-}
-// Funcion que guarda la imagen dependiendo de la operacion morfologica aplicada
-//void MainWindow::on_btnMorphologic_clicked()
-//{
-//    show_Message_Status_Bar(11);
 
-//    switch(morphologic)
-//    {
-//        case 0: *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-//        break;
-//        case 1: *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-//        break;
-//        case 2:
-//        {
-//            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-//            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-//        }
-//        break;
-//        case 3:
-//        {
-//            *imageLabel = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
-//            *imageLabel = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
-//        }
-//        break;
-//        default: qDebug()<<"No se puede guardar la operacion morfologica";
-//    }
-//    render_Miniature_Image();
-//    show_Message_Status_Bar(12);
-//}
+    if(imageBinaria(*imageLabel))
+    {
+        show_Message_Status_Bar(18);
+
+        QImage transicion;
+
+        //Guardar imagen de respaldo antes de que se aplique el filtro
+        imageRestore = *imageLabel;
+        morphologic = 3;
+
+        if(background())
+        {
+            transicion = dilationOrErosion(*imageLabel,false,sizeKernelOperatiosMorphologics());
+            *imageLabel = dilationOrErosion(transicion,true,sizeKernelOperatiosMorphologics());
+        }
+        else
+        {
+            transicion = dilationOrErosion(*imageLabel,true,sizeKernelOperatiosMorphologics());
+            *imageLabel = dilationOrErosion(transicion,false,sizeKernelOperatiosMorphologics());
+        }
+
+        ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+        // Update histograma
+        updateHistograma();
+
+        show_Message_Status_Bar(4);
+    }
+    else
+    {
+         messageBoxGrayscale("binaria");
+    }
+}
 
 /********************** Fin **********************/
 
@@ -876,10 +1070,21 @@ void MainWindow::on_btnClosing_clicked()
 
 void MainWindow::on_actionDemo_triggered()
 {
-    Progress *progress = new Progress(this);
-    progress->setModal(true);
-    progress->show();
 
+
+//      ui->origin->setPixmap(QPixmap::fromImage(segmentationKMeans(*imageLabel,2)));
+//    int threshold = ui->threshold->value();
+//      ui->origin->setPixmap(QPixmap::fromImage(segmentationThreshold(*imageLabel,threshold)));
+// filtro laplaciano
+//    listLaplaciano = sizeKernelAverageOrGaussiano(sizeKernel,"average");
+//    int threshold = ui->threshold->value();
+//    listLaplaciano = stringLaplaciano5x5.split(' ');
+//    createMatriz(listLaplaciano);
+//    ui->origin->setPixmap(QPixmap::fromImage(filterLaplaciano(*imageLabel,3,threshold)));
+
+    // filtro norte y este
+//    *imageLabel = filterEdgeDetection(*imageLabel,este,norte,3,threshold,background());
+//    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
 }
 
 
@@ -917,3 +1122,47 @@ void MainWindow::on_actionNew_Convertion_triggered()
 /*-----------------------------------------------------------------------------------------------------------/*
  * Fin
  *-----------------------------------------------------------------------------------------------------------*/
+
+void MainWindow::on_actionDesaher_triggered()
+{
+    ui->origin->setPixmap(QPixmap::fromImage(imageRestore));
+
+    switch(channel)
+    {
+        case 0: {imageT = imageRestore; imageLabel = &imageT;}
+        break;
+        case 1: {imageR = imageRestore; imageLabel = &imageR;}
+        break;
+        case 2: {imageG = imageRestore; imageLabel = &imageG;}
+        break;
+        case 3: {imageB = imageRestore; imageLabel = &imageB;}
+        break;
+    }
+
+    // pinto nuevamente las miniaturas
+    render_Miniature_Image();
+
+    // Update histograma
+    updateHistograma();
+
+}
+
+void MainWindow::on_actionConfution_table_triggered()
+{
+    Progress *progress = new Progress(this);
+    progress->show();
+    progress->setModal(true);
+    progress->showImageA(*imageLabel);
+}
+
+void MainWindow::on_actionSave_Step_triggered()
+{
+    step = *imageLabel;
+}
+
+void MainWindow::on_actionShow_Step_triggered()
+{
+    imageLabel = &step;
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+    on_actionNew_Convertion_triggered();
+}

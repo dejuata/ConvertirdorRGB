@@ -2,7 +2,11 @@
 #define PROGRESS_H
 
 #include <QDialog>
-#include <QMovie>
+#include <QImage>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QFile>
+#include <QDebug>
 
 namespace Ui {
 class Progress;
@@ -16,13 +20,22 @@ public:
     explicit Progress(QWidget *parent = 0);
     ~Progress();
 
-    QMovie *movie = new QMovie(":/img/loading.gif");
+    QImage imageA;
+    QImage imageB;
 
-    void insertMessage(QString message = "Loading...");
+    void showImageA(QImage image);
 
     Ui::Progress *ui;
 
+private slots:
+    void on_open_clicked();
+
+    void on_calculated_clicked();
+
 private:
+
+    void matrizDeConfusion();
+
 
 };
 
