@@ -22,7 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);    
     ui->histograma->hide();
     ui->structure->hide();    
-    this->setWindowState(Qt::WindowMaximized);
+    createShorcuts();
+    this->setWindowState(Qt::WindowMaximized);     
 }
 
 MainWindow::~MainWindow()
@@ -78,11 +79,12 @@ void MainWindow::on_actionOpen_triggered()
     sizeImage = image.width() * image.height();
 
     //mostrar especificamente las imagenes de retina
-    if(sizeImage == (565*584))
-    {
-        ui->origin->setScaledContents(false);
-    }
+//    if(sizeImage == (565*584))
+//    {
+//        ui->origin->setScaledContents(false);
+//    }
 }
+
 // Función para guardar la imagen transformada
 void MainWindow::on_actionSave_triggered()
 {
@@ -1118,12 +1120,7 @@ void MainWindow::on_actionNew_Convertion_triggered()
 
 }
 
-
-/*-----------------------------------------------------------------------------------------------------------/*
- * Fin
- *-----------------------------------------------------------------------------------------------------------*/
-
-void MainWindow::on_actionDesaher_triggered()
+void MainWindow::on_actionUndo_triggered()
 {
     ui->origin->setPixmap(QPixmap::fromImage(imageRestore));
 
@@ -1147,7 +1144,7 @@ void MainWindow::on_actionDesaher_triggered()
 
 }
 
-void MainWindow::on_actionConfution_table_triggered()
+void MainWindow::on_actionConfusion_table_triggered()
 {
     Progress *progress = new Progress(this);
     progress->show();
@@ -1162,7 +1159,74 @@ void MainWindow::on_actionSave_Step_triggered()
 
 void MainWindow::on_actionShow_Step_triggered()
 {
-    imageLabel = &step;
+    imageLabel = &step;    
     ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
     on_actionNew_Convertion_triggered();
 }
+/********************* Options Masks *******************/
+// Crear mascara
+void MainWindow::on_actionNew_triggered()
+{
+    mask = imageLabel->createHeuristicMask();
+    ui->origin->setPixmap(QPixmap::fromImage(mask));
+}
+// Guardar mascara
+void MainWindow::on_actionSave_2_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Open File"), "", tr("Images (*.png)"));
+
+    if (!fileName.isEmpty())
+    {
+        if (!mask.save(fileName))
+        {
+            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+            return;
+        }
+        else
+        {
+            mask.save(fileName);
+        }
+    }
+    // Show Message status bar Save
+    show_Message_Status_Bar(2);
+}
+// Cargar mascara
+void MainWindow::on_actionLoad_triggered()
+{
+    show_Message_Status_Bar(0);
+
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Image Files (*.png *.jpg *.bmp *.tif *.gif)"));
+
+    mask.load(file);
+
+    if (!file.isEmpty())
+    {
+        if (!mask.load(file))
+        {
+            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+            show_Message_Status_Bar(4);
+        }
+    }
+
+}
+// Aplicar mascara
+void MainWindow::on_actionApply_triggered()
+{
+    show_Message_Status_Bar(18);
+
+    *imageLabel = applyMask(*imageLabel,mask);
+    render_Miniature_Image();
+    updateHistograma();
+    ui->origin->setPixmap(QPixmap::fromImage(*imageLabel));
+
+    show_Message_Status_Bar(4);
+}
+/*-----------------------------------------------------------------------------------------------------------/*
+ * Fin
+ *-----------------------------------------------------------------------------------------------------------*/
+
+
+
+
+
+

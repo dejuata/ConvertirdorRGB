@@ -16,7 +16,6 @@ QSize resizeImage(int width, int height)
 
     return QSize(width,height);
 }
-
 // Funcion que valida que la imagen cargada no sea nula y si es falso ejecuta una serie de funciones
 void MainWindow::convert_Image_To_Space_Color(QString r, QString g, QString b, int spaceColor)
 {
@@ -277,7 +276,6 @@ QString MainWindow::stateMessage(int index)
 
     return message;
 }
-
 // Funcion que muestra los diferentes mensajes en la QStatusBar
 void MainWindow::show_Message_Status_Bar(int index)
 {
@@ -306,8 +304,6 @@ void MainWindow::show_Message_Status_Bar(int index)
     if(index == 19)ui->statusBar->showMessage(" Normalizing histogram...");
 
 }
-
-
 // Funcion que llama a la ventana de Progress con el mensaje que es pasado como parametro
 void MainWindow::show_Window_Message()
 {
@@ -397,5 +393,53 @@ void MainWindow::messageBoxGrayscale(QString option)
     }    
     updateHistograma();
 }
+// Aplicar Mascara
+QImage applyMask(QImage image, QImage mask)
+{
+    QImage result = image;
 
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++)
+        {
+            if(mask.pixel(i,j) == qRgb(0,0,0))
+            {
+                result.setPixel(i,j,qRgb(0,0,0));
+            }
+        }
+    }
+
+    return result;
+}
+// Agregar shorcuts
+void MainWindow::createShorcuts()
+{
+    // Crear acciones
+    channelZero = new QAction();
+    channelOne = new QAction();
+    channelTwo = new QAction();
+    channelThree = new QAction();
+    undo = new QAction();
+
+    // Crear Shortcut
+    channelZero->setShortcut(Qt::CTRL + Qt::Key_0);
+    channelOne->setShortcut(Qt::CTRL + Qt::Key_1);
+    channelTwo->setShortcut(Qt::CTRL + Qt::Key_2);
+    channelThree->setShortcut(Qt::CTRL + Qt::Key_3);
+    undo->setShortcut(QKeySequence::Undo);
+
+    // Conectar con las funciones
+    connect(channelZero,SIGNAL(triggered()),this,SLOT(on_btn_transform_clicked()));
+    connect(channelOne,SIGNAL(triggered()),this,SLOT(on_btn_one_clicked()));
+    connect(channelTwo,SIGNAL(triggered()),this,SLOT(on_btn_two_clicked()));
+    connect(channelThree,SIGNAL(triggered()),this,SLOT(on_btn_three_clicked()));
+    connect(undo,SIGNAL(triggered()),this,SLOT(on_actionUndo_triggered()));
+
+    // Agregar acciones al menu para que puedan funcionar
+    ui->menuBar->addAction(channelZero);
+    ui->menuBar->addAction(channelOne);
+    ui->menuBar->addAction(channelTwo);
+    ui->menuBar->addAction(channelThree);
+    ui->menuBar->addAction(undo);
+}
 #endif // RESOURCES_H

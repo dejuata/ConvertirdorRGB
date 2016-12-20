@@ -117,13 +117,16 @@ void Progress::matrizDeConfusion()
     ui->p->setText(QString::number(P)+"%");
 }
 
+
+
 /******************************Info**********************************/
+
 
 
 // inciar el calculo
 void Progress::on_calculated_clicked()
 {
-    matrizDeConfusion();
+    matrizDeConfusion();  
 }
 
 

@@ -672,7 +672,7 @@ QImage filterEdgeDetection(QImage image, int kernelX[][3], int kernelY[][3] ,int
     {
         // Columnas
         for (int j = 0; j < image.height(); j++)
-        {
+        {            
             // Incializo valores r g b a 0
             x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0;
 
@@ -717,7 +717,7 @@ QImage filterEdgeDetection(QImage image, int kernelX[][3], int kernelY[][3] ,int
                 }
             }
             value = qRgb(xy1,xy2,xy3);
-            result.setPixelColor(i,j,value);
+            result.setPixelColor(i,j,value);            
         }
     }
     return result;

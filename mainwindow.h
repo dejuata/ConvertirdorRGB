@@ -22,7 +22,7 @@
 #include <QtConcurrent>
 #include <QtWidgets>
 #include <QMovie>
-
+#include <QAction>
 
 #define lengthArray(x) (sizeof(x)/sizeof(x[0]))
 
@@ -43,6 +43,7 @@ public:
     // Almacena las Imagenes a procesar
     QImage origin;    
     QImage image; // imagen original
+    QImage mask;
     QImage imageT;// imagen en el canal RGB
     QImage imageR;// imagen solo en el canal R
     QImage imageG;// imagen solo en el canal G
@@ -50,6 +51,13 @@ public:
     QImage *imageLabel;// puntero que puede contener la direccion de las imagenes anteriores
     QImage imageRestore;
     QImage step;
+
+    // Acciones para shortcut
+    QAction *channelZero;
+    QAction *channelOne;
+    QAction *channelTwo;
+    QAction *channelThree;
+    QAction *undo;
 
     // Almacena los resultados de la conversion de imagenes que se realiza asincronicamente
     // estas variables se setean en las variable QImage normal, esto es necesario por el
@@ -188,15 +196,21 @@ private slots:
 
     void enable_BtnImage(bool enable = true);
 
-    void on_actionDesaher_triggered();
+    void on_actionUndo_triggered();
 
-
-
-    void on_actionConfution_table_triggered();
+    void on_actionConfusion_table_triggered();
 
     void on_actionSave_Step_triggered();
 
-    void on_actionShow_Step_triggered();
+    void on_actionShow_Step_triggered();    
+
+    void on_actionLoad_triggered();
+
+    void on_actionApply_triggered();
+
+    void on_actionNew_triggered();
+
+    void on_actionSave_2_triggered();
 
 private:
 
@@ -242,7 +256,11 @@ private:
 
     void updateHistograma();
 
+    void createShorcuts();
+
 };
+
+
 
 
 

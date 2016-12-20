@@ -78,7 +78,7 @@ QImage convertToRGB(QImage image, char channel)
     for(int i = 0; i < image.width(); i++)
     {
         for(int j = 0; j < image.height(); j++)
-        {
+        {            
             // Format RGB
             if (channel == 'a')
             {
