@@ -1,4 +1,4 @@
-# ConvertirdorRGB
+# Retinal image processing
 
 Software containing the topics covered in the course of digital image processing of the university of the valley
 
