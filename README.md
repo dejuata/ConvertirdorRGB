@@ -1,24 +1,30 @@
 # ConvertirdorRGB
 
-Procesamiento Digital de Imagenes
+Software containing the topics covered in the course of digital image processing of the university of the valley
 
 ### Requerimientos
 * Qt 5.7 
-* Tener instalado el modulo Qt Charts
+* Module Qt Charts
 
 ### Features
-* Conversión de imagenes RGB a diferentes espacios de color
-* Filtros para correción de ruido
-* Operaciones y visualizacion del Histograma de la imagen
+* Color spaces
+* Filtering techniques
+* Histogram
+* Morphological operations
 
-#### Conversión
+
+### Color spaces
 RGB to XYZ
-![RGB to XYZ](http://res.cloudinary.com/dnat0jmou/image/upload/v1476302625/conversion_xkndmv.png)
+![RGB to XYZ](http://res.cloudinary.com/dnat0jmou/image/upload/v1482261814/image1_dtdbxg.png)
 
-### Filtros
-Filtro Sigma
-![Filtro sigma](http://res.cloudinary.com/dnat0jmou/image/upload/v1476302871/filtros_ggqtwi.png)
+### Filtering techniques
+Sigma filter
+![Sigma filter](http://res.cloudinary.com/dnat0jmou/image/upload/v1482261818/sigma_zb5v0z.png)
 
-### Histograma
-Visualizacion de histograma por canal
-![Histograma Red](http://res.cloudinary.com/dnat0jmou/image/upload/v1476303071/histograma_ivs0jw.png)
+### Histogram
+Histogram display per channel
+![Histograma Red channel](http://res.cloudinary.com/dnat0jmou/image/upload/v1482261802/histograma_rbmabj.png)
+
+### Morphological operations
+Dilation operation
+![Dilation operation](http://res.cloudinary.com/dnat0jmou/image/upload/v1482261803/operaciones_morfologicas_yv945v.png)
