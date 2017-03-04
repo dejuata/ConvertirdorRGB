@@ -1,6 +1,6 @@
 # Retinal image processing
 
-Software containing the topics covered in the course of digital image processing of the university of the valley
+Software containing the topics covered in the course of digital image processing of the Universidad del Valle
 
 ### Requerimientos
 * Qt 5.7 
